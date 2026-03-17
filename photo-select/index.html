@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>White Fox Studio - Выбор фотографий</title>
+    <link rel="stylesheet" href="photo-select.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Шапка -->
+        <header class="header">
+            <div class="logo">
+                <img src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="White Fox Studio">
+                <span>WHITE FOX STUDIO</span>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main class="main-content" id="mainContent">
+            <!-- Сюда будет подгружаться контент -->
+        </main>
+
+        <!-- Экран входа (по умолчанию) -->
+        <template id="loginTemplate">
+            <div class="login-screen">
+                <h1>Введите номер заказа</h1>
+                <p class="subtitle">Чтобы выбрать фотографии, введите номер вашего заказа</p>
+                
+                <div class="form-group">
+                    <input type="text" id="orderCode" placeholder="Например: 333" class="order-input">
+                    <button class="btn btn-primary" id="loginBtn">Продолжить</button>
+                </div>
+
+                <div class="demo-orders">
+                    <p>Демо-заказы:</p>
+                    <button class="demo-btn" data-order="333">333</button>
+                    <button class="demo-btn" data-order="444">444</button>
+                    <button class="demo-btn" data-order="555">555</button>
+                </div>
+            </div>
+        </template>
+
+        <!-- Экран галереи -->
+        <template id="galleryTemplate">
+            <div class="gallery-screen">
+                <div class="order-info">
+                    <h2>Заказ #<span id="orderNumber"></span></h2>
+                    <p>Выберите фотографии для ваших товаров</p>
+                </div>
+
+                <div id="productsList" class="products-list"></div>
+            </div>
+        </template>
+
+        <!-- Шаблон товара -->
+        <template id="productTemplate">
+            <div class="product-card">
+                <div class="product-header">
+                    <div class="product-image">
+                        <img src="" alt="" id="productImg">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-sku" id="productSku"></div>
+                        <div class="product-title" id="productTitle"></div>
+                        <div class="product-note" id="productNote"></div>
+                    </div>
+                </div>
+                <div class="photo-blocks" id="photoBlocks"></div>
+            </div>
+        </template>
+
+        <!-- Кнопка подтверждения -->
+        <div class="submit-container" id="submitContainer" style="display: none;">
+            <button class="btn btn-primary btn-large" id="submitBtn">Подтвердить выбор</button>
+        </div>
+    </div>
+
+    <!-- Тосты для уведомлений -->
+    <div id="toast" class="toast"></div>
+
+    <script src="photo-select.js"></script>
+</body>
+</html>
