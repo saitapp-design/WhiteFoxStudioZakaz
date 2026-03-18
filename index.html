@@ -7,8 +7,8 @@
     <style>
         /* ===== ОСНОВНЫЕ ПЕРЕМЕННЫЕ ===== */
         :root {
-            --accent-primary: #007883;  /* ОСНОВНОЙ ЦВЕТ */
-            --accent-hover: #0a6570;     /* Темнее для ховера */
+            --accent-primary: #007883;
+            --accent-hover: #0a6570;
             --accent-light: rgba(0, 120, 131, 0.1);
             --bg-secondary: #ffffff;
             --bg-form: #f5f5f5;
@@ -367,8 +367,8 @@
                 </div>
                 
                 <button class="lang-toggle" id="langToggle">
-                    <span id="lang-icon">🇹🇭</span>
-                    <span id="lang-text">TH</span>
+                    <span id="lang-icon">🇬🇧</span>
+                    <span id="lang-text">EN</span>
                 </button>
             </div>
         </div>
@@ -379,7 +379,7 @@
             <h1 id="title">Enter Order Number</h1>
             <p class="subtitle" id="subtitle">Please enter your order number to select photos</p>
             
-            <input type="text" id="orderNumberInput" class="order-input" placeholder="e.g., 333 / เช่น 333">
+            <input type="text" id="orderNumberInput" class="order-input" placeholder="e.g., 333">
             <button class="btn-primary" id="loginBtn">Continue</button>
 
             <div class="demo-orders">
@@ -403,7 +403,7 @@
                 loginBtn: 'Continue',
                 demoText: 'Demo orders:',
                 toastError: 'Please enter order number',
-                placeholder: 'e.g., 333 / เช่น 333'
+                placeholder: 'e.g., 333'
             },
             th: {
                 title: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
@@ -411,36 +411,38 @@
                 loginBtn: 'ดำเนินการต่อ',
                 demoText: 'ตัวอย่างคำสั่งซื้อ:',
                 toastError: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
-                placeholder: 'เช่น 333 / e.g., 333'
+                placeholder: 'เช่น 333'
             }
         };
 
         let currentLang = 'en';
 
-        document.getElementById('langToggle').addEventListener('click', function() {
-            const icon = document.getElementById('lang-icon');
-            const text = document.getElementById('lang-text');
-            
-            if (currentLang === 'en') {
-                currentLang = 'th';
-                icon.textContent = '🇬🇧';
-                text.textContent = 'EN';
-            } else {
-                currentLang = 'en';
-                icon.textContent = '🇹🇭';
-                text.textContent = 'TH';
-            }
-            
-            updateLanguage();
-        });
-
         function updateLanguage() {
+            // Обновляем все тексты
             document.getElementById('title').textContent = translations[currentLang].title;
             document.getElementById('subtitle').textContent = translations[currentLang].subtitle;
             document.getElementById('loginBtn').textContent = translations[currentLang].loginBtn;
             document.getElementById('demoText').textContent = translations[currentLang].demoText;
             document.getElementById('orderNumberInput').placeholder = translations[currentLang].placeholder;
+            
+            // Обновляем кнопку языка
+            const icon = document.getElementById('lang-icon');
+            const text = document.getElementById('lang-text');
+            
+            if (currentLang === 'en') {
+                icon.textContent = '🇬🇧';
+                text.textContent = 'EN';
+            } else {
+                icon.textContent = '🇹🇭';
+                text.textContent = 'TH';
+            }
         }
+
+        document.getElementById('langToggle').addEventListener('click', function() {
+            // Переключаем язык
+            currentLang = currentLang === 'en' ? 'th' : 'en';
+            updateLanguage();
+        });
 
         document.getElementById('loginBtn').addEventListener('click', function() {
             const orderNumber = document.getElementById('orderNumberInput').value.trim();
@@ -465,6 +467,9 @@
                 toast.classList.remove('show');
             }, 3000);
         }
+
+        // Инициализация
+        updateLanguage();
     </script>
 </body>
 </html>
