@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>White Fox Studio - Photo Selection</title>
     <style>
-        /* ===== ОСНОВНЫЕ ПЕРЕМЕННЫЕ (как на основном сайте) ===== */
+        /* ===== ОСНОВНЫЕ ПЕРЕМЕННЫЕ ===== */
         :root {
-            --accent-primary: #88ddde;
-            --accent-hover: #6bc5c6;
-            --accent-light: rgba(136, 221, 222, 0.1);
+            --accent-primary: #00414b;
+            --accent-hover: #002d34;
+            --accent-light: rgba(0, 65, 75, 0.1);
             --bg-secondary: #ffffff;
             --bg-form: #f5f5f5;
             --text-primary: #333333;
             --text-secondary: #666666;
             --text-muted: #999999;
             --border-color: #e0e0e0;
-            --shadow-color: rgba(0, 0, 0, 0.1);
+            --shadow-color: rgba(0, 65, 75, 0.15);
         }
 
         * {
@@ -31,7 +31,6 @@
             min-height: 100vh;
         }
 
-        /* ===== ШАПКА (как на основном сайте) ===== */
         .header {
             position: sticky;
             top: 0;
@@ -71,7 +70,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* ===== ПОИСК ЗАКАЗА ===== */
         .right-actions {
             display: flex;
             align-items: center;
@@ -91,7 +89,7 @@
             border: 2px solid var(--accent-primary);
             height: 48px;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0,65,75,0.05);
         }
 
         .search-box:focus-within {
@@ -133,7 +131,6 @@
             transform: scale(1.02);
         }
 
-        /* ===== КНОПКА ЯЗЫКА ===== */
         .lang-toggle {
             background: white;
             border: 2px solid var(--accent-primary);
@@ -162,7 +159,6 @@
             font-size: 1.2rem;
         }
 
-        /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
         .main-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -170,7 +166,6 @@
             min-height: calc(100vh - 120px);
         }
 
-        /* ===== ЭКРАН ВХОДА ===== */
         .login-screen {
             max-width: 500px;
             margin: 3rem auto;
@@ -184,7 +179,7 @@
 
         .login-screen h1 {
             font-size: 2.2rem;
-            color: var(--text-primary);
+            color: var(--accent-primary);
             margin-bottom: 1rem;
             font-weight: 700;
         }
@@ -269,35 +264,6 @@
             color: white;
         }
 
-        /* ===== ЭКРАН ГАЛЕРЕИ ===== */
-        .gallery-screen {
-            display: none;
-        }
-
-        .gallery-screen.active {
-            display: block;
-        }
-
-        .order-info {
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            margin-bottom: 2rem;
-            border: 2px solid var(--border-color);
-        }
-
-        .order-info h2 {
-            font-size: 1.8rem;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .order-info h2 span {
-            color: var(--accent-primary);
-            font-weight: 800;
-        }
-
-        /* ===== АДАПТАЦИЯ ===== */
         @media (max-width: 768px) {
             .top-bar {
                 padding: 0.8rem 1rem;
@@ -329,7 +295,6 @@
             }
         }
 
-        /* ===== ЗАГРУЗКА ===== */
         .loading {
             text-align: center;
             padding: 3rem;
@@ -352,7 +317,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ===== УВЕДОМЛЕНИЯ ===== */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -387,7 +351,6 @@
     </style>
 </head>
 <body>
-    <!-- Шапка как на основном сайте -->
     <header class="header">
         <div class="top-bar">
             <div class="logo-area">
@@ -396,15 +359,13 @@
             </div>
             
             <div class="right-actions">
-                <!-- Поиск по номеру заказа -->
                 <div class="search-container">
                     <div class="search-box">
-                        <input type="text" id="orderNumber" placeholder="Введите номер заказа / กรุณากรอกหมายเลขคำสั่งซื้อ">
+                        <input type="text" id="orderNumber" placeholder="Order number / หมายเลขคำสั่งซื้อ">
                         <button onclick="window.location.href='gallery.html?order=' + document.getElementById('orderNumber').value">OK</button>
                     </div>
                 </div>
                 
-                <!-- Кнопка языка -->
                 <button class="lang-toggle" id="langToggle">
                     <span id="lang-icon">🇹🇭</span>
                     <span id="lang-text">TH</span>
@@ -413,19 +374,16 @@
         </div>
     </header>
 
-    <!-- Основной контент -->
     <main class="main-content">
-        <!-- Экран входа -->
         <div class="login-screen" id="loginScreen">
-            <h1 data-en="Enter Order Number" data-th="กรุณากรอกหมายเลขคำสั่งซื้อ">Enter Order Number</h1>
-            <p class="subtitle" data-en="Please enter your order number to select photos" data-th="กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ">Please enter your order number to select photos</p>
+            <h1 id="title">Enter Order Number</h1>
+            <p class="subtitle" id="subtitle">Please enter your order number to select photos</p>
             
             <input type="text" id="orderNumberInput" class="order-input" placeholder="e.g., 333 / เช่น 333">
-            <button class="btn-primary" id="loginBtn" data-en="Continue" data-th="ดำเนินการต่อ">Continue</button>
+            <button class="btn-primary" id="loginBtn">Continue</button>
 
-            <!-- Демо-заказы -->
             <div class="demo-orders">
-                <p data-en="Demo orders:" data-th="ตัวอย่างคำสั่งซื้อ:">Demo orders:</p>
+                <p id="demoText">Demo orders:</p>
                 <div class="demo-buttons">
                     <button class="demo-btn" onclick="window.location.href='gallery.html?order=333'">333</button>
                     <button class="demo-btn" onclick="window.location.href='gallery.html?order=444'">444</button>
@@ -435,33 +393,30 @@
         </div>
     </main>
 
-    <!-- Уведомления -->
     <div id="toast" class="toast"></div>
 
     <script>
-        // Переводы
         const translations = {
             en: {
-                'Enter Order Number': 'Enter Order Number',
-                'Please enter your order number to select photos': 'Please enter your order number to select photos',
-                'Continue': 'Continue',
-                'Demo orders:': 'Demo orders:',
-                'Please enter order number': 'Please enter order number',
-                'Order not found': 'Order not found'
+                title: 'Enter Order Number',
+                subtitle: 'Please enter your order number to select photos',
+                loginBtn: 'Continue',
+                demoText: 'Demo orders:',
+                toastError: 'Please enter order number',
+                placeholder: 'e.g., 333 / เช่น 333'
             },
             th: {
-                'Enter Order Number': 'กรุณากรอกหมายเลขคำสั่งซื้อ',
-                'Please enter your order number to select photos': 'กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ',
-                'Continue': 'ดำเนินการต่อ',
-                'Demo orders:': 'ตัวอย่างคำสั่งซื้อ:',
-                'Please enter order number': 'กรุณากรอกหมายเลขคำสั่งซื้อ',
-                'Order not found': 'ไม่พบคำสั่งซื้อ'
+                title: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
+                subtitle: 'กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ',
+                loginBtn: 'ดำเนินการต่อ',
+                demoText: 'ตัวอย่างคำสั่งซื้อ:',
+                toastError: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
+                placeholder: 'เช่น 333 / e.g., 333'
             }
         };
 
         let currentLang = 'en';
 
-        // Переключение языка
         document.getElementById('langToggle').addEventListener('click', function() {
             const icon = document.getElementById('lang-icon');
             const text = document.getElementById('lang-text');
@@ -479,37 +434,29 @@
             updateLanguage();
         });
 
-        // Обновление текстов
         function updateLanguage() {
-            document.querySelectorAll('[data-en][data-th]').forEach(el => {
-                el.textContent = el.getAttribute(`data-${currentLang}`);
-            });
-
-            // Обновляем placeholder
-            const input = document.getElementById('orderNumberInput');
-            if (input) {
-                input.placeholder = currentLang === 'en' ? 'e.g., 333 / เช่น 333' : 'เช่น 333 / e.g., 333';
-            }
+            document.getElementById('title').textContent = translations[currentLang].title;
+            document.getElementById('subtitle').textContent = translations[currentLang].subtitle;
+            document.getElementById('loginBtn').textContent = translations[currentLang].loginBtn;
+            document.getElementById('demoText').textContent = translations[currentLang].demoText;
+            document.getElementById('orderNumberInput').placeholder = translations[currentLang].placeholder;
         }
 
-        // Обработка ввода заказа
         document.getElementById('loginBtn').addEventListener('click', function() {
             const orderNumber = document.getElementById('orderNumberInput').value.trim();
             if (orderNumber) {
                 window.location.href = `gallery.html?order=${orderNumber}`;
             } else {
-                showToast(currentLang === 'en' ? 'Please enter order number' : 'กรุณากรอกหมายเลขคำสั่งซื้อ');
+                showToast(translations[currentLang].toastError);
             }
         });
 
-        // Enter в поле ввода
         document.getElementById('orderNumberInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 document.getElementById('loginBtn').click();
             }
         });
 
-        // Показ уведомлений
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
