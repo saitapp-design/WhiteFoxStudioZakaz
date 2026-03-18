@@ -226,44 +226,6 @@
             box-shadow: 0 5px 20px var(--shadow-color);
         }
 
-        .demo-orders {
-            margin-top: 2.5rem;
-            padding: 1.5rem;
-            background: var(--bg-form);
-            border-radius: 20px;
-        }
-
-        .demo-orders p {
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .demo-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .demo-btn {
-            padding: 0.8rem 2rem;
-            background: white;
-            border: 2px solid var(--accent-primary);
-            color: var(--accent-primary);
-            border-radius: 40px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            font-size: 1.1rem;
-            min-width: 80px;
-        }
-
-        .demo-btn:hover {
-            background: var(--accent-primary);
-            color: white;
-        }
-
         @media (max-width: 768px) {
             .top-bar {
                 padding: 0.8rem 1rem;
@@ -284,14 +246,6 @@
 
             .login-screen h1 {
                 font-size: 1.8rem;
-            }
-
-            .demo-buttons {
-                flex-direction: column;
-            }
-
-            .demo-btn {
-                width: 100%;
             }
         }
 
@@ -361,7 +315,7 @@
             <div class="right-actions">
                 <div class="search-container">
                     <div class="search-box">
-                        <input type="text" id="orderNumber" placeholder="Order number / หมายเลขคำสั่งซื้อ">
+                        <input type="text" id="orderNumber" placeholder="Order number">
                         <button onclick="window.location.href='gallery.html?order=' + document.getElementById('orderNumber').value">OK</button>
                     </div>
                 </div>
@@ -379,17 +333,8 @@
             <h1 id="title">Enter Order Number</h1>
             <p class="subtitle" id="subtitle">Please enter your order number to select photos</p>
             
-            <input type="text" id="orderNumberInput" class="order-input" placeholder="e.g., 333">
+            <input type="text" id="orderNumberInput" class="order-input" placeholder="Enter order number">
             <button class="btn-primary" id="loginBtn">Continue</button>
-
-            <div class="demo-orders">
-                <p id="demoText">Demo orders:</p>
-                <div class="demo-buttons">
-                    <button class="demo-btn" onclick="window.location.href='gallery.html?order=333'">333</button>
-                    <button class="demo-btn" onclick="window.location.href='gallery.html?order=444'">444</button>
-                    <button class="demo-btn" onclick="window.location.href='gallery.html?order=555'">555</button>
-                </div>
-            </div>
         </div>
     </main>
 
@@ -401,31 +346,26 @@
                 title: 'Enter Order Number',
                 subtitle: 'Please enter your order number to select photos',
                 loginBtn: 'Continue',
-                demoText: 'Demo orders:',
                 toastError: 'Please enter order number',
-                placeholder: 'e.g., 333'
+                placeholder: 'Enter order number'
             },
             th: {
                 title: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
                 subtitle: 'กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ',
                 loginBtn: 'ดำเนินการต่อ',
-                demoText: 'ตัวอย่างคำสั่งซื้อ:',
                 toastError: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
-                placeholder: 'เช่น 333'
+                placeholder: 'กรอกหมายเลขคำสั่งซื้อ'
             }
         };
 
         let currentLang = 'en';
 
         function updateLanguage() {
-            // Обновляем все тексты
             document.getElementById('title').textContent = translations[currentLang].title;
             document.getElementById('subtitle').textContent = translations[currentLang].subtitle;
             document.getElementById('loginBtn').textContent = translations[currentLang].loginBtn;
-            document.getElementById('demoText').textContent = translations[currentLang].demoText;
             document.getElementById('orderNumberInput').placeholder = translations[currentLang].placeholder;
             
-            // Обновляем кнопку языка
             const icon = document.getElementById('lang-icon');
             const text = document.getElementById('lang-text');
             
@@ -439,7 +379,6 @@
         }
 
         document.getElementById('langToggle').addEventListener('click', function() {
-            // Переключаем язык
             currentLang = currentLang === 'en' ? 'th' : 'en';
             updateLanguage();
         });
@@ -468,7 +407,6 @@
             }, 3000);
         }
 
-        // Инициализация
         updateLanguage();
     </script>
 </body>
