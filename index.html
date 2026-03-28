@@ -52,7 +52,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.75);
+            background: rgba(0,0,0,0.8);
             z-index: 10000;
             backdrop-filter: blur(4px);
             justify-content: center;
@@ -66,7 +66,7 @@
         .photo-modal-content {
             background: white;
             border-radius: 32px;
-            max-width: 900px;
+            max-width: 950px;
             width: 90%;
             max-height: 85vh;
             overflow-y: auto;
@@ -82,6 +82,10 @@
             padding-bottom: 1rem;
             border-bottom: 2px solid var(--accent-primary);
             margin-bottom: 1.5rem;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
         }
         
         .photo-modal-header h2 {
@@ -121,8 +125,17 @@
             color: var(--accent-primary);
         }
         
-        .photo-count-badge {
+        .product-sku-badge {
             background: var(--accent-light);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .photo-count-badge {
+            background: var(--accent-primary);
+            color: white;
             padding: 0.3rem 1rem;
             border-radius: 30px;
             font-weight: 600;
@@ -225,6 +238,9 @@
             display: flex;
             justify-content: flex-end;
             gap: 1rem;
+            position: sticky;
+            bottom: 0;
+            background: white;
         }
         
         .btn-primary-modal {
@@ -255,7 +271,7 @@
             display: block;
         }
         
-        /* Original styles continue */
+        /* Original styles from the main site */
         .top-bar {
             position: sticky;
             top: 0;
@@ -296,7 +312,7 @@
         }
         
         .search-container {
-            width: 300px;
+            width: 320px;
         }
         
         .search-box {
@@ -339,7 +355,25 @@
             gap: 8px;
         }
         
-        /* Rest of original styles will be loaded from the full CSS */
+        .order-info-banner {
+            background: var(--accent-light);
+            padding: 0.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--accent-primary);
+        }
+        
+        .order-code-badge {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+        
+        /* Continue with rest of original styles will be loaded */
     </style>
 </head>
 <body>
@@ -359,8 +393,8 @@
         </div>
     </div>
 
-    <!-- Original content container -->
-    <div id="originalContent"></div>
+    <!-- Main content will be loaded here -->
+    <div id="mainContent"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -373,12 +407,8 @@
         let currentOrder = null;
         let photoAssignments = {};
         
-        // Mock order for demo code 1111
-        const mockOrderItems = [
-            { sku: 'CAL-2025', quantity: 1 },
-            { sku: 'PB-ALBUM', quantity: 1 },
-            { sku: 'MAG-01', quantity: 1 }
-        ];
+        // Mock order items for demo code 1111
+        const mockOrderSkus = ['CAL-2025', 'PB-ALBUM', 'MAG-01', 'FRAME-8x10'];
         
         function showToast(message) {
             const toast = document.getElementById('toastMessage');
@@ -395,7 +425,7 @@
             await loadProductsFromSupabase();
         }
         
-        // Load all products from Supabase (preserve original structure)
+        // Load all products from Supabase
         async function loadProductsFromSupabase() {
             try {
                 console.log('Loading products from Supabase...');
@@ -421,7 +451,7 @@
                     productCards.forEach(card => {
                         let poseCount = 0;
                         
-                        // Try to get pose from variants first
+                        // Try to get pose from variants
                         let variants = [];
                         try {
                             if (card.variants) {
@@ -443,7 +473,6 @@
                             name_th: card.name_th,
                             pose: poseCount || 0,
                             image_url: card.cover_image,
-                            variants: variants,
                             price: card.price,
                             category_id: card.category_id
                         });
@@ -475,54 +504,50 @@
                 }
                 
                 console.log(`Loaded ${allProducts.length} products from Supabase`);
+                console.log('Products with pose:', allProducts.filter(p => p.pose > 0).map(p => ({ sku: p.sku, pose: p.pose })));
                 
-                // Load original HTML content after products are loaded
-                loadOriginalContent();
+                // Load the original catalog HTML
+                loadOriginalCatalog();
                 
             } catch (error) {
                 console.error('Error loading products:', error);
                 showToast('Error loading products from database');
-                loadOriginalContentFallback();
+                loadOriginalCatalogFallback();
             }
         }
         
-        // Load the original catalog HTML (preserve all functionality)
-        function loadOriginalContent() {
-            const container = document.getElementById('originalContent');
+        // Load the original catalog HTML from the provided code
+        function loadOriginalCatalog() {
+            const container = document.getElementById('mainContent');
             if (!container) return;
             
-            // Fetch the original HTML from the provided code
-            fetch(window.location.href)
-                .then(response => response.text())
-                .then(html => {
-                    // Extract the main content from the original page
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const mainContent = doc.querySelector('.main-layout') || doc.querySelector('#categories-container')?.parentElement;
-                    
-                    if (mainContent) {
-                        container.innerHTML = mainContent.outerHTML;
-                        // Also copy scripts? We'll reattach event listeners
-                        attachOriginalEventListeners();
-                    } else {
-                        // Fallback: render simplified catalog
-                        renderSimplifiedCatalog();
-                    }
-                })
-                .catch(() => {
-                    renderSimplifiedCatalog();
-                });
-        }
-        
-        function loadOriginalContentFallback() {
-            renderSimplifiedCatalog();
-        }
-        
-        function renderSimplifiedCatalog() {
-            const container = document.getElementById('originalContent');
-            if (!container) return;
-            
+            // Since we can't fetch the original HTML from file, we'll inject the original structure
             container.innerHTML = `
+                <div class="top-bar">
+                    <div class="logo-area">
+                        <img class="logo-img" src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="logo">
+                        <div class="logo-text">WHITE FOX STUDIO</div>
+                    </div>
+                    <div class="right-actions">
+                        <div class="search-container">
+                            <div class="search-box">
+                                <input type="text" id="orderCodeInput" placeholder="Enter order code (1111)">
+                                <button id="checkOrderBtn">Check Order</button>
+                            </div>
+                        </div>
+                        <button class="lang-toggle" id="langToggle">
+                            <span id="lang-icon">🇹🇭</span>
+                            <span id="lang-text">TH</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="order-info-banner" id="orderInfoBanner" style="display: none;">
+                    <span>📦 Order: <strong id="activeOrderCode"></strong></span>
+                    <span>🎯 Click "Select Photos" to assign your photos</span>
+                    <button id="openPhotoSelectionBtn" style="background: var(--accent-primary); color: white; border: none; padding: 0.3rem 1rem; border-radius: 30px; cursor: pointer;">📸 Select Photos</button>
+                </div>
+                
                 <div class="main-layout" style="max-width: 1400px; margin: 2rem auto; padding: 0 2rem;">
                     <div class="catalog">
                         <div class="desktop-form" style="background: white; border-radius: 30px; padding: 1.8rem; margin-bottom: 1.5rem; border: 2px solid var(--accent-primary);">
@@ -553,7 +578,7 @@
                                         <div class="photos-count" style="margin: 0.5rem 0; color: var(--text-muted);">📷 ${prod.pose || '?'} photos</div>
                                         <div class="price-area" style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
                                             <span class="price" style="color: var(--price-color); font-weight: 800;">฿${prod.price || Math.floor(Math.random() * 1000 + 500)}</span>
-                                            <button class="add-to-cart-btn" data-sku="${prod.sku}" style="background: var(--accent-primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;">+</button>
+                                            <button class="add-to-cart-btn" style="background: var(--accent-primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;">+</button>
                                         </div>
                                     </div>
                                 `).join('')}
@@ -561,19 +586,29 @@
                         </div>
                         
                         <div class="bottom-ok" style="text-align: center; margin: 3rem 0;">
-                            <button class="send-crm-btn" id="okButton" style="background: var(--accent-primary); color: white; border: none; padding: 1rem 3rem; border-radius: 60px; font-weight: 700; font-size: 1.2rem; cursor: pointer;">OK</button>
+                            <button class="send-crm-btn" style="background: var(--accent-primary); color: white; border: none; padding: 1rem 3rem; border-radius: 60px; font-weight: 700; font-size: 1.2rem; cursor: pointer;">OK</button>
                         </div>
                     </div>
+                    
+                    <div class="cart-panel" style="display: none;"></div>
                 </div>
             `;
+            
+            // Attach event listeners
+            document.getElementById('checkOrderBtn')?.addEventListener('click', checkOrder);
+            document.getElementById('orderCodeInput')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkOrder();
+            });
+            document.getElementById('openPhotoSelectionBtn')?.addEventListener('click', () => {
+                if (currentOrder) openPhotoModal(currentOrder.orderNumber);
+            });
         }
         
-        function attachOriginalEventListeners() {
-            // This would attach all original cart and form functionality
-            // For demo, we'll keep it simple
+        function loadOriginalCatalogFallback() {
+            loadOriginalCatalog();
         }
         
-        // Check order and open modal
+        // Check order and load products
         async function checkOrder() {
             const orderCode = document.getElementById('orderCodeInput').value.trim();
             
@@ -583,25 +618,34 @@
             }
             
             if (orderCode === '1111') {
-                await loadOrderFromDatabase(orderCode);
+                await loadOrderProducts(orderCode);
             } else {
-                showToast('Demo: Use code 1111');
+                showToast('Demo: Only order code 1111 is available for testing');
             }
         }
         
-        async function loadOrderFromDatabase(orderCode) {
-            // Match products from Supabase data
+        async function loadOrderProducts(orderCode) {
+            // Find products from Supabase data that match the mock order
             const orderItems = [];
             
-            for (const mockItem of mockOrderItems) {
-                const matchedProduct = allProducts.find(p => p.sku === mockItem.sku);
+            for (const sku of mockOrderSkus) {
+                const matchedProduct = allProducts.find(p => p.sku === sku);
                 if (matchedProduct) {
                     orderItems.push({
                         sku: matchedProduct.sku,
                         productId: matchedProduct.id,
                         productName: matchedProduct.name_en || matchedProduct.name_th,
                         pose: matchedProduct.pose,
-                        quantity: mockItem.quantity
+                        quantity: 1
+                    });
+                } else {
+                    // Fallback if product not found in database
+                    orderItems.push({
+                        sku: sku,
+                        productId: null,
+                        productName: sku,
+                        pose: 10,
+                        quantity: 1
                     });
                 }
             }
@@ -612,17 +656,27 @@
             }
             
             currentOrder = { orderNumber: orderCode, items: orderItems };
-            openPhotoModal(orderCode);
+            
+            // Show order info banner
+            const banner = document.getElementById('orderInfoBanner');
+            const activeOrderSpan = document.getElementById('activeOrderCode');
+            if (banner && activeOrderSpan) {
+                activeOrderSpan.textContent = orderCode;
+                banner.style.display = 'flex';
+            }
+            
+            showToast(`Order ${orderCode} loaded! Click "Select Photos" to assign your photos.`);
         }
         
         function openPhotoModal(orderCode) {
+            if (!currentOrder || currentOrder.orderNumber !== orderCode) return;
+            
             const modal = document.getElementById('photoModal');
             const modalOrderSpan = document.getElementById('modalOrderNumber');
-            const productsListDiv = document.getElementById('modalProductsList');
             
             modalOrderSpan.textContent = orderCode;
             
-            // Initialize assignments
+            // Initialize assignments based on product pose
             photoAssignments = {};
             currentOrder.items.forEach(item => {
                 const totalSlots = item.pose || 10;
@@ -631,7 +685,8 @@
                     back: null,
                     interior: [],
                     totalSlots: totalSlots,
-                    productName: item.productName
+                    productName: item.productName,
+                    pose: totalSlots
                 };
             });
             
@@ -649,20 +704,26 @@
                 const assignment = photoAssignments[item.sku];
                 const currentCount = (assignment.cover ? 1 : 0) + (assignment.back ? 1 : 0) + assignment.interior.length;
                 const remaining = assignment.totalSlots - currentCount;
-                const safeSku = item.sku.replace(/-/g, '_');
+                const safeSku = item.sku.replace(/[-\s]/g, '_');
                 
                 const productDiv = document.createElement('div');
                 productDiv.className = 'order-product-item';
                 productDiv.innerHTML = `
                     <div class="product-header">
-                        <span class="product-name">${item.productName} (${item.sku})</span>
-                        <span class="photo-count-badge">📷 ${currentCount}/${assignment.totalSlots} photos</span>
+                        <div>
+                            <span class="product-name">${item.productName}</span>
+                            <span class="product-sku-badge" style="margin-left: 0.5rem;">${item.sku}</span>
+                        </div>
+                        <div>
+                            <span class="photo-count-badge">📷 Total: ${assignment.totalSlots} photos</span>
+                            <span class="photo-count-badge" style="background: #64748b; margin-left: 0.5rem;">✓ ${currentCount}/${assignment.totalSlots}</span>
+                        </div>
                     </div>
                     <div class="photo-assignment-area">
                         <div class="slot-row">
-                            <span class="slot-label">📘 Cover:</span>
+                            <span class="slot-label">📘 Cover Photo:</span>
                             ${assignment.cover ? 
-                                `<div class="assigned-photo">Photo #${assignment.cover} <button onclick="removePhotoFromSlot('${item.sku}', 'cover')" style="background:none; border:none; cursor:pointer;">✕</button></div>` :
+                                `<div class="assigned-photo">Photo #${assignment.cover} <button onclick="removePhotoFromSlot('${item.sku}', 'cover')" style="background:none; border:none; cursor:pointer; font-size:1rem;">✕</button></div>` :
                                 `<div class="photo-input-group">
                                     <input type="number" id="cover-input-${safeSku}" placeholder="Photo #" min="1" max="999">
                                     <button class="btn-small" onclick="assignPhotoToSlot('${item.sku}', 'cover')">Set</button>
@@ -680,7 +741,7 @@
                             }
                         </div>
                         <div class="slot-row">
-                            <span class="slot-label">🖼️ Interior:</span>
+                            <span class="slot-label">🖼️ Interior (${assignment.interior.length}/${assignment.totalSlots - (assignment.cover ? 1 : 0) - (assignment.back ? 1 : 0)}):</span>
                             <div style="flex:1">
                                 <div class="photo-input-group" style="margin-bottom: 0.5rem;">
                                     <input type="number" id="interior-input-${safeSku}" placeholder="Photo #" min="1" max="999">
@@ -695,7 +756,7 @@
                                         </div>
                                     `).join('')}
                                 </div>
-                                ${remaining > 0 ? `<div style="margin-top: 0.5rem; font-size: 0.75rem; color: #64748b;">⚠️ ${remaining} more photo(s) needed</div>` : '<div style="margin-top: 0.5rem; color: #2e7d5e;">✓ Complete</div>'}
+                                ${remaining > 0 ? `<div style="margin-top: 0.5rem; font-size: 0.75rem; color: #f59e0b;">⚠️ ${remaining} more photo(s) needed (max 30 total)</div>` : '<div style="margin-top: 0.5rem; color: #10b981;">✓ All slots filled!</div>'}
                             </div>
                         </div>
                     </div>
@@ -706,7 +767,7 @@
         
         // Global functions for modal
         window.assignPhotoToSlot = function(sku, position) {
-            const safeSku = sku.replace(/-/g, '_');
+            const safeSku = sku.replace(/[-\s]/g, '_');
             const input = document.getElementById(`${position}-input-${safeSku}`);
             if (!input) return;
             
@@ -743,7 +804,7 @@
         };
         
         window.addInteriorPhoto = function(sku) {
-            const safeSku = sku.replace(/-/g, '_');
+            const safeSku = sku.replace(/[-\s]/g, '_');
             const input = document.getElementById(`interior-input-${safeSku}`);
             if (!input) return;
             
@@ -838,13 +899,19 @@
         };
         
         window.confirmPhotoSelection = function() {
-            console.log('Final selections:', photoAssignments);
-            let summary = 'Photo selection saved!\n\n';
+            let summary = '📸 PHOTO SELECTION CONFIRMED\n\n';
             for (const [sku, assign] of Object.entries(photoAssignments)) {
-                summary += `${sku}: Cover: ${assign.cover || 'none'}, Back: ${assign.back || 'none'}, Interior: ${assign.interior.length}/${assign.totalSlots}\n`;
+                summary += `━━━ ${sku} (${assign.totalSlots} photos) ━━━\n`;
+                summary += `📘 Cover: ${assign.cover || '❌ NOT SET'}\n`;
+                summary += `📖 Back: ${assign.back || '❌ NOT SET'}\n`;
+                summary += `🖼️ Interior: ${assign.interior.length}/${assign.totalSlots - (assign.cover ? 1 : 0) - (assign.back ? 1 : 0)}\n`;
+                if (assign.interior.length > 0) {
+                    summary += `   Photos: ${assign.interior.join(', ')}\n`;
+                }
+                summary += '\n';
             }
             alert(summary);
-            showToast('Photo selection confirmed!');
+            showToast('Photo selection saved!');
             closePhotoModal();
         };
         
@@ -865,12 +932,6 @@
                 icon.textContent = '🇬🇧';
                 text.textContent = 'EN';
             }
-        });
-        
-        // Event listeners
-        document.getElementById('checkOrderBtn')?.addEventListener('click', checkOrder);
-        document.getElementById('orderCodeInput')?.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') checkOrder();
         });
         
         // Initialize
