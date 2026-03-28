@@ -1,47 +1,229 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio — แคตตาล็อกสินค้า</title>
-    
-    <link rel="preconnect" href="https://bgawfptgxcwhggbdrxhv.supabase.co">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>White Fox Studio - Photo Selection for Order</title>
     <style>
+        /* ===== ОСНОВНЫЕ ПЕРЕМЕННЫЕ ===== */
+        :root {
+            --accent-primary: #007883;
+            --accent-hover: #0a6570;
+            --accent-light: rgba(0, 120, 131, 0.1);
+            --bg-secondary: #ffffff;
+            --bg-form: #f5f5f5;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-muted: #999999;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0, 120, 131, 0.2);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        :root {
-            --bg-primary: #f5f7fa;
-            --bg-secondary: #ffffff;
-            --bg-card: #ffffff;
-            --bg-nav: #ffffff;
-            --bg-button: #f1f5f9;
-            --bg-cart: #ffffff;
-            --bg-form: #f8fafc;
-            --text-primary: #1e293b;
-            --text-secondary: #334155;
-            --text-muted: #546e7a;
-            --border-color: #e9eef2;
-            --border-dark: #d1d9e2;
-            --accent-primary: #007883;
-            --accent-hover: #0a6570;
-            --accent-light: #d9f0f2;
-            --shadow-color: rgba(0, 120, 131, 0.2);
-            --price-color: #007883;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.4;
+            background: #f8f8f8;
             min-height: 100vh;
-            overflow-x: hidden;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--bg-secondary);
+            box-shadow: 0 4px 20px var(--shadow-color);
+            border-bottom: 3px solid var(--accent-primary);
+        }
+
+        .top-bar {
+            padding: 0.8rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            background: var(--bg-secondary);
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            letter-spacing: 0.5px;
+        }
+
+        .right-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-container {
+            flex: 1;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 60px;
+            padding: 0.1rem 0.1rem 0.1rem 1.5rem;
+            border: 2px solid var(--accent-primary);
+            height: 48px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,120,131,0.1);
+        }
+
+        .search-box:focus-within {
+            box-shadow: 0 4px 20px var(--accent-light);
+            border-color: var(--accent-hover);
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 0;
+            width: 100%;
+            outline: none;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .search-box button {
+            background: var(--accent-primary);
+            border: none;
+            color: white;
+            padding: 0.5rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            height: 40px;
+        }
+
+        .search-box button:hover {
+            background: var(--accent-hover);
+            transform: scale(1.02);
+        }
+
+        .lang-toggle {
+            background: white;
+            border: 2px solid var(--accent-primary);
+            border-radius: 60px;
+            padding: 0.5rem 1.2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--accent-primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-shrink: 0;
+            height: 48px;
+            min-width: 90px;
+            transition: all 0.2s;
+        }
+
+        .lang-toggle:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        #lang-icon {
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            min-height: calc(100vh - 120px);
+        }
+
+        .login-screen {
+            max-width: 500px;
+            margin: 3rem auto;
+            text-align: center;
+            background: white;
+            padding: 3rem;
+            border-radius: 30px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        .login-screen h1 {
+            font-size: 2.2rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .order-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.2rem;
+            border: 2px solid var(--border-color);
+            border-radius: 60px;
+            outline: none;
+            transition: all 0.3s;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .order-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px var(--shadow-color);
         }
 
         /* Modal Styles */
@@ -253,7 +435,42 @@
             cursor: pointer;
         }
         
-        .toast-message {
+        .order-info-banner {
+            background: var(--accent-light);
+            padding: 0.8rem 2rem;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-bottom: 1px solid var(--accent-primary);
+        }
+        
+        .order-code-badge {
+            background: white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+        
+        .select-photos-btn {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .select-photos-btn:hover {
+            background: var(--accent-hover);
+            transform: scale(1.02);
+        }
+        
+        .toast {
             position: fixed;
             bottom: 30px;
             left: 50%;
@@ -263,138 +480,137 @@
             padding: 1rem 2rem;
             border-radius: 60px;
             font-weight: 600;
-            z-index: 10001;
+            z-index: 2000;
             display: none;
-        }
-        
-        .toast-message.show {
-            display: block;
-        }
-        
-        /* Original styles from the main site */
-        .top-bar {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: var(--bg-secondary);
-            padding: 0.6rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             box-shadow: 0 4px 20px var(--shadow-color);
-            border-bottom: 3px solid var(--accent-primary);
-            flex-wrap: wrap;
-            gap: 1rem;
+            border: 2px solid white;
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 0.8rem 1rem;
+            }
+
+            .right-actions {
+                flex-direction: column;
+            }
+
+            .lang-toggle {
+                width: 100%;
+            }
+
+            .login-screen {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            .login-screen h1 {
+                font-size: 1.8rem;
+            }
+            
+            .order-info-banner {
+                flex-direction: column;
+                text-align: center;
+            }
         }
         
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
         }
         
-        .logo-img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
-        
-        .logo-text {
-            font-weight: 800;
-            font-size: 1.4rem;
-            color: var(--accent-primary);
-        }
-        
-        .right-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .search-container {
-            width: 320px;
-        }
-        
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: white;
-            border-radius: 50px;
-            padding: 0.2rem 0.2rem 0.2rem 1.5rem;
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 10px;
             border: 2px solid var(--accent-primary);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
         
-        .search-box input {
-            background: transparent;
-            border: none;
-            padding: 0.7rem 0;
-            width: 100%;
-            outline: none;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
-        
-        .search-box button {
-            background: var(--accent-primary);
-            border: none;
-            color: white;
-            padding: 0.7rem 1.8rem;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        
-        .lang-toggle {
-            background: white;
-            border: 2px solid var(--accent-primary);
-            border-radius: 50px;
-            padding: 0.5rem 1.2rem;
-            cursor: pointer;
-            color: var(--accent-primary);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .order-info-banner {
-            background: var(--accent-light);
-            padding: 0.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            border-bottom: 1px solid var(--accent-primary);
-        }
-        
-        .order-code-badge {
-            background: white;
-            padding: 0.3rem 1rem;
-            border-radius: 30px;
-            font-weight: 600;
-            color: var(--accent-primary);
-        }
-        
-        /* Continue with rest of original styles will be loaded */
     </style>
 </head>
 <body>
-    <div id="toastMessage" class="toast-message"></div>
+    <header class="header">
+        <div class="top-bar">
+            <div class="logo-area">
+                <img class="logo-img" src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="White Fox Studio">
+                <span class="logo-text">WHITE FOX STUDIO</span>
+            </div>
+            
+            <div class="right-actions">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="orderNumber" placeholder="Order number (1111 for demo)">
+                        <button id="checkOrderBtn">OK</button>
+                    </div>
+                </div>
+                
+                <button class="lang-toggle" id="langToggle">
+                    <span id="lang-icon">🇬🇧</span>
+                    <span id="lang-text">EN</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Order Info Banner (shown after entering valid order) -->
+    <div id="orderInfoBanner" class="order-info-banner">
+        <span>📦 Order: <strong id="activeOrderCode"></strong></span>
+        <span>🎯 Select photos for your products below</span>
+        <button id="openPhotoSelectionBtn" class="select-photos-btn">📸 Select Photos</button>
+    </div>
+
+    <main class="main-content">
+        <div class="login-screen" id="loginScreen">
+            <h1 id="title">Enter Order Number</h1>
+            <p class="subtitle" id="subtitle">Please enter your order number to select photos</p>
+            
+            <input type="text" id="orderNumberInput" class="order-input" placeholder="Enter order number (1111)">
+            <button class="btn-primary" id="loginBtn">Continue</button>
+        </div>
+    </main>
 
     <!-- Photo Selection Modal -->
     <div id="photoModal" class="photo-modal">
         <div class="photo-modal-content">
             <div class="photo-modal-header">
                 <h2>📸 Select Photos for Order <span id="modalOrderNumber"></span></h2>
-                <button class="close-modal" onclick="closePhotoModal()">✕</button>
+                <button class="close-modal" id="closeModalBtn">✕</button>
             </div>
-            <div id="modalProductsList"></div>
+            <div id="modalProductsList">
+                <div class="loading">Loading products...</div>
+            </div>
             <div class="modal-footer">
-                <button class="btn-primary-modal" onclick="confirmPhotoSelection()">✅ Confirm Selection</button>
+                <button class="btn-primary-modal" id="confirmSelectionBtn">✅ Confirm Selection</button>
             </div>
         </div>
     </div>
 
-    <!-- Main content will be loaded here -->
-    <div id="mainContent"></div>
+    <div id="toast" class="toast"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -408,13 +624,69 @@
         let photoAssignments = {};
         
         // Mock order items for demo code 1111
-        const mockOrderSkus = ['CAL-2025', 'PB-ALBUM', 'MAG-01', 'FRAME-8x10'];
+        const mockOrderSkus = ['CAL-2025', 'PB-ALBUM', 'MAG-01'];
+        
+        // Translations
+        const translations = {
+            en: {
+                title: 'Enter Order Number',
+                subtitle: 'Please enter your order number to select photos',
+                loginBtn: 'Continue',
+                toastError: 'Please enter order number',
+                placeholder: 'Enter order number (1111)',
+                toastOrderLoaded: 'Order loaded! Click "Select Photos" to assign your photos.',
+                toastInvalidCode: 'Demo: Only order code 1111 is available for testing',
+                toastPhotoUsed: 'Photo #${num} is already used in this order',
+                toastAllFilled: 'All slots are filled',
+                toastConfirm: 'Photo selection saved!',
+                coverLabel: 'Cover Photo',
+                backLabel: 'Back Cover',
+                interiorLabel: 'Interior Photos'
+            },
+            th: {
+                title: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
+                subtitle: 'กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ',
+                loginBtn: 'ดำเนินการต่อ',
+                toastError: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
+                placeholder: 'กรอกหมายเลขคำสั่งซื้อ (1111)',
+                toastOrderLoaded: 'โหลดออเดอร์เรียบร้อย! คลิก "เลือกรูป" เพื่อกำหนดรูป',
+                toastInvalidCode: 'ทดสอบ: ใช้รหัส 1111 เท่านั้น',
+                toastPhotoUsed: 'รูป #${num} ถูกใช้ไปแล้ว',
+                toastAllFilled: 'ครบทุกตำแหน่งแล้ว',
+                toastConfirm: 'บันทึกการเลือกรูปแล้ว!',
+                coverLabel: 'รูปปก',
+                backLabel: 'รูปปกหลัง',
+                interiorLabel: 'รูปภายใน'
+            }
+        };
+        
+        let currentLang = 'en';
+        
+        function updateLanguage() {
+            document.getElementById('title').textContent = translations[currentLang].title;
+            document.getElementById('subtitle').textContent = translations[currentLang].subtitle;
+            document.getElementById('loginBtn').textContent = translations[currentLang].loginBtn;
+            document.getElementById('orderNumberInput').placeholder = translations[currentLang].placeholder;
+            
+            const icon = document.getElementById('lang-icon');
+            const text = document.getElementById('lang-text');
+            
+            if (currentLang === 'en') {
+                icon.textContent = '🇬🇧';
+                text.textContent = 'EN';
+            } else {
+                icon.textContent = '🇹🇭';
+                text.textContent = 'TH';
+            }
+        }
         
         function showToast(message) {
-            const toast = document.getElementById('toastMessage');
+            const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
         
         // Initialize Supabase
@@ -473,8 +745,7 @@
                             name_th: card.name_th,
                             pose: poseCount || 0,
                             image_url: card.cover_image,
-                            price: card.price,
-                            category_id: card.category_id
+                            price: card.price
                         });
                     });
                 }
@@ -506,121 +777,35 @@
                 console.log(`Loaded ${allProducts.length} products from Supabase`);
                 console.log('Products with pose:', allProducts.filter(p => p.pose > 0).map(p => ({ sku: p.sku, pose: p.pose })));
                 
-                // Load the original catalog HTML
-                loadOriginalCatalog();
-                
             } catch (error) {
                 console.error('Error loading products:', error);
                 showToast('Error loading products from database');
-                loadOriginalCatalogFallback();
             }
         }
         
-        // Load the original catalog HTML from the provided code
-        function loadOriginalCatalog() {
-            const container = document.getElementById('mainContent');
-            if (!container) return;
-            
-            // Since we can't fetch the original HTML from file, we'll inject the original structure
-            container.innerHTML = `
-                <div class="top-bar">
-                    <div class="logo-area">
-                        <img class="logo-img" src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="logo">
-                        <div class="logo-text">WHITE FOX STUDIO</div>
-                    </div>
-                    <div class="right-actions">
-                        <div class="search-container">
-                            <div class="search-box">
-                                <input type="text" id="orderCodeInput" placeholder="Enter order code (1111)">
-                                <button id="checkOrderBtn">Check Order</button>
-                            </div>
-                        </div>
-                        <button class="lang-toggle" id="langToggle">
-                            <span id="lang-icon">🇹🇭</span>
-                            <span id="lang-text">TH</span>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="order-info-banner" id="orderInfoBanner" style="display: none;">
-                    <span>📦 Order: <strong id="activeOrderCode"></strong></span>
-                    <span>🎯 Click "Select Photos" to assign your photos</span>
-                    <button id="openPhotoSelectionBtn" style="background: var(--accent-primary); color: white; border: none; padding: 0.3rem 1rem; border-radius: 30px; cursor: pointer;">📸 Select Photos</button>
-                </div>
-                
-                <div class="main-layout" style="max-width: 1400px; margin: 2rem auto; padding: 0 2rem;">
-                    <div class="catalog">
-                        <div class="desktop-form" style="background: white; border-radius: 30px; padding: 1.8rem; margin-bottom: 1.5rem; border: 2px solid var(--accent-primary);">
-                            <h3>Parent Information</h3>
-                            <div class="form-row" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                                <input type="text" id="clientName" placeholder="Full Name" style="flex:1; padding: 0.8rem; border-radius: 16px; border: 2px solid var(--border-color);">
-                                <input type="tel" id="clientPhone" placeholder="Phone Number" style="flex:1; padding: 0.8rem; border-radius: 16px; border: 2px solid var(--border-color);">
-                                <input type="text" id="clientLine" placeholder="Line ID" style="flex:1; padding: 0.8rem; border-radius: 16px; border: 2px solid var(--border-color);">
-                            </div>
-                            <h3>Student Information</h3>
-                            <div class="form-row" style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                                <input type="text" id="studentFirstName" placeholder="Student First Name" style="flex:1; padding: 0.8rem; border-radius: 16px; border: 2px solid var(--border-color);">
-                                <input type="text" id="studentLastName" placeholder="Student Family Name" style="flex:1; padding: 0.8rem; border-radius: 16px; border: 2px solid var(--border-color);">
-                                <input type="text" id="birthdate" placeholder="DD/MM/YYYY" style="flex:1; padding: 0.8rem; border-radius: 16px; border: 2px solid var(--border-color);">
-                                <input type="text" id="classGrade" placeholder="Class/Grade" style="flex:1; padding: 0.8rem; border-radius: 16px; border: 2px solid var(--border-color);">
-                            </div>
-                        </div>
-                        
-                        <div id="categories-container">
-                            <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
-                                ${allProducts.map(prod => `
-                                    <div class="product-card" style="background: white; border-radius: 24px; padding: 1rem; border: 2px solid var(--border-color);">
-                                        <div class="product-image" style="aspect-ratio: 1; background: #f0f0f0; border-radius: 16px; overflow: hidden; margin-bottom: 0.8rem;">
-                                            <img src="${prod.image_url || 'https://placehold.co/300x300?text=' + (prod.sku || 'Product')}" style="width:100%; height:100%; object-fit:cover;">
-                                        </div>
-                                        <div class="product-sku" style="color: var(--accent-primary); font-weight: 600;">${prod.sku || 'N/A'}</div>
-                                        <div class="product-title" style="font-weight: 700;">${prod.name_en || prod.name_th || 'Product'}</div>
-                                        <div class="photos-count" style="margin: 0.5rem 0; color: var(--text-muted);">📷 ${prod.pose || '?'} photos</div>
-                                        <div class="price-area" style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
-                                            <span class="price" style="color: var(--price-color); font-weight: 800;">฿${prod.price || Math.floor(Math.random() * 1000 + 500)}</span>
-                                            <button class="add-to-cart-btn" style="background: var(--accent-primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;">+</button>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                        
-                        <div class="bottom-ok" style="text-align: center; margin: 3rem 0;">
-                            <button class="send-crm-btn" style="background: var(--accent-primary); color: white; border: none; padding: 1rem 3rem; border-radius: 60px; font-weight: 700; font-size: 1.2rem; cursor: pointer;">OK</button>
-                        </div>
-                    </div>
-                    
-                    <div class="cart-panel" style="display: none;"></div>
-                </div>
-            `;
-            
-            // Attach event listeners
-            document.getElementById('checkOrderBtn')?.addEventListener('click', checkOrder);
-            document.getElementById('orderCodeInput')?.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') checkOrder();
-            });
-            document.getElementById('openPhotoSelectionBtn')?.addEventListener('click', () => {
-                if (currentOrder) openPhotoModal(currentOrder.orderNumber);
-            });
-        }
-        
-        function loadOriginalCatalogFallback() {
-            loadOriginalCatalog();
-        }
-        
-        // Check order and load products
+        // Check order
         async function checkOrder() {
-            const orderCode = document.getElementById('orderCodeInput').value.trim();
+            const orderCode = document.getElementById('orderNumberInput').value.trim() || 
+                              document.getElementById('orderNumber').value.trim();
             
             if (!orderCode) {
-                showToast('Please enter order code');
+                showToast(translations[currentLang].toastError);
                 return;
             }
             
             if (orderCode === '1111') {
                 await loadOrderProducts(orderCode);
+                // Hide login screen and show order info
+                document.getElementById('loginScreen').style.display = 'none';
+                const banner = document.getElementById('orderInfoBanner');
+                const activeOrderSpan = document.getElementById('activeOrderCode');
+                if (banner && activeOrderSpan) {
+                    activeOrderSpan.textContent = orderCode;
+                    banner.style.display = 'flex';
+                }
+                showToast(translations[currentLang].toastOrderLoaded);
             } else {
-                showToast('Demo: Only order code 1111 is available for testing');
+                showToast(translations[currentLang].toastInvalidCode);
             }
         }
         
@@ -634,8 +819,8 @@
                     orderItems.push({
                         sku: matchedProduct.sku,
                         productId: matchedProduct.id,
-                        productName: matchedProduct.name_en || matchedProduct.name_th,
-                        pose: matchedProduct.pose,
+                        productName: matchedProduct.name_en || matchedProduct.name_th || matchedProduct.sku,
+                        pose: matchedProduct.pose || 10,
                         quantity: 1
                     });
                 } else {
@@ -650,31 +835,19 @@
                 }
             }
             
-            if (orderItems.length === 0) {
-                showToast('No products found for this order');
-                return;
-            }
-            
             currentOrder = { orderNumber: orderCode, items: orderItems };
-            
-            // Show order info banner
-            const banner = document.getElementById('orderInfoBanner');
-            const activeOrderSpan = document.getElementById('activeOrderCode');
-            if (banner && activeOrderSpan) {
-                activeOrderSpan.textContent = orderCode;
-                banner.style.display = 'flex';
-            }
-            
-            showToast(`Order ${orderCode} loaded! Click "Select Photos" to assign your photos.`);
         }
         
-        function openPhotoModal(orderCode) {
-            if (!currentOrder || currentOrder.orderNumber !== orderCode) return;
+        function openPhotoModal() {
+            if (!currentOrder) {
+                showToast('Please enter order code first');
+                return;
+            }
             
             const modal = document.getElementById('photoModal');
             const modalOrderSpan = document.getElementById('modalOrderNumber');
             
-            modalOrderSpan.textContent = orderCode;
+            modalOrderSpan.textContent = currentOrder.orderNumber;
             
             // Initialize assignments based on product pose
             photoAssignments = {};
@@ -711,7 +884,7 @@
                 productDiv.innerHTML = `
                     <div class="product-header">
                         <div>
-                            <span class="product-name">${item.productName}</span>
+                            <span class="product-name">${escapeHtml(item.productName)}</span>
                             <span class="product-sku-badge" style="margin-left: 0.5rem;">${item.sku}</span>
                         </div>
                         <div>
@@ -721,7 +894,7 @@
                     </div>
                     <div class="photo-assignment-area">
                         <div class="slot-row">
-                            <span class="slot-label">📘 Cover Photo:</span>
+                            <span class="slot-label">📘 ${translations[currentLang].coverLabel}:</span>
                             ${assignment.cover ? 
                                 `<div class="assigned-photo">Photo #${assignment.cover} <button onclick="removePhotoFromSlot('${item.sku}', 'cover')" style="background:none; border:none; cursor:pointer; font-size:1rem;">✕</button></div>` :
                                 `<div class="photo-input-group">
@@ -731,7 +904,7 @@
                             }
                         </div>
                         <div class="slot-row">
-                            <span class="slot-label">📖 Back Cover:</span>
+                            <span class="slot-label">📖 ${translations[currentLang].backLabel}:</span>
                             ${assignment.back ? 
                                 `<div class="assigned-photo">Photo #${assignment.back} <button onclick="removePhotoFromSlot('${item.sku}', 'back')" style="background:none; border:none; cursor:pointer;">✕</button></div>` :
                                 `<div class="photo-input-group">
@@ -741,7 +914,7 @@
                             }
                         </div>
                         <div class="slot-row">
-                            <span class="slot-label">🖼️ Interior (${assignment.interior.length}/${assignment.totalSlots - (assignment.cover ? 1 : 0) - (assignment.back ? 1 : 0)}):</span>
+                            <span class="slot-label">🖼️ ${translations[currentLang].interiorLabel} (${assignment.interior.length}/${assignment.totalSlots - (assignment.cover ? 1 : 0) - (assignment.back ? 1 : 0)}):</span>
                             <div style="flex:1">
                                 <div class="photo-input-group" style="margin-bottom: 0.5rem;">
                                     <input type="number" id="interior-input-${safeSku}" placeholder="Photo #" min="1" max="999">
@@ -756,12 +929,22 @@
                                         </div>
                                     `).join('')}
                                 </div>
-                                ${remaining > 0 ? `<div style="margin-top: 0.5rem; font-size: 0.75rem; color: #f59e0b;">⚠️ ${remaining} more photo(s) needed (max 30 total)</div>` : '<div style="margin-top: 0.5rem; color: #10b981;">✓ All slots filled!</div>'}
+                                ${remaining > 0 ? `<div style="margin-top: 0.5rem; font-size: 0.75rem; color: #f59e0b;">⚠️ ${remaining} more photo(s) needed</div>` : '<div style="margin-top: 0.5rem; color: #10b981;">✓ All slots filled!</div>'}
                             </div>
                         </div>
                     </div>
                 `;
                 productsListDiv.appendChild(productDiv);
+            });
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
             });
         }
         
@@ -789,7 +972,7 @@
             });
             
             if (isUsed) {
-                showToast(`Photo #${photoNum} is already used in this order`);
+                showToast(translations[currentLang].toastPhotoUsed.replace('${num}', photoNum));
                 return;
             }
             
@@ -826,13 +1009,13 @@
             });
             
             if (isUsed) {
-                showToast(`Photo #${photoNum} is already used`);
+                showToast(translations[currentLang].toastPhotoUsed.replace('${num}', photoNum));
                 return;
             }
             
             const currentCount = (assignment.cover ? 1 : 0) + (assignment.back ? 1 : 0) + assignment.interior.length;
             if (currentCount >= assignment.totalSlots) {
-                showToast(`All ${assignment.totalSlots} slots are filled`);
+                showToast(translations[currentLang].toastAllFilled);
                 return;
             }
             
@@ -866,7 +1049,7 @@
             const needed = assignment.totalSlots - currentCount;
             
             if (needed <= 0) {
-                showToast('All slots already filled');
+                showToast(translations[currentLang].toastAllFilled);
                 return;
             }
             
@@ -898,7 +1081,7 @@
             showToast(`Added ${toAdd.length} random photos`);
         };
         
-        window.confirmPhotoSelection = function() {
+        function confirmPhotoSelection() {
             let summary = '📸 PHOTO SELECTION CONFIRMED\n\n';
             for (const [sku, assign] of Object.entries(photoAssignments)) {
                 summary += `━━━ ${sku} (${assign.totalSlots} photos) ━━━\n`;
@@ -911,30 +1094,34 @@
                 summary += '\n';
             }
             alert(summary);
-            showToast('Photo selection saved!');
+            showToast(translations[currentLang].toastConfirm);
             closePhotoModal();
-        };
+        }
         
-        window.closePhotoModal = function() {
+        function closePhotoModal() {
             document.getElementById('photoModal').classList.remove('active');
-        };
+        }
         
-        // Language toggle
-        let currentLang = 'th';
-        document.getElementById('langToggle')?.addEventListener('click', () => {
-            currentLang = currentLang === 'th' ? 'en' : 'th';
-            const icon = document.getElementById('lang-icon');
-            const text = document.getElementById('lang-text');
-            if (currentLang === 'th') {
-                icon.textContent = '🇹🇭';
-                text.textContent = 'TH';
-            } else {
-                icon.textContent = '🇬🇧';
-                text.textContent = 'EN';
-            }
+        // Event listeners
+        document.getElementById('langToggle').addEventListener('click', function() {
+            currentLang = currentLang === 'en' ? 'th' : 'en';
+            updateLanguage();
+            if (currentOrder) renderModalProducts();
         });
         
-        // Initialize
+        document.getElementById('loginBtn').addEventListener('click', checkOrder);
+        document.getElementById('checkOrderBtn').addEventListener('click', checkOrder);
+        document.getElementById('orderNumberInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkOrder();
+        });
+        document.getElementById('orderNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkOrder();
+        });
+        document.getElementById('openPhotoSelectionBtn').addEventListener('click', openPhotoModal);
+        document.getElementById('closeModalBtn').addEventListener('click', closePhotoModal);
+        document.getElementById('confirmSelectionBtn').addEventListener('click', confirmPhotoSelection);
+        
+        updateLanguage();
         initSupabase();
     </script>
 </body>
