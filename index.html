@@ -2,412 +2,738 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>White Fox Studio - Photo Selection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>White Fox Studio — Photo Selection (Demo)</title>
     <style>
-        /* ===== ОСНОВНЫЕ ПЕРЕМЕННЫЕ ===== */
-        :root {
-            --accent-primary: #007883;
-            --accent-hover: #0a6570;
-            --accent-light: rgba(0, 120, 131, 0.1);
-            --bg-secondary: #ffffff;
-            --bg-form: #f5f5f5;
-            --text-primary: #333333;
-            --text-secondary: #666666;
-            --text-muted: #999999;
-            --border-color: #e0e0e0;
-            --shadow-color: rgba(0, 120, 131, 0.2);
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :root {
+            --accent: #007883;
+            --accent-light: #d9f0f2;
+            --accent-hover: #0a6570;
+            --bg-page: #f5f7fa;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #475569;
+            --shadow-sm: 0 4px 12px rgba(0,120,131,0.12);
+            --danger: #e11d48;
         }
 
         body {
-            background: #f8f8f8;
-            min-height: 100vh;
+            background: var(--bg-page);
+            color: var(--text-main);
+            padding: 2rem 1rem;
         }
 
-        .header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: var(--bg-secondary);
-            box-shadow: 0 4px 20px var(--shadow-color);
-            border-bottom: 3px solid var(--accent-primary);
-        }
-
-        .top-bar {
-            padding: 0.8rem 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            background: var(--bg-secondary);
+        .container {
             max-width: 1400px;
             margin: 0 auto;
-            width: 100%;
         }
 
-        .logo-area {
+        /* header */
+        .demo-header {
+            background: white;
+            border-radius: 2rem;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-left: 6px solid var(--accent);
+        }
+
+        .logo {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .logo-img {
-            width: 42px;
-            height: 42px;
+        .logo img {
+            width: 44px;
+            height: 44px;
             object-fit: contain;
         }
 
-        .logo-text {
-            font-size: 1.4rem;
+        .logo span {
             font-weight: 800;
-            color: var(--accent-primary);
-            letter-spacing: 0.5px;
+            font-size: 1.4rem;
+            color: var(--accent);
         }
 
-        .right-actions {
-            display: flex;
-            align-items: center;
+        .order-badge {
+            background: var(--accent-light);
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* two columns layout */
+        .selection-layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 2rem;
+        }
+
+        /* main gallery */
+        .gallery-panel {
+            background: var(--card-bg);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            border-left: 5px solid var(--accent);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             gap: 1rem;
         }
 
-        .search-container {
-            flex: 1;
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
+        .photo-card {
             background: white;
-            border-radius: 60px;
-            padding: 0.1rem 0.1rem 0.1rem 1.5rem;
-            border: 2px solid var(--accent-primary);
-            height: 48px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,120,131,0.1);
-        }
-
-        .search-box:focus-within {
-            box-shadow: 0 4px 20px var(--accent-light);
-            border-color: var(--accent-hover);
-        }
-
-        .search-box input {
-            background: transparent;
-            border: none;
-            padding: 0.5rem 0;
-            width: 100%;
-            outline: none;
-            font-size: 1rem;
-            color: var(--text-primary);
-        }
-
-        .search-box input::placeholder {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .search-box button {
-            background: var(--accent-primary);
-            border: none;
-            color: white;
-            padding: 0.5rem 2rem;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
+            border-radius: 1.2rem;
+            border: 2px solid var(--border);
+            overflow: hidden;
             transition: all 0.2s;
-            white-space: nowrap;
-            height: 40px;
-        }
-
-        .search-box button:hover {
-            background: var(--accent-hover);
-            transform: scale(1.02);
-        }
-
-        .lang-toggle {
-            background: white;
-            border: 2px solid var(--accent-primary);
-            border-radius: 60px;
-            padding: 0.5rem 1.2rem;
-            font-size: 1rem;
             cursor: pointer;
-            color: var(--accent-primary);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            flex-shrink: 0;
-            height: 48px;
-            min-width: 90px;
-            transition: all 0.2s;
+            position: relative;
         }
 
-        .lang-toggle:hover {
-            background: var(--accent-primary);
-            color: white;
-        }
-
-        #lang-icon {
-            font-size: 1.2rem;
-        }
-
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-            min-height: calc(100vh - 120px);
-        }
-
-        .login-screen {
-            max-width: 500px;
-            margin: 3rem auto;
-            text-align: center;
-            background: white;
-            padding: 3rem;
-            border-radius: 30px;
-            border: 2px solid var(--border-color);
-            box-shadow: 0 10px 30px var(--shadow-color);
-        }
-
-        .login-screen h1 {
-            font-size: 2.2rem;
-            color: var(--accent-primary);
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        .subtitle {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-        }
-
-        .order-input {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            font-size: 1.2rem;
-            border: 2px solid var(--border-color);
-            border-radius: 60px;
-            outline: none;
-            transition: all 0.3s;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .order-input:focus {
-            border-color: var(--accent-primary);
+        .photo-card.selected {
+            border-color: var(--accent);
             box-shadow: 0 0 0 3px var(--accent-light);
         }
 
-        .btn-primary {
+        .photo-card.assigned-cover {
+            border-color: #f97316;
+            background: #fff7ed;
+        }
+        .photo-card.assigned-back {
+            border-color: #8b5cf6;
+            background: #f5f3ff;
+        }
+
+        .photo-img {
+            aspect-ratio: 1 / 1;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .photo-img img {
             width: 100%;
-            padding: 1rem;
-            background: var(--accent-primary);
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-info {
+            padding: 0.6rem;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: white;
+            border-top: 1px solid var(--border);
+        }
+
+        .assigned-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: rgba(0,0,0,0.7);
             color: white;
-            border: none;
-            border-radius: 60px;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            backdrop-filter: blur(2px);
+        }
+
+        /* right sidebar */
+        .assignment-panel {
+            background: var(--card-bg);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 1rem;
+            height: fit-content;
+        }
+
+        .assignment-group {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .assignment-group h3 {
             font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .slot-badge {
+            background: var(--accent-light);
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+        }
+
+        .selected-photo-preview {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .mini-thumb {
+            width: 48px;
+            height: 48px;
+            background: #e2e8f0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .slot-info {
+            flex: 1;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--accent);
+            color: var(--accent);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-light);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            margin-top: 0.8rem;
         }
 
         .btn-primary:hover {
             background: var(--accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px var(--shadow-color);
+            transform: scale(0.98);
         }
 
-        @media (max-width: 768px) {
-            .top-bar {
-                padding: 0.8rem 1rem;
+        .random-group-btn {
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .warning-note {
+            background: #fff8e7;
+            border-left: 4px solid #f59e0b;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            margin: 1rem 0;
+            color: #92400e;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 800px) {
+            .selection-layout {
+                grid-template-columns: 1fr;
             }
-
-            .right-actions {
-                flex-direction: column;
-            }
-
-            .lang-toggle {
-                width: 100%;
-            }
-
-            .login-screen {
-                padding: 2rem 1.5rem;
-                margin: 1rem;
-            }
-
-            .login-screen h1 {
-                font-size: 1.8rem;
-            }
-        }
-
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-muted);
-        }
-
-        .loading::after {
-            content: '';
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            margin-left: 10px;
-            border: 2px solid var(--accent-primary);
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--accent-primary);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 60px;
-            font-weight: 600;
-            z-index: 2000;
-            display: none;
-            box-shadow: 0 4px 20px var(--shadow-color);
-            border: 2px solid white;
-        }
-
-        .toast.show {
-            display: block;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translate(-50%, 20px);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, 0);
+            .assignment-panel {
+                position: static;
             }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="top-bar">
-            <div class="logo-area">
-                <img class="logo-img" src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="White Fox Studio">
-                <span class="logo-text">WHITE FOX STUDIO</span>
+<div class="container">
+    <div class="demo-header">
+        <div class="logo">
+            <img src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="logo">
+            <span>WHITE FOX STUDIO</span>
+        </div>
+        <div class="order-badge">
+            📸 Order: <strong id="orderNumberDisplay">WF-2412-001</strong>
+        </div>
+        <div class="order-badge">
+            🖼️ Total photos: <strong id="totalPhotosCount">0</strong>
+        </div>
+    </div>
+
+    <div class="selection-layout">
+        <!-- left gallery: all photos from order -->
+        <div class="gallery-panel">
+            <div class="section-title">📷 All photos (select to assign)</div>
+            <div id="photoGallery" class="photo-grid">
+                <!-- dynamic photo cards -->
             </div>
+            <div class="warning-note" style="margin-top: 1rem;">
+                💡 <strong>Logic:</strong> You can manually pick <strong>Cover</strong> and <strong>Back cover</strong> (unique). 
+                The remaining photos will fill the rest of the product positions. Use "Random fill others" to auto-distribute leftovers.
+                Same photo cannot be repeated. Max 30 photos total.
+            </div>
+        </div>
+
+        <!-- right assignment panel -->
+        <div class="assignment-panel">
+            <div class="section-title" style="font-size: 1.3rem;">🎯 Assign positions</div>
             
-            <div class="right-actions">
-                <div class="search-container">
-                    <div class="search-box">
-                        <input type="text" id="orderNumber" placeholder="Order number">
-                        <button onclick="window.location.href='gallery.html?order=' + document.getElementById('orderNumber').value">OK</button>
-                    </div>
+            <!-- Cover slot -->
+            <div class="assignment-group">
+                <h3>📘 Cover photo <span class="slot-badge">mandatory</span></h3>
+                <div id="coverPreview" class="selected-photo-preview">
+                    <div class="mini-thumb">🖼️</div>
+                    <div class="slot-info">Not assigned yet</div>
+                    <button class="btn-outline" id="clearCoverBtn" style="font-size:0.7rem;">✖ Clear</button>
                 </div>
-                
-                <button class="lang-toggle" id="langToggle">
-                    <span id="lang-icon">🇬🇧</span>
-                    <span id="lang-text">EN</span>
-                </button>
             </div>
-        </div>
-    </header>
 
-    <main class="main-content">
-        <div class="login-screen" id="loginScreen">
-            <h1 id="title">Enter Order Number</h1>
-            <p class="subtitle" id="subtitle">Please enter your order number to select photos</p>
+            <!-- Back cover slot -->
+            <div class="assignment-group">
+                <h3>📖 Back cover <span class="slot-badge">optional</span></h3>
+                <div id="backPreview" class="selected-photo-preview">
+                    <div class="mini-thumb">🖼️</div>
+                    <div class="slot-info">Not assigned</div>
+                    <button class="btn-outline" id="clearBackBtn" style="font-size:0.7rem;">✖ Clear</button>
+                </div>
+            </div>
+
+            <!-- product info: dynamic product context -->
+            <div class="assignment-group">
+                <h3>📦 Product / Album info</h3>
+                <div style="background:#f1f5f9; border-radius: 1rem; padding: 0.8rem;">
+                    <div class="flex-between"><span>Product:</span> <strong id="productNameDemo">Premium Photo Book (30 poses)</strong></div>
+                    <div class="flex-between"><span>Total slots:</span> <strong id="totalSlotsCount">30</strong></div>
+                    <div class="flex-between"><span>Assigned:</span> <strong id="assignedCount">0</strong></div>
+                    <div class="flex-between"><span>Remaining:</span> <strong id="remainingSlots">30</strong></div>
+                </div>
+            </div>
+
+            <!-- remaining photos filler -->
+            <div class="assignment-group">
+                <h3>✨ Remaining positions</h3>
+                <button id="randomFillBtn" class="btn-primary random-group-btn" style="background:#e9ecef; color:#1e293b;">🎲 Randomly fill remaining slots</button>
+                <button id="autoDistributeBtn" class="btn-primary">🔄 Auto-distribute (cover fixed, rest random)</button>
+                <button id="resetAllBtn" class="btn-outline" style="width:100%; margin-top: 8px;">🗑️ Reset all assignments</button>
+            </div>
+
+            <!-- Final confirmation demo -->
+            <button id="confirmSelectionBtn" class="btn-primary" style="background:#0f3b3f;">✅ Save selection & preview</button>
+            <div id="resultPreview" style="margin-top: 1rem; font-size: 0.75rem; background: #f8fafc; padding: 0.8rem; border-radius: 1rem; max-height: 200px; overflow-y: auto;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================== DEMO DATA ===========================
+    // simulate order with 30 photos (max 30 photos, each unique)
+    const TOTAL_PHOTOS = 28;  // example: 28 photos (can be less than max slots)
+    const MAX_SLOTS = 30;     // product capacity (pose = 30)
+    
+    // generate mock photos: each photo has id, url placeholder, label
+    let allPhotos = [];
+    for (let i = 1; i <= TOTAL_PHOTOS; i++) {
+        allPhotos.push({
+            id: `photo_${i}`,
+            number: i,
+            label: `Photo ${i}`,
+            url: `https://picsum.photos/id/${i + 30}/200/200?random=${i}`,
+            assignedTo: null   // 'cover', 'back', or 'interior'
+        });
+    }
+
+    // product context (pose count = MAX_SLOTS)
+    let currentProduct = {
+        name: "Premium Album / Calendar (30 pages)",
+        totalSlots: MAX_SLOTS,
+        assignedPositions: {
+            cover: null,      // stores photo id
+            back: null,
+            interior: []      // array of photo ids (max totalSlots - cover/back)
+        }
+    };
+
+    // helper: compute used slots count
+    function getUsedSlots() {
+        let count = 0;
+        if (currentProduct.assignedPositions.cover) count++;
+        if (currentProduct.assignedPositions.back) count++;
+        count += currentProduct.assignedPositions.interior.length;
+        return count;
+    }
+
+    function getRemainingCapacity() {
+        return currentProduct.totalSlots - getUsedSlots();
+    }
+
+    // update UI: gallery highlights + preview panels
+    function renderGallery() {
+        const galleryDiv = document.getElementById('photoGallery');
+        if (!galleryDiv) return;
+        
+        galleryDiv.innerHTML = '';
+        allPhotos.forEach(photo => {
+            const isCover = (currentProduct.assignedPositions.cover === photo.id);
+            const isBack = (currentProduct.assignedPositions.back === photo.id);
+            const isInterior = currentProduct.assignedPositions.interior.includes(photo.id);
             
-            <input type="text" id="orderNumberInput" class="order-input" placeholder="Enter order number">
-            <button class="btn-primary" id="loginBtn">Continue</button>
-        </div>
-    </main>
-
-    <div id="toast" class="toast"></div>
-
-    <script>
-        const translations = {
-            en: {
-                title: 'Enter Order Number',
-                subtitle: 'Please enter your order number to select photos',
-                loginBtn: 'Continue',
-                toastError: 'Please enter order number',
-                placeholder: 'Enter order number'
-            },
-            th: {
-                title: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
-                subtitle: 'กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ',
-                loginBtn: 'ดำเนินการต่อ',
-                toastError: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
-                placeholder: 'กรอกหมายเลขคำสั่งซื้อ'
+            const card = document.createElement('div');
+            card.className = 'photo-card';
+            if (isCover) card.classList.add('assigned-cover');
+            if (isBack) card.classList.add('assigned-back');
+            if (isCover || isBack || isInterior) card.classList.add('selected');
+            
+            let badgeText = '';
+            if (isCover) badgeText = '📘 COVER';
+            else if (isBack) badgeText = '📖 BACK';
+            else if (isInterior) badgeText = '✓ placed';
+            
+            card.innerHTML = `
+                <div class="photo-img">
+                    <img src="${photo.url}" alt="${photo.label}" loading="lazy" onerror="this.src='https://placehold.co/200x200?text=${photo.label}'">
+                </div>
+                <div class="photo-info">${photo.label}</div>
+                ${badgeText ? `<div class="assigned-badge">${badgeText}</div>` : ''}
+            `;
+            card.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openAssignmentMenu(photo);
+            });
+            galleryDiv.appendChild(card);
+        });
+        
+        // update stats display
+        document.getElementById('totalPhotosCount').innerText = allPhotos.length;
+        document.getElementById('totalSlotsCount').innerText = currentProduct.totalSlots;
+        const used = getUsedSlots();
+        document.getElementById('assignedCount').innerText = used;
+        const remainingCapacity = getRemainingCapacity();
+        document.getElementById('remainingSlots').innerText = remainingCapacity;
+        document.getElementById('productNameDemo').innerText = currentProduct.name;
+        
+        // preview cover/back UI
+        updateSlotPreviews();
+    }
+    
+    function updateSlotPreviews() {
+        const coverPhoto = allPhotos.find(p => p.id === currentProduct.assignedPositions.cover);
+        const coverDiv = document.getElementById('coverPreview');
+        if (coverDiv) {
+            if (coverPhoto) {
+                coverDiv.innerHTML = `
+                    <div class="mini-thumb"><img src="${coverPhoto.url}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;"></div>
+                    <div class="slot-info"><strong>${coverPhoto.label}</strong></div>
+                    <button class="btn-outline" id="clearCoverBtn" style="font-size:0.7rem;">✖ Clear</button>
+                `;
+            } else {
+                coverDiv.innerHTML = `
+                    <div class="mini-thumb">🖼️</div>
+                    <div class="slot-info">Not assigned yet</div>
+                    <button class="btn-outline" id="clearCoverBtn" style="font-size:0.7rem;">✖ Clear</button>
+                `;
             }
+            document.getElementById('clearCoverBtn')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentProduct.assignedPositions.cover) {
+                    // remove from interior if accidentally duplicate? but cover is exclusive
+                    const oldCoverId = currentProduct.assignedPositions.cover;
+                    currentProduct.assignedPositions.cover = null;
+                    // ensure not in interior array (just in case)
+                    currentProduct.assignedPositions.interior = currentProduct.assignedPositions.interior.filter(id => id !== oldCoverId);
+                    renderGallery();
+                    showToast(`Cover cleared`);
+                }
+            });
+        }
+        
+        const backPhoto = allPhotos.find(p => p.id === currentProduct.assignedPositions.back);
+        const backDiv = document.getElementById('backPreview');
+        if (backDiv) {
+            if (backPhoto) {
+                backDiv.innerHTML = `
+                    <div class="mini-thumb"><img src="${backPhoto.url}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;"></div>
+                    <div class="slot-info"><strong>${backPhoto.label}</strong></div>
+                    <button class="btn-outline" id="clearBackBtn" style="font-size:0.7rem;">✖ Clear</button>
+                `;
+            } else {
+                backDiv.innerHTML = `
+                    <div class="mini-thumb">🖼️</div>
+                    <div class="slot-info">Not assigned</div>
+                    <button class="btn-outline" id="clearBackBtn" style="font-size:0.7rem;">✖ Clear</button>
+                `;
+            }
+            document.getElementById('clearBackBtn')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentProduct.assignedPositions.back) {
+                    const oldBackId = currentProduct.assignedPositions.back;
+                    currentProduct.assignedPositions.back = null;
+                    currentProduct.assignedPositions.interior = currentProduct.assignedPositions.interior.filter(id => id !== oldBackId);
+                    renderGallery();
+                    showToast(`Back cover cleared`);
+                }
+            });
+        }
+    }
+    
+    // manual assignment: popup style or modal? we'll use simple click dialog
+    function openAssignmentMenu(photo) {
+        // check if photo is already assigned
+        const isCover = (currentProduct.assignedPositions.cover === photo.id);
+        const isBack = (currentProduct.assignedPositions.back === photo.id);
+        const isInterior = currentProduct.assignedPositions.interior.includes(photo.id);
+        
+        let options = [];
+        if (!isCover) options.push('Assign as COVER');
+        if (!isBack) options.push('Assign as BACK COVER');
+        if (!isInterior && !isCover && !isBack) options.push('Assign to interior (regular page)');
+        if (isCover || isBack || isInterior) options.push('Remove from all positions');
+        
+        const choice = prompt(`Photo: ${photo.label}\nSelect action:\n${options.map((opt, idx) => `${idx+1}. ${opt}`).join('\n')}\n\nNote: Cover & back cover must be unique. Max capacity ${getRemainingCapacity()} interior slots left.`);
+        if (!choice) return;
+        
+        const lowerChoice = choice.toLowerCase();
+        if (lowerChoice.includes('cover') && !isCover) {
+            // assign as cover
+            if (currentProduct.assignedPositions.cover) {
+                alert(`Cover already assigned to another photo. Remove current cover first.`);
+                return;
+            }
+            // remove from any other assignment
+            removePhotoFromAll(photo.id);
+            currentProduct.assignedPositions.cover = photo.id;
+            renderGallery();
+            showToast(`${photo.label} set as COVER`);
+        } 
+        else if (lowerChoice.includes('back cover') && !isBack) {
+            if (currentProduct.assignedPositions.back) {
+                alert(`Back cover already taken. Clear first.`);
+                return;
+            }
+            removePhotoFromAll(photo.id);
+            currentProduct.assignedPositions.back = photo.id;
+            renderGallery();
+            showToast(`${photo.label} set as BACK COVER`);
+        }
+        else if (lowerChoice.includes('interior') && !isCover && !isBack && !isInterior) {
+            let remaining = getRemainingCapacity();
+            if (remaining <= 0) {
+                alert(`No free slots left! Product capacity is ${currentProduct.totalSlots} photos. You already used ${getUsedSlots()} slots.`);
+                return;
+            }
+            removePhotoFromAll(photo.id);
+            currentProduct.assignedPositions.interior.push(photo.id);
+            renderGallery();
+            showToast(`${photo.label} added to interior (${currentProduct.assignedPositions.interior.length}/${currentProduct.totalSlots - (currentProduct.assignedPositions.cover ? 1 : 0) - (currentProduct.assignedPositions.back ? 1 : 0)})`);
+        }
+        else if (lowerChoice.includes('remove')) {
+            removePhotoFromAll(photo.id);
+            renderGallery();
+            showToast(`${photo.label} removed from all assignments`);
+        }
+        else {
+            alert('Invalid selection');
+        }
+    }
+    
+    function removePhotoFromAll(photoId) {
+        if (currentProduct.assignedPositions.cover === photoId) currentProduct.assignedPositions.cover = null;
+        if (currentProduct.assignedPositions.back === photoId) currentProduct.assignedPositions.back = null;
+        currentProduct.assignedPositions.interior = currentProduct.assignedPositions.interior.filter(id => id !== photoId);
+    }
+    
+    // random fill remaining slots: picks from unassigned photos (not cover/back/interior) and fills up to capacity
+    function randomFillRemaining() {
+        const assignedSet = new Set();
+        if (currentProduct.assignedPositions.cover) assignedSet.add(currentProduct.assignedPositions.cover);
+        if (currentProduct.assignedPositions.back) assignedSet.add(currentProduct.assignedPositions.back);
+        currentProduct.assignedPositions.interior.forEach(id => assignedSet.add(id));
+        
+        const availablePhotos = allPhotos.filter(p => !assignedSet.has(p.id));
+        let neededSlots = getRemainingCapacity();
+        if (neededSlots <= 0) {
+            alert('No remaining slots to fill. Maximum capacity reached.');
+            return;
+        }
+        if (availablePhotos.length === 0) {
+            alert('No unassigned photos left.');
+            return;
+        }
+        // shuffle available
+        const shuffled = [...availablePhotos];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const toAdd = shuffled.slice(0, Math.min(neededSlots, shuffled.length));
+        toAdd.forEach(photo => {
+            currentProduct.assignedPositions.interior.push(photo.id);
+        });
+        renderGallery();
+        showToast(`Randomly added ${toAdd.length} photos to interior slots. Remaining slots: ${getRemainingCapacity()}`);
+    }
+    
+    // auto-distribute: cover + back fixed, then fill rest randomly among available photos (no repeats, respects capacity)
+    function autoDistributeAll() {
+        // keep current cover/back fixed
+        const fixedIds = new Set();
+        if (currentProduct.assignedPositions.cover) fixedIds.add(currentProduct.assignedPositions.cover);
+        if (currentProduct.assignedPositions.back) fixedIds.add(currentProduct.assignedPositions.back);
+        
+        // reset interior but keep cover/back
+        currentProduct.assignedPositions.interior = [];
+        
+        const allFreePhotos = allPhotos.filter(p => !fixedIds.has(p.id));
+        const needed = currentProduct.totalSlots - fixedIds.size;
+        if (needed <= 0) {
+            renderGallery();
+            showToast('No slots available after cover/back');
+            return;
+        }
+        // shuffle and pick needed (max possible)
+        const shuffled = [...allFreePhotos];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const selected = shuffled.slice(0, Math.min(needed, shuffled.length));
+        currentProduct.assignedPositions.interior = selected.map(p => p.id);
+        renderGallery();
+        showToast(`Auto-distribution completed: Cover + Back fixed, ${currentProduct.assignedPositions.interior.length} interior photos assigned.`);
+    }
+    
+    function resetAllAssignments() {
+        currentProduct.assignedPositions = {
+            cover: null,
+            back: null,
+            interior: []
         };
-
-        let currentLang = 'en';
-
-        function updateLanguage() {
-            document.getElementById('title').textContent = translations[currentLang].title;
-            document.getElementById('subtitle').textContent = translations[currentLang].subtitle;
-            document.getElementById('loginBtn').textContent = translations[currentLang].loginBtn;
-            document.getElementById('orderNumberInput').placeholder = translations[currentLang].placeholder;
-            
-            const icon = document.getElementById('lang-icon');
-            const text = document.getElementById('lang-text');
-            
-            if (currentLang === 'en') {
-                icon.textContent = '🇬🇧';
-                text.textContent = 'EN';
-            } else {
-                icon.textContent = '🇹🇭';
-                text.textContent = 'TH';
-            }
+        renderGallery();
+        showToast('All photo assignments have been reset.');
+    }
+    
+    // confirm selection: show final mapping (demo preview)
+    function showFinalPreview() {
+        const coverPhoto = allPhotos.find(p => p.id === currentProduct.assignedPositions.cover);
+        const backPhoto = allPhotos.find(p => p.id === currentProduct.assignedPositions.back);
+        const interiorPhotos = currentProduct.assignedPositions.interior.map(id => allPhotos.find(p => p.id === id)).filter(Boolean);
+        
+        let msg = `📸 ORDER PHOTO LAYOUT\n`;
+        msg += `📘 Cover: ${coverPhoto ? coverPhoto.label : 'NOT SET'}\n`;
+        msg += `📖 Back cover: ${backPhoto ? backPhoto.label : 'NOT SET'}\n`;
+        msg += `📄 Interior pages (${interiorPhotos.length} photos): `;
+        if (interiorPhotos.length === 0) msg += `none\n`;
+        else msg += interiorPhotos.map(p => p.label).join(', ') + '\n';
+        msg += `\n✅ Total slots used: ${getUsedSlots()} / ${currentProduct.totalSlots}`;
+        if (getRemainingCapacity() > 0) msg += `\n⚠️ ${getRemainingCapacity()} empty slots remaining. You can fill with more photos.`;
+        
+        document.getElementById('resultPreview').innerHTML = `<pre style="white-space: pre-wrap; font-size:0.7rem;">${msg}</pre>`;
+        showToast('Preview updated in bottom panel');
+    }
+    
+    // simple toast
+    function showToast(message, duration = 2000) {
+        let toast = document.getElementById('dynamicToast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'dynamicToast';
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.backgroundColor = '#007883';
+            toast.style.color = 'white';
+            toast.style.padding = '0.8rem 1.8rem';
+            toast.style.borderRadius = '60px';
+            toast.style.fontWeight = '600';
+            toast.style.zIndex = '9999';
+            toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+            toast.style.fontSize = '0.85rem';
+            document.body.appendChild(toast);
         }
-
-        document.getElementById('langToggle').addEventListener('click', function() {
-            currentLang = currentLang === 'en' ? 'th' : 'en';
-            updateLanguage();
-        });
-
-        document.getElementById('loginBtn').addEventListener('click', function() {
-            const orderNumber = document.getElementById('orderNumberInput').value.trim();
-            if (orderNumber) {
-                window.location.href = `gallery.html?order=${orderNumber}`;
-            } else {
-                showToast(translations[currentLang].toastError);
-            }
-        });
-
-        document.getElementById('orderNumberInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('loginBtn').click();
-            }
-        });
-
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+        toast.textContent = message;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, duration);
+    }
+    
+    // additional logic: prevent duplicate assign; ensure no photo repeats and max 30 constraint
+    // All functions already respect uniqueness via removePhotoFromAll before assigning new.
+    
+    function initDemo() {
+        // set default product total slots based on 'pose' concept
+        currentProduct.totalSlots = MAX_SLOTS;
+        currentProduct.name = "Premium Album / Calendar (max 30 poses)";
+        // optionally set some demo initial assignments for showcase
+        // but leave empty for clean demo
+        renderGallery();
+        
+        document.getElementById('randomFillBtn').addEventListener('click', randomFillRemaining);
+        document.getElementById('autoDistributeBtn').addEventListener('click', autoDistributeAll);
+        document.getElementById('resetAllBtn').addEventListener('click', resetAllAssignments);
+        document.getElementById('confirmSelectionBtn').addEventListener('click', showFinalPreview);
+        
+        // order number display (demo)
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderParam = urlParams.get('order');
+        if (orderParam) {
+            document.getElementById('orderNumberDisplay').innerHTML = `#${orderParam}`;
+        } else {
+            document.getElementById('orderNumberDisplay').innerHTML = `DEMO-2025-001`;
         }
-
-        updateLanguage();
-    </script>
+    }
+    
+    initDemo();
+</script>
 </body>
 </html>
