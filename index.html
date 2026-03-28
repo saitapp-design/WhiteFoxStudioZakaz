@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio - Smart Photo Selection</title>
+    <title>White Fox Studio - Photo Selection</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         :root {
@@ -221,13 +221,7 @@
             gap: 0.3rem;
         }
 
-        .product-name {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-        }
-
-        .product-sku-code {
+        .product-sku {
             background: var(--accent-soft);
             padding: 0.2rem 0.8rem;
             border-radius: 30px;
@@ -235,6 +229,13 @@
             font-weight: 600;
             font-family: monospace;
             display: inline-block;
+            color: var(--accent-primary);
+        }
+
+        .product-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-primary);
         }
 
         .product-type-badge {
@@ -505,19 +506,6 @@
         let photoAssignments = {};
         let isLoading = true;
         
-        // Function to generate readable SKU from product name
-        function generateSKUFromName(name) {
-            if (!name) return 'UNKNOWN';
-            // Convert to uppercase, replace spaces with underscore, remove special characters
-            let sku = name.toUpperCase()
-                .replace(/[^\w\s]/g, '')
-                .replace(/\s+/g, '_')
-                .replace(/[^A-Z0-9_]/g, '');
-            // Limit length
-            if (sku.length > 30) sku = sku.substring(0, 30);
-            return sku;
-        }
-        
         function detectProductType(product) {
             const name = ((product.name_en || '') + ' ' + (product.name_th || '')).toLowerCase();
             const pose = product.pose || 0;
@@ -601,16 +589,22 @@
                 
                 allProducts = [];
                 
-                // Process product cards - generate readable SKU from name
+                // Process product cards - following original logic for SKU
                 if (productCards) {
                     productCards.forEach(card => {
                         let pose = 0;
+                        let variants = [];
+                        
+                        // Parse variants if exists
                         try {
                             if (card.variants) {
-                                const vars = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
-                                if (vars[0]?.pose) pose = parseInt(vars[0].pose);
+                                variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
+                                if (variants.length > 0 && variants[0].pose) {
+                                    pose = parseInt(variants[0].pose);
+                                }
                             }
                         } catch(e) {}
+                        
                         if (!pose && card.pose) pose = parseInt(card.pose);
                         if (!pose && card.total_photos) pose = parseInt(card.total_photos);
                         
@@ -628,21 +622,28 @@
                             }
                         }
                         
-                        // Get name for SKU generation
-                        const nameForSku = card.name_en || card.name_th || 'PRODUCT';
-                        const sku = generateSKUFromName(nameForSku);
+                        // KEY LOGIC: Get SKU from card.sku, or from first variant, or generate fallback
+                        let cardSku = card.sku;
+                        if (!cardSku && variants.length > 0) {
+                            cardSku = variants[0].sku;
+                        }
+                        if (!cardSku) {
+                            cardSku = card.card_id || `PROD_${Date.now()}`;
+                        }
                         
                         allProducts.push({
-                            sku: sku,
+                            id: card.card_id || `card_${cardSku}`,
+                            sku: cardSku,
                             name_en: card.name_en,
                             name_th: card.name_th,
                             pose: pose,
-                            isPackage: false
+                            isPackage: false,
+                            variants: variants
                         });
                     });
                 }
                 
-                // Process packages - use existing SKU or generate from name
+                // Process packages
                 if (packages) {
                     packages.forEach(pkg => {
                         let contents = [];
@@ -656,18 +657,11 @@
                         if (!totalPhotos && contents.length) {
                             totalPhotos = contents.reduce((s, i) => s + (i.qty || 1), 0);
                         }
-                        
                         if (totalPhotos === 0) totalPhotos = contents.length || 1;
                         
-                        // Use existing SKU or generate from name
-                        let sku = pkg.sku;
-                        if (!sku || sku === 'undefined' || sku === 'null' || sku === '') {
-                            const nameForSku = pkg.name_en || pkg.name_th || 'PACKAGE';
-                            sku = generateSKUFromName(nameForSku);
-                        }
-                        
                         allProducts.push({
-                            sku: sku,
+                            id: pkg.id || `pkg_${pkg.sku}`,
+                            sku: pkg.sku || pkg.slug || `PKG_${Date.now()}`,
                             name_en: pkg.name_en,
                             name_th: pkg.name_th,
                             pose: totalPhotos,
@@ -677,12 +671,13 @@
                     });
                 }
                 
-                console.log(`✅ Loaded ${allProducts.length} products from Supabase`);
-                console.log('Sample products:', allProducts.slice(0, 15).map(p => ({ 
+                console.log(`✅ Loaded ${allProducts.length} products`);
+                console.log('Sample products with SKU:', allProducts.slice(0, 10).map(p => ({ 
                     sku: p.sku, 
                     name: p.name_en || p.name_th, 
                     pose: p.pose, 
-                    isPackage: p.isPackage 
+                    isPackage: p.isPackage,
+                    variantsCount: p.variants?.length || 0
                 })));
                 
                 if (allProducts.length === 0) {
@@ -719,14 +714,11 @@
                 return;
             }
             
-            // Use all products
-            const validProducts = [...allProducts];
-            
             // Select random number of products between 4 and 6
-            const numProducts = Math.min(Math.floor(Math.random() * 3) + 4, validProducts.length);
+            const numProducts = Math.min(Math.floor(Math.random() * 3) + 4, allProducts.length);
             
             // Shuffle and select random products
-            const shuffled = [...validProducts];
+            const shuffled = [...allProducts];
             for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -768,27 +760,38 @@
                         productType: productType,
                         isPackage: true,
                         packageContents: item.packageContents,
-                        contentSlots: contentSlots
-                    };
-                } else if (productType.type === 'single' || item.pose === 1) {
-                    photoAssignments[itemId] = {
-                        id: itemId,
-                        sku: item.sku,
-                        name: item.name_en || item.name_th || item.sku,
-                        total: item.pose || 1,
-                        productType: productType,
-                        isPackage: false,
-                        isSingle: true,
-                        cover: null
+                        contentSlots: contentSlots,
+                        variants: item.variants || []
                     };
                 } else {
+                    // For regular products - get current SKU from variants if exists
+                    let currentSku = item.sku;
+                    let currentPrice = 0;
+                    let currentImage = '';
+                    let currentDescription = '';
+                    
+                    if (item.variants && item.variants.length > 0) {
+                        const firstVariant = item.variants[0];
+                        if (firstVariant) {
+                            currentSku = firstVariant.sku || item.sku;
+                            currentPrice = firstVariant.price || 0;
+                            currentImage = firstVariant.image_url || '';
+                            currentDescription = firstVariant.descriptions || '';
+                        }
+                    }
+                    
                     photoAssignments[itemId] = {
                         id: itemId,
                         sku: item.sku,
+                        currentSku: currentSku,
                         name: item.name_en || item.name_th || item.sku,
                         total: item.pose,
                         productType: productType,
                         isPackage: false,
+                        variants: item.variants || [],
+                        currentPrice: currentPrice,
+                        currentImage: currentImage,
+                        currentDescription: currentDescription,
                         cover: null,
                         back: null,
                         interior: []
@@ -972,9 +975,39 @@
                 totalSlots += a.total;
                 totalFilled += used;
                 
+                // Determine SKU to display - use variant SKU if available
+                let displaySku = a.sku;
+                if (a.variants && a.variants.length > 0 && a.variants[0]?.sku) {
+                    displaySku = a.variants[0].sku;
+                }
+                
                 let packageContentsHtml = '';
                 if (a.isPackage && a.contentSlots && Object.keys(a.contentSlots).length > 0) {
                     packageContentsHtml = `<div class="package-contents"><span style="font-weight:600;">${t.packageContents}</span> ${Object.values(a.contentSlots).map(s => `${s.label}: ${s.required} photo(s)`).join(' • ')}</div>`;
+                }
+                
+                // Variant selector for products with multiple variants
+                let variantSelectorHtml = '';
+                if (!a.isPackage && a.variants && a.variants.length > 1) {
+                    variantSelectorHtml = `
+                        <div style="padding: 0 1.5rem 0 1.5rem;">
+                            <select class="variant-selector" id="variant-select-${safeId}" 
+                                style="width:100%; padding:0.5rem; border:2px solid var(--border-color); border-radius:12px; margin-bottom:0.5rem;">
+                                ${a.variants.map((v, idx) => {
+                                    let variantText = '';
+                                    let variantParts = [];
+                                    if (v.size_label) variantParts.push(v.size_label);
+                                    if (v.pose) variantParts.push(v.pose);
+                                    if (v.color) variantParts.push(v.color);
+                                    variantText = variantParts.join(' / ');
+                                    if (!variantText) variantText = v.sku;
+                                    return `<option value="${v.sku}" data-price="${v.price || 0}" data-sku="${v.sku}" ${idx === 0 ? 'selected' : ''}>
+                                        ${variantText} — ฿${v.price || 0}
+                                    </option>`;
+                                }).join('')}
+                            </select>
+                        </div>
+                    `;
                 }
                 
                 let slotsHtml = '';
@@ -1005,7 +1038,24 @@
                     </div>`;
                 }
                 
-                productsHtml += `<div class="product-card"><div class="product-header"><div class="product-info"><div class="product-name">${escapeHtml(a.name)}</div><div><span class="product-sku-code">${escapeHtml(a.sku || 'N/A')}</span><span class="product-type-badge" style="margin-left: 0.5rem;">${a.productType.label}</span></div></div><div class="product-stats"><div class="photos-counter">${used}/${a.total}</div><div class="photos-label">${t.totalPhotos}</div></div></div>${packageContentsHtml}${slotsHtml}<div class="product-footer"><button class="action-btn-outline" onclick="resetProduct('${id}')">🔄 ${t.reset}</button></div></div>`;
+                productsHtml += `<div class="product-card">
+                    <div class="product-header">
+                        <div class="product-info">
+                            <div class="product-sku" id="sku-${safeId}">${escapeHtml(displaySku)}</div>
+                            <div class="product-name">${escapeHtml(a.name)}</div>
+                        </div>
+                        <div class="product-stats">
+                            <div class="photos-counter">${used}/${a.total}</div>
+                            <div class="photos-label">${t.totalPhotos}</div>
+                        </div>
+                    </div>
+                    ${packageContentsHtml}
+                    ${variantSelectorHtml}
+                    ${slotsHtml}
+                    <div class="product-footer">
+                        <button class="action-btn-outline" onclick="resetProduct('${id}')">🔄 ${t.reset}</button>
+                    </div>
+                </div>`;
             }
             
             const percent = totalSlots > 0 ? Math.round((totalFilled / totalSlots) * 100) : 0;
