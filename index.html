@@ -157,11 +157,6 @@
             margin-bottom: 1rem;
         }
 
-        .order-input:focus {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px var(--accent-light);
-        }
-
         .btn-primary {
             width: 100%;
             padding: 1rem;
@@ -240,6 +235,7 @@
             font-weight: 600;
             font-family: monospace;
             color: var(--accent-primary);
+            display: inline-block;
         }
 
         .product-type-badge {
@@ -517,35 +513,36 @@
         let currentOrder = null;
         let photoAssignments = {};
         
-        // Product type detection based on name and SKU
+        // Product type detection based on name and pose
         function detectProductType(product) {
-            const name = (product.name_en + ' ' + product.name_th + ' ' + product.sku).toLowerCase();
+            const name = ((product.name_en || '') + ' ' + (product.name_th || '') + ' ' + (product.sku || '')).toLowerCase();
+            const pose = product.pose || 0;
             
-            // Single photo items (no back cover needed)
-            if (name.includes('canvas') || name.includes('poster') || name.includes('photo') && product.pose === 1 ||
+            // Single photo items (no interior, no back)
+            if (pose === 1 || name.includes('canvas') || name.includes('poster') || 
                 name.includes('mug') || name.includes('keyring') || name.includes('magnet') ||
-                name.includes('card holder') || name.includes('acrylic') && product.pose === 1) {
-                return { type: 'single', hasCover: true, hasBack: false, hasInterior: false };
+                name.includes('card holder') || (name.includes('acrylic') && pose === 1)) {
+                return { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '📷 Single Photo' };
             }
             
             // Calendar type (has back cover)
             if (name.includes('calendar') || name.includes('ปฏิทิน')) {
-                return { type: 'calendar', hasCover: true, hasBack: true, hasInterior: true };
+                return { type: 'calendar', hasCover: true, hasBack: true, hasInterior: true, label: '📅 Calendar / Album' };
             }
             
-            // Book/Album type (has back cover)
+            // Book/Album/Package type (has back cover)
             if (name.includes('book') || name.includes('album') || name.includes('package') ||
-                name.includes('notebook') || name.includes('magazine')) {
-                return { type: 'book', hasCover: true, hasBack: true, hasInterior: true };
+                name.includes('notebook') || name.includes('magazine') || pose >= 10) {
+                return { type: 'book', hasCover: true, hasBack: true, hasInterior: true, label: '📚 Book / Album' };
             }
             
-            // Default: has cover and interior, optional back
-            if (product.pose > 2) {
-                return { type: 'multi', hasCover: true, hasBack: true, hasInterior: true };
-            } else if (product.pose === 2) {
-                return { type: 'double', hasCover: true, hasBack: false, hasInterior: true };
+            // Default for multi-photo
+            if (pose > 2) {
+                return { type: 'multi', hasCover: true, hasBack: true, hasInterior: true, label: '📸 Multi-photo' };
+            } else if (pose === 2) {
+                return { type: 'double', hasCover: true, hasBack: false, hasInterior: true, label: '🖼️ Double Photo' };
             } else {
-                return { type: 'single', hasCover: true, hasBack: false, hasInterior: false };
+                return { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '📷 Single Photo' };
             }
         }
         
@@ -574,8 +571,7 @@
                 backToLogin: '← Back',
                 totalPhotos: 'Total photos',
                 moreNeeded: 'more needed',
-                filled: 'Complete!',
-                productType: 'Product Type'
+                filled: 'Complete!'
             },
             th: {
                 title: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
@@ -601,8 +597,7 @@
                 backToLogin: '← กลับ',
                 totalPhotos: 'รูปทั้งหมด',
                 moreNeeded: 'ต้องเลือกเพิ่ม',
-                filled: 'ครบถ้วน!',
-                productType: 'ประเภทสินค้า'
+                filled: 'ครบถ้วน!'
             }
         };
         
@@ -659,7 +654,7 @@
                         if (!pose && card.total_photos) pose = parseInt(card.total_photos);
                         
                         allProducts.push({
-                            sku: card.sku,
+                            sku: card.sku || `card_${card.id}`,
                             name_en: card.name_en,
                             name_th: card.name_th,
                             pose: pose || 0
@@ -677,7 +672,7 @@
                             } catch(e) {}
                         }
                         allProducts.push({
-                            sku: pkg.sku,
+                            sku: pkg.sku || `pkg_${pkg.id}`,
                             name_en: pkg.name_en,
                             name_th: pkg.name_th,
                             pose: total || 0
@@ -704,36 +699,69 @@
         }
         
         async function loadDemoOrder() {
-            // Select 3 different products from Supabase with different types
-            const demoSkus = ['Q11', 'DESK CALENDAR FLIP', 'CANVAS'];
-            
+            // Find 3 different products from Supabase
             const items = [];
-            for (const sku of demoSkus) {
-                let product = allProducts.find(p => p.sku === sku);
-                if (!product && sku === 'DESK CALENDAR FLIP') {
-                    product = allProducts.find(p => p.name_en?.includes('DESK CALENDAR') || p.name_th?.includes('ปฏิทิน'));
-                }
-                if (!product && sku === 'CANVAS') {
-                    product = allProducts.find(p => p.name_en?.includes('CANVAS') || p.name_th?.includes('แคนวาส'));
-                }
+            
+            // Find Package S (Q11 or similar)
+            let packageProduct = allProducts.find(p => p.sku === 'Q11' || (p.name_en && p.name_en.includes('Package')));
+            if (!packageProduct) {
+                packageProduct = allProducts.find(p => p.pose >= 6 && p.pose <= 15);
+            }
+            
+            // Find Calendar product
+            let calendarProduct = allProducts.find(p => p.name_en && (p.name_en.includes('CALENDAR') || p.name_en.includes('ปฏิทิน')));
+            if (!calendarProduct) {
+                calendarProduct = allProducts.find(p => p.pose >= 13 && p.pose <= 30);
+            }
+            
+            // Find Canvas or Single photo product
+            let canvasProduct = allProducts.find(p => p.name_en && p.name_en.includes('CANVAS'));
+            if (!canvasProduct) {
+                canvasProduct = allProducts.find(p => p.pose === 1);
+            }
+            
+            if (packageProduct) {
+                items.push({
+                    sku: packageProduct.sku,
+                    name: packageProduct.name_en || packageProduct.name_th || 'Package Product',
+                    pose: packageProduct.pose || 6,
+                    productType: detectProductType(packageProduct)
+                });
+                console.log(`✅ Added: ${packageProduct.name_en || packageProduct.name_th} (${packageProduct.sku}) - ${packageProduct.pose} photos`);
+            }
+            
+            if (calendarProduct) {
+                items.push({
+                    sku: calendarProduct.sku,
+                    name: calendarProduct.name_en || calendarProduct.name_th || 'Calendar',
+                    pose: calendarProduct.pose || 13,
+                    productType: detectProductType(calendarProduct)
+                });
+                console.log(`✅ Added: ${calendarProduct.name_en || calendarProduct.name_th} (${calendarProduct.sku}) - ${calendarProduct.pose} photos`);
+            }
+            
+            if (canvasProduct) {
+                items.push({
+                    sku: canvasProduct.sku,
+                    name: canvasProduct.name_en || canvasProduct.name_th || 'Canvas / Photo',
+                    pose: canvasProduct.pose || 1,
+                    productType: detectProductType(canvasProduct)
+                });
+                console.log(`✅ Added: ${canvasProduct.name_en || canvasProduct.name_th} (${canvasProduct.sku}) - ${canvasProduct.pose} photos`);
+            }
+            
+            // If we couldn't find 3 products, add some defaults
+            if (items.length < 3) {
+                const defaults = [
+                    { sku: 'PKG-001', name: 'Package Set', pose: 6, productType: { type: 'book', hasCover: true, hasBack: true, hasInterior: true, label: '📚 Package' } },
+                    { sku: 'CAL-2025', name: 'Desk Calendar', pose: 13, productType: { type: 'calendar', hasCover: true, hasBack: true, hasInterior: true, label: '📅 Calendar' } },
+                    { sku: 'CANVAS-01', name: 'Canvas Print', pose: 1, productType: { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '🖼️ Canvas' } }
+                ];
                 
-                if (product && product.pose > 0) {
-                    const productType = detectProductType(product);
-                    items.push({
-                        sku: product.sku,
-                        name: product.name_en || product.name_th || product.sku,
-                        pose: product.pose,
-                        productType: productType
-                    });
-                    console.log(`✅ Added: ${product.name_en} (${product.sku}) - ${product.pose} photos - Type: ${productType.type}`);
-                } else if (product) {
-                    console.log(`⚠️ Product ${sku} has 0 photos, using default`);
-                    items.push({
-                        sku: product.sku,
-                        name: product.name_en || product.name_th || product.sku,
-                        pose: 5,
-                        productType: detectProductType({ ...product, pose: 5 })
-                    });
+                for (let i = items.length; i < 3; i++) {
+                    if (defaults[i]) {
+                        items.push(defaults[i]);
+                    }
                 }
             }
             
@@ -741,13 +769,15 @@
             
             photoAssignments = {};
             items.forEach(item => {
-                photoAssignments[item.sku] = {
+                const safeSku = (item.sku || `product_${Date.now()}_${Math.random()}`).replace(/[^a-zA-Z0-9]/g, '_');
+                photoAssignments[safeSku] = {
                     cover: null,
                     back: null,
                     interior: [],
                     total: item.pose,
                     name: item.name,
                     sku: item.sku,
+                    originalSku: safeSku,
                     productType: item.productType
                 };
             });
@@ -837,9 +867,9 @@
             let summary = '📸 PHOTO SELECTION CONFIRMED\n\n';
             for (const [sku, a] of Object.entries(photoAssignments)) {
                 summary += `━━━ ${a.name} (${a.sku}) ━━━\n`;
-                summary += `📘 ${translations[currentLang].cover}: ${a.cover || '❌'}\n`;
+                summary += `📘 ${translations[currentLang].cover}: ${a.cover || '❌ NOT SET'}\n`;
                 if (a.productType.hasBack) {
-                    summary += `📖 ${translations[currentLang].back}: ${a.back || '❌'}\n`;
+                    summary += `📖 ${translations[currentLang].back}: ${a.back || '❌ NOT SET'}\n`;
                 }
                 if (a.productType.hasInterior) {
                     const interiorCount = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
@@ -867,30 +897,17 @@
             document.getElementById('orderNumberInput').addEventListener('keypress', e => { if (e.key === 'Enter') checkOrder(); });
         }
         
-        function getProductTypeName(type) {
-            const names = {
-                single: '📷 Single Photo',
-                double: '🖼️ Double Photo',
-                calendar: '📅 Calendar / Album',
-                book: '📚 Book / Album',
-                multi: '📸 Multi-photo'
-            };
-            return names[type.type] || '📷 Photo Product';
-        }
-        
         function renderOrderInterface() {
             const t = translations[currentLang];
             let totalSlots = 0, totalFilled = 0;
             let productsHtml = '';
             
-            for (const item of currentOrder.items) {
-                const a = photoAssignments[item.sku];
-                if (!a) continue;
+            for (const [sku, a] of Object.entries(photoAssignments)) {
                 const used = (a.cover?1:0) + (a.back?1:0) + a.interior.length;
                 totalSlots += a.total;
                 totalFilled += used;
                 const remain = a.total - used;
-                const safeSku = item.sku.replace(/[-\s]/g, '_');
+                const safeSku = sku.replace(/[^a-zA-Z0-9]/g, '_');
                 const productType = a.productType;
                 
                 productsHtml += `
@@ -898,9 +915,9 @@
                         <div class="product-header">
                             <div class="product-info">
                                 <div class="product-name">${escapeHtml(a.name)}</div>
-                                <div class="product-sku-code">${item.sku}</div>
-                                <div style="display: flex; gap: 0.5rem; margin-top: 0.3rem;">
-                                    <span class="product-type-badge">${getProductTypeName(productType)}</span>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.3rem;">
+                                    <span class="product-sku-code">${escapeHtml(a.sku || 'N/A')}</span>
+                                    <span class="product-type-badge">${productType.label}</span>
                                     <span class="product-pose">📷 ${a.total} photos</span>
                                 </div>
                             </div>
@@ -911,7 +928,7 @@
                         </div>
                         
                         <div class="assignment-grid">
-                            <!-- Cover - always required for all products -->
+                            <!-- Cover - always required -->
                             <div class="slot-card">
                                 <div class="slot-title">
                                     <span class="slot-icon">📘</span>
@@ -921,17 +938,17 @@
                                 ${a.cover ? `
                                     <div class="assigned-photo-card">
                                         <span class="photo-number-large">#${a.cover}</span>
-                                        <button class="remove-btn" onclick="removePhoto('${item.sku}', 'cover')">✕</button>
+                                        <button class="remove-btn" onclick="removePhoto('${sku}', 'cover')">✕</button>
                                     </div>
                                 ` : `
                                     <div class="photo-input-wrapper">
                                         <input type="number" id="cover-in-${safeSku}" class="photo-input" placeholder="#" min="1">
-                                        <button class="action-btn" onclick="setFromInput('${item.sku}', 'cover')">${t.set}</button>
+                                        <button class="action-btn" onclick="setFromInput('${sku}', 'cover')">${t.set}</button>
                                     </div>
                                 `}
                             </div>
                             
-                            <!-- Back Cover - only for products that need it -->
+                            <!-- Back Cover - only if needed -->
                             ${productType.hasBack ? `
                             <div class="slot-card">
                                 <div class="slot-title">
@@ -942,12 +959,12 @@
                                 ${a.back ? `
                                     <div class="assigned-photo-card">
                                         <span class="photo-number-large">#${a.back}</span>
-                                        <button class="remove-btn" onclick="removePhoto('${item.sku}', 'back')">✕</button>
+                                        <button class="remove-btn" onclick="removePhoto('${sku}', 'back')">✕</button>
                                     </div>
                                 ` : `
                                     <div class="photo-input-wrapper">
                                         <input type="number" id="back-in-${safeSku}" class="photo-input" placeholder="#" min="1">
-                                        <button class="action-btn" onclick="setFromInput('${item.sku}', 'back')">${t.set}</button>
+                                        <button class="action-btn" onclick="setFromInput('${sku}', 'back')">${t.set}</button>
                                     </div>
                                 `}
                             </div>
@@ -959,12 +976,12 @@
                                     <span class="slot-badge">${t.notApplicable}</span>
                                 </div>
                                 <div style="padding: 0.5rem; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
-                                    ⚡ Not applicable for this product type
+                                    ⚡ ${t.notApplicable} for this product
                                 </div>
                             </div>
                             `}
                             
-                            <!-- Interior Photos - only for products with multiple photos -->
+                            <!-- Interior Photos - only if needed -->
                             ${productType.hasInterior ? `
                             <div class="slot-card">
                                 <div class="slot-title">
@@ -974,14 +991,14 @@
                                 </div>
                                 <div class="photo-input-wrapper" style="margin-bottom: 0.6rem;">
                                     <input type="number" id="int-in-${safeSku}" class="photo-input" placeholder="#" min="1">
-                                    <button class="action-btn" onclick="addFromInput('${item.sku}')">${t.set}</button>
-                                    <button class="action-btn-outline" onclick="randomFill('${item.sku}')">${t.randomFill}</button>
+                                    <button class="action-btn" onclick="addFromInput('${sku}')">${t.set}</button>
+                                    <button class="action-btn-outline" onclick="randomFill('${sku}')">${t.randomFill}</button>
                                 </div>
                                 <div class="interior-list">
                                     ${a.interior.map((num, idx) => `
                                         <div class="photo-tag">
                                             #${num}
-                                            <button onclick="removePhoto('${item.sku}', 'interior', ${idx})">✕</button>
+                                            <button onclick="removePhoto('${sku}', 'interior', ${idx})">✕</button>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -1002,7 +1019,7 @@
                         </div>
                         
                         <div class="product-footer">
-                            <button class="action-btn-outline" onclick="resetProduct('${item.sku}')">🔄 ${t.reset}</button>
+                            <button class="action-btn-outline" onclick="resetProduct('${sku}')">🔄 ${t.reset}</button>
                         </div>
                     </div>
                 `;
@@ -1013,7 +1030,7 @@
             document.getElementById('mainContent').innerHTML = `
                 <div class="order-header">
                     <div class="order-badge">📦 Order: <strong>${currentOrder.number}</strong></div>
-                    <div class="order-badge">🎯 Smart detection: ${currentOrder.items.length} products</div>
+                    <div class="order-badge">🎯 ${totalFilled}/${totalSlots} photos selected (${percent}%)</div>
                     <button class="back-btn" id="backBtn">${t.backToLogin}</button>
                 </div>
                 ${productsHtml}
@@ -1029,7 +1046,7 @@
         function escapeHtml(s) { if (!s) return ''; return String(s).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
         
         window.setFromInput = function(sku, pos) {
-            const safe = sku.replace(/[-\s]/g, '_');
+            const safe = sku.replace(/[^a-zA-Z0-9]/g, '_');
             const input = document.getElementById(`${pos}-in-${safe}`);
             if (!input) return;
             const num = parseInt(input.value);
@@ -1038,7 +1055,7 @@
         };
         
         window.addFromInput = function(sku) {
-            const safe = sku.replace(/[-\s]/g, '_');
+            const safe = sku.replace(/[^a-zA-Z0-9]/g, '_');
             const input = document.getElementById(`int-in-${safe}`);
             if (!input) return;
             const num = parseInt(input.value);
