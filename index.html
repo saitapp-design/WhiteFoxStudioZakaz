@@ -575,7 +575,6 @@
         async function initSupabase() {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
             await loadProductsFromSupabase();
-            // Auto check order after loading
             if (document.getElementById('orderNumberInput')?.value === '1111') {
                 await checkOrder();
             }
@@ -589,7 +588,7 @@
                 
                 allProducts = [];
                 
-                // Process ALL product cards (no filtering)
+                // Process product cards - use original SKU if exists
                 if (productCards) {
                     productCards.forEach(card => {
                         let pose = 0;
@@ -610,12 +609,20 @@
                             } else if (name.includes('canvas') || name.includes('poster') || name.includes('mug')) {
                                 pose = 1;
                             } else {
-                                pose = 1; // Default to 1 photo
+                                pose = 1;
                             }
                         }
                         
+                        // Use original SKU or generate from name if missing
+                        let sku = card.sku;
+                        if (!sku || sku === 'undefined' || sku === 'null' || sku === '') {
+                            // Generate SKU from name
+                            const namePart = (card.name_en || card.name_th || 'product').toUpperCase().replace(/[^A-Z0-9]/g, '_').substring(0, 15);
+                            sku = namePart;
+                        }
+                        
                         allProducts.push({
-                            sku: card.sku || `CARD_${card.id || Math.random().toString(36).substr(2, 6)}`,
+                            sku: sku,
                             name_en: card.name_en,
                             name_th: card.name_th,
                             pose: pose,
@@ -624,7 +631,7 @@
                     });
                 }
                 
-                // Process ALL packages
+                // Process packages - use original SKU
                 if (packages) {
                     packages.forEach(pkg => {
                         let contents = [];
@@ -641,8 +648,15 @@
                         
                         if (totalPhotos === 0) totalPhotos = contents.length || 1;
                         
+                        // Use original SKU
+                        let sku = pkg.sku;
+                        if (!sku || sku === 'undefined' || sku === 'null' || sku === '') {
+                            const namePart = (pkg.name_en || pkg.name_th || 'package').toUpperCase().replace(/[^A-Z0-9]/g, '_').substring(0, 15);
+                            sku = namePart;
+                        }
+                        
                         allProducts.push({
-                            sku: pkg.sku || `PKG_${pkg.id || Math.random().toString(36).substr(2, 6)}`,
+                            sku: sku,
                             name_en: pkg.name_en,
                             name_th: pkg.name_th,
                             pose: totalPhotos,
@@ -694,10 +708,10 @@
                 return;
             }
             
-            // Use all products (no filtering)
+            // Use all products
             const validProducts = [...allProducts];
             
-            // Select random number of products between 4 and 6 (or less if not enough)
+            // Select random number of products between 4 and 6
             const numProducts = Math.min(Math.floor(Math.random() * 3) + 4, validProducts.length);
             
             // Shuffle and select random products
@@ -907,7 +921,7 @@
                 summary += `📦 Type: ${a.productType.label}\n`;
                 summary += `📷 Total photos: ${a.total}\n`;
                 
-                if (a.isPackage && a.contentSlots) {
+                if (a.isPackage && a.contentSlots && Object.keys(a.contentSlots).length > 0) {
                     for (const [key, slot] of Object.entries(a.contentSlots)) {
                         summary += `📷 ${slot.label}: ${slot.assigned.length}/${slot.required} - [${slot.assigned.join(', ') || 'none'}]\n`;
                     }
