@@ -1,739 +1,871 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio — Photo Selection (Demo)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>White Fox Studio — Выбор фото для заказа</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         :root {
-            --accent: #007883;
-            --accent-light: #d9f0f2;
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-nav: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #334155;
+            --text-muted: #546e7a;
+            --border-color: #e9eef2;
+            --accent-primary: #007883;
             --accent-hover: #0a6570;
-            --bg-page: #f5f7fa;
-            --card-bg: #ffffff;
-            --border: #e2e8f0;
-            --text-main: #1e293b;
-            --text-muted: #475569;
-            --shadow-sm: 0 4px 12px rgba(0,120,131,0.12);
-            --danger: #e11d48;
+            --accent-light: #d9f0f2;
+            --shadow-color: rgba(0, 120, 131, 0.2);
+            --price-color: #007883;
         }
 
         body {
-            background: var(--bg-page);
-            color: var(--text-main);
-            padding: 2rem 1rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* header */
-        .demo-header {
-            background: white;
-            border-radius: 2rem;
-            padding: 1rem 2rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-sm);
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: var(--bg-secondary);
+            padding: 0.6rem 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            border-bottom: 3px solid var(--accent-primary);
             flex-wrap: wrap;
             gap: 1rem;
-            border-left: 6px solid var(--accent);
         }
 
-        .logo {
+        .logo-area {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .logo img {
-            width: 44px;
-            height: 44px;
+        .logo-img {
+            width: 40px;
+            height: 40px;
             object-fit: contain;
         }
 
-        .logo span {
+        .logo-text {
             font-weight: 800;
             font-size: 1.4rem;
-            color: var(--accent);
+            color: var(--accent-primary);
         }
 
-        .order-badge {
-            background: var(--accent-light);
-            padding: 0.5rem 1.2rem;
-            border-radius: 60px;
-            font-weight: 600;
-            color: var(--accent);
-        }
-
-        /* two columns layout */
-        .selection-layout {
-            display: grid;
-            grid-template-columns: 1fr 360px;
-            gap: 2rem;
-        }
-
-        /* main gallery */
-        .gallery-panel {
-            background: var(--card-bg);
-            border-radius: 2rem;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            border-left: 5px solid var(--accent);
-            padding-left: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        .right-actions {
+            display: flex;
+            align-items: center;
             gap: 1rem;
         }
 
-        .photo-card {
-            background: white;
-            border-radius: 1.2rem;
-            border: 2px solid var(--border);
-            overflow: hidden;
-            transition: all 0.2s;
-            cursor: pointer;
-            position: relative;
+        .search-container {
+            width: 300px;
         }
 
-        .photo-card.selected {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-light);
-        }
-
-        .photo-card.assigned-cover {
-            border-color: #f97316;
-            background: #fff7ed;
-        }
-        .photo-card.assigned-back {
-            border-color: #8b5cf6;
-            background: #f5f3ff;
-        }
-
-        .photo-img {
-            aspect-ratio: 1 / 1;
-            background: #f1f5f9;
+        .search-box {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-        }
-
-        .photo-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .photo-info {
-            padding: 0.6rem;
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 600;
             background: white;
-            border-top: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 0.2rem 0.2rem 0.2rem 1.5rem;
+            border: 2px solid var(--accent-primary);
         }
 
-        .assigned-badge {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            background: rgba(0,0,0,0.7);
+        .search-box input {
+            background: transparent;
+            border: none;
+            padding: 0.7rem 0;
+            width: 100%;
+            outline: none;
+        }
+
+        .search-box button {
+            background: var(--accent-primary);
+            border: none;
             color: white;
-            border-radius: 20px;
-            padding: 2px 8px;
-            font-size: 0.65rem;
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
             font-weight: 600;
-            backdrop-filter: blur(2px);
+            cursor: pointer;
         }
 
-        /* right sidebar */
-        .assignment-panel {
-            background: var(--card-bg);
-            border-radius: 2rem;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            position: sticky;
-            top: 1rem;
-            height: fit-content;
-        }
-
-        .assignment-group {
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .assignment-group h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
+        .lang-toggle {
+            background: white;
+            border: 2px solid var(--accent-primary);
+            border-radius: 50px;
+            padding: 0.5rem 1.2rem;
+            cursor: pointer;
+            color: var(--accent-primary);
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .slot-badge {
+        .order-info-bar {
             background: var(--accent-light);
-            padding: 0.3rem 0.8rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-bottom: 1px solid var(--accent-primary);
         }
 
-        .selected-photo-preview {
+        .order-badge {
+            background: white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .main-layout {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Products in order */
+        .order-products-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            border-left: 5px solid var(--accent-primary);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .order-product-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+        .order-product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--accent-light);
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .product-sku {
+            background: var(--accent-light);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+        }
+
+        .photo-count-badge {
+            background: #f1f5f9;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        .photo-selection-area {
+            margin-top: 1rem;
+        }
+
+        .slot-section {
             background: #f8fafc;
-            border-radius: 1rem;
-            padding: 0.8rem;
-            margin: 0.5rem 0;
+            border-radius: 20px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .slot-title {
+            font-weight: 700;
+            margin-bottom: 0.8rem;
             display: flex;
             align-items: center;
-            gap: 10px;
-            border: 1px solid var(--border);
+            gap: 0.5rem;
         }
 
-        .mini-thumb {
-            width: 48px;
-            height: 48px;
+        .slot-badge {
+            background: var(--accent-primary);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+        }
+
+        .slot-badge.optional {
+            background: #94a3b8;
+        }
+
+        .assigned-photo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: white;
+            padding: 0.8rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 0.8rem;
+        }
+
+        .photo-thumb {
+            width: 60px;
+            height: 60px;
             background: #e2e8f0;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
+            overflow: hidden;
         }
 
-        .slot-info {
-            flex: 1;
-            font-size: 0.85rem;
-            font-weight: 500;
+        .photo-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .btn-outline {
-            background: transparent;
-            border: 1.5px solid var(--accent);
-            color: var(--accent);
-            padding: 0.4rem 1rem;
+        .photo-number-input {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .photo-number-input input {
+            width: 100px;
+            padding: 0.6rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .btn-small {
+            background: var(--accent-light);
+            border: none;
+            padding: 0.5rem 1rem;
             border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .btn-random {
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+        }
+
+        .remaining-photos-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .photo-number-chip {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
 
-        .btn-outline:hover {
+        .photo-number-chip:hover {
+            border-color: var(--accent-primary);
             background: var(--accent-light);
         }
 
-        .btn-primary {
-            background: var(--accent);
-            border: none;
+        .photo-number-chip.selected {
+            background: var(--accent-primary);
             color: white;
-            padding: 0.6rem 1.2rem;
+            border-color: var(--accent-primary);
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
             border-radius: 60px;
             font-weight: 700;
+            font-size: 1.2rem;
             cursor: pointer;
-            transition: 0.2s;
             width: 100%;
-            margin-top: 0.8rem;
+            margin-top: 2rem;
         }
 
         .btn-primary:hover {
             background: var(--accent-hover);
-            transform: scale(0.98);
         }
 
-        .random-group-btn {
-            background: #f1f5f9;
-            border: 1px solid var(--border);
-            margin-top: 0.5rem;
-            font-size: 0.85rem;
+        .toast-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-primary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            z-index: 2000;
+            display: none;
         }
 
-        .warning-note {
-            background: #fff8e7;
-            border-left: 4px solid #f59e0b;
-            padding: 0.8rem;
-            border-radius: 1rem;
-            font-size: 0.75rem;
-            margin: 1rem 0;
-            color: #92400e;
+        .toast-message.show {
+            display: block;
         }
 
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        @media (max-width: 800px) {
-            .selection-layout {
-                grid-template-columns: 1fr;
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 0.8rem 1rem;
+                flex-direction: column;
             }
-            .assignment-panel {
-                position: static;
+            .right-actions {
+                width: 100%;
+            }
+            .search-container {
+                width: 100%;
+            }
+            .main-layout {
+                padding: 0 1rem;
             }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="demo-header">
-        <div class="logo">
-            <img src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="logo">
-            <span>WHITE FOX STUDIO</span>
+    <div class="top-bar">
+        <div class="logo-area">
+            <img class="logo-img" src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="logo">
+            <div class="logo-text">WHITE FOX STUDIO</div>
         </div>
-        <div class="order-badge">
-            📸 Order: <strong id="orderNumberDisplay">WF-2412-001</strong>
-        </div>
-        <div class="order-badge">
-            🖼️ Total photos: <strong id="totalPhotosCount">0</strong>
+        <div class="right-actions">
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="orderNumberInput" placeholder="Order number">
+                    <button id="searchOrderBtn">OK</button>
+                </div>
+            </div>
+            <button class="lang-toggle" id="langToggle">
+                <span id="lang-icon">🇬🇧</span>
+                <span id="lang-text">EN</span>
+            </button>
         </div>
     </div>
 
-    <div class="selection-layout">
-        <!-- left gallery: all photos from order -->
-        <div class="gallery-panel">
-            <div class="section-title">📷 All photos (select to assign)</div>
-            <div id="photoGallery" class="photo-grid">
-                <!-- dynamic photo cards -->
-            </div>
-            <div class="warning-note" style="margin-top: 1rem;">
-                💡 <strong>Logic:</strong> You can manually pick <strong>Cover</strong> and <strong>Back cover</strong> (unique). 
-                The remaining photos will fill the rest of the product positions. Use "Random fill others" to auto-distribute leftovers.
-                Same photo cannot be repeated. Max 30 photos total.
-            </div>
-        </div>
-
-        <!-- right assignment panel -->
-        <div class="assignment-panel">
-            <div class="section-title" style="font-size: 1.3rem;">🎯 Assign positions</div>
-            
-            <!-- Cover slot -->
-            <div class="assignment-group">
-                <h3>📘 Cover photo <span class="slot-badge">mandatory</span></h3>
-                <div id="coverPreview" class="selected-photo-preview">
-                    <div class="mini-thumb">🖼️</div>
-                    <div class="slot-info">Not assigned yet</div>
-                    <button class="btn-outline" id="clearCoverBtn" style="font-size:0.7rem;">✖ Clear</button>
-                </div>
-            </div>
-
-            <!-- Back cover slot -->
-            <div class="assignment-group">
-                <h3>📖 Back cover <span class="slot-badge">optional</span></h3>
-                <div id="backPreview" class="selected-photo-preview">
-                    <div class="mini-thumb">🖼️</div>
-                    <div class="slot-info">Not assigned</div>
-                    <button class="btn-outline" id="clearBackBtn" style="font-size:0.7rem;">✖ Clear</button>
-                </div>
-            </div>
-
-            <!-- product info: dynamic product context -->
-            <div class="assignment-group">
-                <h3>📦 Product / Album info</h3>
-                <div style="background:#f1f5f9; border-radius: 1rem; padding: 0.8rem;">
-                    <div class="flex-between"><span>Product:</span> <strong id="productNameDemo">Premium Photo Book (30 poses)</strong></div>
-                    <div class="flex-between"><span>Total slots:</span> <strong id="totalSlotsCount">30</strong></div>
-                    <div class="flex-between"><span>Assigned:</span> <strong id="assignedCount">0</strong></div>
-                    <div class="flex-between"><span>Remaining:</span> <strong id="remainingSlots">30</strong></div>
-                </div>
-            </div>
-
-            <!-- remaining photos filler -->
-            <div class="assignment-group">
-                <h3>✨ Remaining positions</h3>
-                <button id="randomFillBtn" class="btn-primary random-group-btn" style="background:#e9ecef; color:#1e293b;">🎲 Randomly fill remaining slots</button>
-                <button id="autoDistributeBtn" class="btn-primary">🔄 Auto-distribute (cover fixed, rest random)</button>
-                <button id="resetAllBtn" class="btn-outline" style="width:100%; margin-top: 8px;">🗑️ Reset all assignments</button>
-            </div>
-
-            <!-- Final confirmation demo -->
-            <button id="confirmSelectionBtn" class="btn-primary" style="background:#0f3b3f;">✅ Save selection & preview</button>
-            <div id="resultPreview" style="margin-top: 1rem; font-size: 0.75rem; background: #f8fafc; padding: 0.8rem; border-radius: 1rem; max-height: 200px; overflow-y: auto;"></div>
-        </div>
+    <div class="order-info-bar" id="orderInfoBar">
+        <span>📦 <strong id="orderNumberDisplay">WF-2412-001</strong></span>
+        <span>📸 Total photos: <strong id="totalPhotosInOrder">0</strong></span>
+        <span>🎯 Max per product: <strong>30</strong></span>
     </div>
-</div>
 
-<script>
-    // ======================== DEMO DATA ===========================
-    // simulate order with 30 photos (max 30 photos, each unique)
-    const TOTAL_PHOTOS = 28;  // example: 28 photos (can be less than max slots)
-    const MAX_SLOTS = 30;     // product capacity (pose = 30)
-    
-    // generate mock photos: each photo has id, url placeholder, label
-    let allPhotos = [];
-    for (let i = 1; i <= TOTAL_PHOTOS; i++) {
-        allPhotos.push({
-            id: `photo_${i}`,
-            number: i,
-            label: `Photo ${i}`,
-            url: `https://picsum.photos/id/${i + 30}/200/200?random=${i}`,
-            assignedTo: null   // 'cover', 'back', or 'interior'
-        });
-    }
-
-    // product context (pose count = MAX_SLOTS)
-    let currentProduct = {
-        name: "Premium Album / Calendar (30 pages)",
-        totalSlots: MAX_SLOTS,
-        assignedPositions: {
-            cover: null,      // stores photo id
-            back: null,
-            interior: []      // array of photo ids (max totalSlots - cover/back)
-        }
-    };
-
-    // helper: compute used slots count
-    function getUsedSlots() {
-        let count = 0;
-        if (currentProduct.assignedPositions.cover) count++;
-        if (currentProduct.assignedPositions.back) count++;
-        count += currentProduct.assignedPositions.interior.length;
-        return count;
-    }
-
-    function getRemainingCapacity() {
-        return currentProduct.totalSlots - getUsedSlots();
-    }
-
-    // update UI: gallery highlights + preview panels
-    function renderGallery() {
-        const galleryDiv = document.getElementById('photoGallery');
-        if (!galleryDiv) return;
+    <div class="main-layout">
+        <div class="order-products-section" id="orderProductsContainer">
+            <!-- Products from order will be rendered here -->
+        </div>
         
-        galleryDiv.innerHTML = '';
-        allPhotos.forEach(photo => {
-            const isCover = (currentProduct.assignedPositions.cover === photo.id);
-            const isBack = (currentProduct.assignedPositions.back === photo.id);
-            const isInterior = currentProduct.assignedPositions.interior.includes(photo.id);
-            
-            const card = document.createElement('div');
-            card.className = 'photo-card';
-            if (isCover) card.classList.add('assigned-cover');
-            if (isBack) card.classList.add('assigned-back');
-            if (isCover || isBack || isInterior) card.classList.add('selected');
-            
-            let badgeText = '';
-            if (isCover) badgeText = '📘 COVER';
-            else if (isBack) badgeText = '📖 BACK';
-            else if (isInterior) badgeText = '✓ placed';
-            
-            card.innerHTML = `
-                <div class="photo-img">
-                    <img src="${photo.url}" alt="${photo.label}" loading="lazy" onerror="this.src='https://placehold.co/200x200?text=${photo.label}'">
-                </div>
-                <div class="photo-info">${photo.label}</div>
-                ${badgeText ? `<div class="assigned-badge">${badgeText}</div>` : ''}
-            `;
-            card.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openAssignmentMenu(photo);
-            });
-            galleryDiv.appendChild(card);
-        });
-        
-        // update stats display
-        document.getElementById('totalPhotosCount').innerText = allPhotos.length;
-        document.getElementById('totalSlotsCount').innerText = currentProduct.totalSlots;
-        const used = getUsedSlots();
-        document.getElementById('assignedCount').innerText = used;
-        const remainingCapacity = getRemainingCapacity();
-        document.getElementById('remainingSlots').innerText = remainingCapacity;
-        document.getElementById('productNameDemo').innerText = currentProduct.name;
-        
-        // preview cover/back UI
-        updateSlotPreviews();
-    }
-    
-    function updateSlotPreviews() {
-        const coverPhoto = allPhotos.find(p => p.id === currentProduct.assignedPositions.cover);
-        const coverDiv = document.getElementById('coverPreview');
-        if (coverDiv) {
-            if (coverPhoto) {
-                coverDiv.innerHTML = `
-                    <div class="mini-thumb"><img src="${coverPhoto.url}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;"></div>
-                    <div class="slot-info"><strong>${coverPhoto.label}</strong></div>
-                    <button class="btn-outline" id="clearCoverBtn" style="font-size:0.7rem;">✖ Clear</button>
-                `;
-            } else {
-                coverDiv.innerHTML = `
-                    <div class="mini-thumb">🖼️</div>
-                    <div class="slot-info">Not assigned yet</div>
-                    <button class="btn-outline" id="clearCoverBtn" style="font-size:0.7rem;">✖ Clear</button>
-                `;
-            }
-            document.getElementById('clearCoverBtn')?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (currentProduct.assignedPositions.cover) {
-                    // remove from interior if accidentally duplicate? but cover is exclusive
-                    const oldCoverId = currentProduct.assignedPositions.cover;
-                    currentProduct.assignedPositions.cover = null;
-                    // ensure not in interior array (just in case)
-                    currentProduct.assignedPositions.interior = currentProduct.assignedPositions.interior.filter(id => id !== oldCoverId);
-                    renderGallery();
-                    showToast(`Cover cleared`);
+        <button class="btn-primary" id="confirmSelectionBtn">✅ Confirm photo selection</button>
+    </div>
+
+    <div id="toastMessage" class="toast-message"></div>
+
+    <script>
+        // ===================== MOCK ORDER DATA =====================
+        // Имитация заказа из базы данных (товары с полем pose = количество фото)
+        const mockOrder = {
+            orderNumber: "WF-2412-001",
+            products: [
+                {
+                    id: "prod_1",
+                    sku: "CAL-2025",
+                    name_th: "ปฏิทินตั้งโต๊ะ 2025",
+                    name_en: "Desk Calendar 2025",
+                    pose: 13,           // количество фото в товаре (13 страниц + обложка?)
+                    type: "calendar",
+                    requiresCover: true,
+                    requiresBack: true
+                },
+                {
+                    id: "prod_2",
+                    sku: "PB-ALBUM",
+                    name_th: "อัลบั้มภาพ Premium",
+                    name_en: "Premium Photo Album",
+                    pose: 20,           // 20 фото внутри
+                    type: "album",
+                    requiresCover: true,
+                    requiresBack: true
+                },
+                {
+                    id: "prod_3",
+                    sku: "MAG-01",
+                    name_th: "นิตยสารปกแข็ง",
+                    name_en: "Hardcover Magazine",
+                    pose: 30,           // 30 фото (максимум)
+                    type: "magazine",
+                    requiresCover: true,
+                    requiresBack: false  // только обложка
                 }
-            });
-        }
-        
-        const backPhoto = allPhotos.find(p => p.id === currentProduct.assignedPositions.back);
-        const backDiv = document.getElementById('backPreview');
-        if (backDiv) {
-            if (backPhoto) {
-                backDiv.innerHTML = `
-                    <div class="mini-thumb"><img src="${backPhoto.url}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;"></div>
-                    <div class="slot-info"><strong>${backPhoto.label}</strong></div>
-                    <button class="btn-outline" id="clearBackBtn" style="font-size:0.7rem;">✖ Clear</button>
-                `;
-            } else {
-                backDiv.innerHTML = `
-                    <div class="mini-thumb">🖼️</div>
-                    <div class="slot-info">Not assigned</div>
-                    <button class="btn-outline" id="clearBackBtn" style="font-size:0.7rem;">✖ Clear</button>
-                `;
-            }
-            document.getElementById('clearBackBtn')?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (currentProduct.assignedPositions.back) {
-                    const oldBackId = currentProduct.assignedPositions.back;
-                    currentProduct.assignedPositions.back = null;
-                    currentProduct.assignedPositions.interior = currentProduct.assignedPositions.interior.filter(id => id !== oldBackId);
-                    renderGallery();
-                    showToast(`Back cover cleared`);
-                }
-            });
-        }
-    }
-    
-    // manual assignment: popup style or modal? we'll use simple click dialog
-    function openAssignmentMenu(photo) {
-        // check if photo is already assigned
-        const isCover = (currentProduct.assignedPositions.cover === photo.id);
-        const isBack = (currentProduct.assignedPositions.back === photo.id);
-        const isInterior = currentProduct.assignedPositions.interior.includes(photo.id);
-        
-        let options = [];
-        if (!isCover) options.push('Assign as COVER');
-        if (!isBack) options.push('Assign as BACK COVER');
-        if (!isInterior && !isCover && !isBack) options.push('Assign to interior (regular page)');
-        if (isCover || isBack || isInterior) options.push('Remove from all positions');
-        
-        const choice = prompt(`Photo: ${photo.label}\nSelect action:\n${options.map((opt, idx) => `${idx+1}. ${opt}`).join('\n')}\n\nNote: Cover & back cover must be unique. Max capacity ${getRemainingCapacity()} interior slots left.`);
-        if (!choice) return;
-        
-        const lowerChoice = choice.toLowerCase();
-        if (lowerChoice.includes('cover') && !isCover) {
-            // assign as cover
-            if (currentProduct.assignedPositions.cover) {
-                alert(`Cover already assigned to another photo. Remove current cover first.`);
-                return;
-            }
-            // remove from any other assignment
-            removePhotoFromAll(photo.id);
-            currentProduct.assignedPositions.cover = photo.id;
-            renderGallery();
-            showToast(`${photo.label} set as COVER`);
-        } 
-        else if (lowerChoice.includes('back cover') && !isBack) {
-            if (currentProduct.assignedPositions.back) {
-                alert(`Back cover already taken. Clear first.`);
-                return;
-            }
-            removePhotoFromAll(photo.id);
-            currentProduct.assignedPositions.back = photo.id;
-            renderGallery();
-            showToast(`${photo.label} set as BACK COVER`);
-        }
-        else if (lowerChoice.includes('interior') && !isCover && !isBack && !isInterior) {
-            let remaining = getRemainingCapacity();
-            if (remaining <= 0) {
-                alert(`No free slots left! Product capacity is ${currentProduct.totalSlots} photos. You already used ${getUsedSlots()} slots.`);
-                return;
-            }
-            removePhotoFromAll(photo.id);
-            currentProduct.assignedPositions.interior.push(photo.id);
-            renderGallery();
-            showToast(`${photo.label} added to interior (${currentProduct.assignedPositions.interior.length}/${currentProduct.totalSlots - (currentProduct.assignedPositions.cover ? 1 : 0) - (currentProduct.assignedPositions.back ? 1 : 0)})`);
-        }
-        else if (lowerChoice.includes('remove')) {
-            removePhotoFromAll(photo.id);
-            renderGallery();
-            showToast(`${photo.label} removed from all assignments`);
-        }
-        else {
-            alert('Invalid selection');
-        }
-    }
-    
-    function removePhotoFromAll(photoId) {
-        if (currentProduct.assignedPositions.cover === photoId) currentProduct.assignedPositions.cover = null;
-        if (currentProduct.assignedPositions.back === photoId) currentProduct.assignedPositions.back = null;
-        currentProduct.assignedPositions.interior = currentProduct.assignedPositions.interior.filter(id => id !== photoId);
-    }
-    
-    // random fill remaining slots: picks from unassigned photos (not cover/back/interior) and fills up to capacity
-    function randomFillRemaining() {
-        const assignedSet = new Set();
-        if (currentProduct.assignedPositions.cover) assignedSet.add(currentProduct.assignedPositions.cover);
-        if (currentProduct.assignedPositions.back) assignedSet.add(currentProduct.assignedPositions.back);
-        currentProduct.assignedPositions.interior.forEach(id => assignedSet.add(id));
-        
-        const availablePhotos = allPhotos.filter(p => !assignedSet.has(p.id));
-        let neededSlots = getRemainingCapacity();
-        if (neededSlots <= 0) {
-            alert('No remaining slots to fill. Maximum capacity reached.');
-            return;
-        }
-        if (availablePhotos.length === 0) {
-            alert('No unassigned photos left.');
-            return;
-        }
-        // shuffle available
-        const shuffled = [...availablePhotos];
-        for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-        }
-        const toAdd = shuffled.slice(0, Math.min(neededSlots, shuffled.length));
-        toAdd.forEach(photo => {
-            currentProduct.assignedPositions.interior.push(photo.id);
-        });
-        renderGallery();
-        showToast(`Randomly added ${toAdd.length} photos to interior slots. Remaining slots: ${getRemainingCapacity()}`);
-    }
-    
-    // auto-distribute: cover + back fixed, then fill rest randomly among available photos (no repeats, respects capacity)
-    function autoDistributeAll() {
-        // keep current cover/back fixed
-        const fixedIds = new Set();
-        if (currentProduct.assignedPositions.cover) fixedIds.add(currentProduct.assignedPositions.cover);
-        if (currentProduct.assignedPositions.back) fixedIds.add(currentProduct.assignedPositions.back);
-        
-        // reset interior but keep cover/back
-        currentProduct.assignedPositions.interior = [];
-        
-        const allFreePhotos = allPhotos.filter(p => !fixedIds.has(p.id));
-        const needed = currentProduct.totalSlots - fixedIds.size;
-        if (needed <= 0) {
-            renderGallery();
-            showToast('No slots available after cover/back');
-            return;
-        }
-        // shuffle and pick needed (max possible)
-        const shuffled = [...allFreePhotos];
-        for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-        }
-        const selected = shuffled.slice(0, Math.min(needed, shuffled.length));
-        currentProduct.assignedPositions.interior = selected.map(p => p.id);
-        renderGallery();
-        showToast(`Auto-distribution completed: Cover + Back fixed, ${currentProduct.assignedPositions.interior.length} interior photos assigned.`);
-    }
-    
-    function resetAllAssignments() {
-        currentProduct.assignedPositions = {
-            cover: null,
-            back: null,
-            interior: []
+            ]
         };
-        renderGallery();
-        showToast('All photo assignments have been reset.');
-    }
-    
-    // confirm selection: show final mapping (demo preview)
-    function showFinalPreview() {
-        const coverPhoto = allPhotos.find(p => p.id === currentProduct.assignedPositions.cover);
-        const backPhoto = allPhotos.find(p => p.id === currentProduct.assignedPositions.back);
-        const interiorPhotos = currentProduct.assignedPositions.interior.map(id => allPhotos.find(p => p.id === id)).filter(Boolean);
+
+        // Имитация доступных фото (номера от 1 до 50)
+        // Пользователь получает листочек с номерами фото, вводит их вручную
+        let availablePhotoNumbers = []; // будет заполняться из ввода пользователя
         
-        let msg = `📸 ORDER PHOTO LAYOUT\n`;
-        msg += `📘 Cover: ${coverPhoto ? coverPhoto.label : 'NOT SET'}\n`;
-        msg += `📖 Back cover: ${backPhoto ? backPhoto.label : 'NOT SET'}\n`;
-        msg += `📄 Interior pages (${interiorPhotos.length} photos): `;
-        if (interiorPhotos.length === 0) msg += `none\n`;
-        else msg += interiorPhotos.map(p => p.label).join(', ') + '\n';
-        msg += `\n✅ Total slots used: ${getUsedSlots()} / ${currentProduct.totalSlots}`;
-        if (getRemainingCapacity() > 0) msg += `\n⚠️ ${getRemainingCapacity()} empty slots remaining. You can fill with more photos.`;
+        // Структура для хранения назначений по каждому товару
+        let productAssignments = {};
+
+        let currentLang = 'en';
         
-        document.getElementById('resultPreview').innerHTML = `<pre style="white-space: pre-wrap; font-size:0.7rem;">${msg}</pre>`;
-        showToast('Preview updated in bottom panel');
-    }
-    
-    // simple toast
-    function showToast(message, duration = 2000) {
-        let toast = document.getElementById('dynamicToast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.id = 'dynamicToast';
-            toast.style.position = 'fixed';
-            toast.style.bottom = '20px';
-            toast.style.left = '50%';
-            toast.style.transform = 'translateX(-50%)';
-            toast.style.backgroundColor = '#007883';
-            toast.style.color = 'white';
-            toast.style.padding = '0.8rem 1.8rem';
-            toast.style.borderRadius = '60px';
-            toast.style.fontWeight = '600';
-            toast.style.zIndex = '9999';
-            toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
-            toast.style.fontSize = '0.85rem';
-            document.body.appendChild(toast);
+        const translations = {
+            en: {
+                cover: "Cover Photo",
+                back: "Back Cover",
+                interior: "Interior Photos",
+                assignPhoto: "Assign photo #",
+                randomFill: "🎲 Random fill remaining",
+                enterNumber: "Enter photo number",
+                confirm: "Confirm selection",
+                toastSuccess: "Selection saved!",
+                toastError: "Please enter photo numbers",
+                toastDuplicate: "Photo already used",
+                toastFull: "All slots filled"
+            },
+            th: {
+                cover: "รูปปก",
+                back: "รูปปกหลัง",
+                interior: "รูปภายใน",
+                assignPhoto: "เลือกรูปหมายเลข",
+                randomFill: "🎲 สุ่มรูปที่เหลือ",
+                enterNumber: "กรอกหมายเลขรูป",
+                confirm: "ยืนยันการเลือก",
+                toastSuccess: "บันทึกการเลือกแล้ว!",
+                toastError: "กรุณากรอกหมายเลขรูป",
+                toastDuplicate: "หมายเลขรูปนี้ถูกใช้แล้ว",
+                toastFull: "ครบทุกตำแหน่งแล้ว"
+            }
+        };
+
+        // Функция для отображения тоста
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toastMessage');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
-        toast.textContent = message;
-        toast.style.display = 'block';
-        setTimeout(() => {
-            toast.style.display = 'none';
-        }, duration);
-    }
-    
-    // additional logic: prevent duplicate assign; ensure no photo repeats and max 30 constraint
-    // All functions already respect uniqueness via removePhotoFromAll before assigning new.
-    
-    function initDemo() {
-        // set default product total slots based on 'pose' concept
-        currentProduct.totalSlots = MAX_SLOTS;
-        currentProduct.name = "Premium Album / Calendar (max 30 poses)";
-        // optionally set some demo initial assignments for showcase
-        // but leave empty for clean demo
-        renderGallery();
-        
-        document.getElementById('randomFillBtn').addEventListener('click', randomFillRemaining);
-        document.getElementById('autoDistributeBtn').addEventListener('click', autoDistributeAll);
-        document.getElementById('resetAllBtn').addEventListener('click', resetAllAssignments);
-        document.getElementById('confirmSelectionBtn').addEventListener('click', showFinalPreview);
-        
-        // order number display (demo)
-        const urlParams = new URLSearchParams(window.location.search);
-        const orderParam = urlParams.get('order');
-        if (orderParam) {
-            document.getElementById('orderNumberDisplay').innerHTML = `#${orderParam}`;
-        } else {
-            document.getElementById('orderNumberDisplay').innerHTML = `DEMO-2025-001`;
+
+        // Обновление языка
+        function updateLanguage() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    el.textContent = translations[currentLang][key];
+                }
+            });
+            
+            const langIcon = document.getElementById('lang-icon');
+            const langText = document.getElementById('lang-text');
+            if (currentLang === 'en') {
+                langIcon.textContent = '🇬🇧';
+                langText.textContent = 'EN';
+            } else {
+                langIcon.textContent = '🇹🇭';
+                langText.textContent = 'TH';
+            }
+            
+            // Перерендерим товары для обновления текстов
+            renderOrderProducts();
         }
-    }
-    
-    initDemo();
-</script>
+
+        // Инициализация назначений для товаров
+        function initAssignments() {
+            productAssignments = {};
+            mockOrder.products.forEach(product => {
+                const totalSlots = product.pose;
+                productAssignments[product.id] = {
+                    cover: null,
+                    back: null,
+                    interior: [],      // массив номеров фото
+                    usedNumbers: new Set(),
+                    totalSlots: totalSlots,
+                    requiresCover: product.requiresCover,
+                    requiresBack: product.requiresBack
+                };
+            });
+        }
+
+        // Получить все использованные номера в заказе
+        function getAllUsedNumbers() {
+            const used = new Set();
+            Object.values(productAssignments).forEach(assignment => {
+                if (assignment.cover) used.add(assignment.cover);
+                if (assignment.back) used.add(assignment.back);
+                assignment.interior.forEach(n => used.add(n));
+            });
+            return used;
+        }
+
+        // Проверка доступности номера
+        function isNumberAvailable(photoNum, productId) {
+            const allUsed = getAllUsedNumbers();
+            return !allUsed.has(photoNum);
+        }
+
+        // Назначить фото на позицию
+        function assignPhoto(productId, position, photoNum) {
+            const assignment = productAssignments[productId];
+            if (!assignment) return false;
+            
+            // Проверка на дубликат во всем заказе
+            if (!isNumberAvailable(photoNum, productId)) {
+                showToast(`${translations[currentLang].toastDuplicate}: ${photoNum}`, 'error');
+                return false;
+            }
+            
+            // Проверка на максимальное количество
+            const currentCount = (assignment.cover ? 1 : 0) + (assignment.back ? 1 : 0) + assignment.interior.length;
+            if (currentCount >= assignment.totalSlots && position !== 'cover' && position !== 'back') {
+                showToast(translations[currentLang].toastFull, 'error');
+                return false;
+            }
+            
+            // Удаляем старое назначение если есть
+            if (position === 'cover' && assignment.cover) {
+                assignment.cover = null;
+            }
+            if (position === 'back' && assignment.back) {
+                assignment.back = null;
+            }
+            
+            // Назначаем новое
+            if (position === 'cover') {
+                assignment.cover = photoNum;
+            } else if (position === 'back') {
+                assignment.back = photoNum;
+            } else {
+                assignment.interior.push(photoNum);
+            }
+            
+            renderOrderProducts();
+            return true;
+        }
+
+        // Удалить фото с позиции
+        function removePhoto(productId, position, index = null) {
+            const assignment = productAssignments[productId];
+            if (!assignment) return;
+            
+            if (position === 'cover') {
+                assignment.cover = null;
+            } else if (position === 'back') {
+                assignment.back = null;
+            } else if (position === 'interior' && index !== null) {
+                assignment.interior.splice(index, 1);
+            }
+            
+            renderOrderProducts();
+        }
+
+        // Случайное заполнение оставшихся позиций
+        function randomFillRemaining(productId) {
+            const assignment = productAssignments[productId];
+            if (!assignment) return;
+            
+            const allUsed = getAllUsedNumbers();
+            const availableNumbers = [];
+            
+            // Доступные номера от 1 до 50, которые не используются
+            for (let i = 1; i <= 50; i++) {
+                if (!allUsed.has(i)) {
+                    availableNumbers.push(i);
+                }
+            }
+            
+            // Перемешиваем
+            for (let i = availableNumbers.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [availableNumbers[i], availableNumbers[j]] = [availableNumbers[j], availableNumbers[i]];
+            }
+            
+            const currentCount = (assignment.cover ? 1 : 0) + (assignment.back ? 1 : 0) + assignment.interior.length;
+            const needed = assignment.totalSlots - currentCount;
+            
+            if (needed <= 0) {
+                showToast(translations[currentLang].toastFull, 'error');
+                return;
+            }
+            
+            const toAdd = availableNumbers.slice(0, Math.min(needed, availableNumbers.length));
+            toAdd.forEach(num => {
+                assignment.interior.push(num);
+            });
+            
+            renderOrderProducts();
+            showToast(`Added ${toAdd.length} photos to ${assignment.totalSlots - (assignment.cover ? 1 : 0) - (assignment.back ? 1 : 0) - assignment.interior.length} remaining slots`);
+        }
+
+        // Сброс всех назначений для товара
+        function resetProduct(productId) {
+            const assignment = productAssignments[productId];
+            if (assignment) {
+                assignment.cover = null;
+                assignment.back = null;
+                assignment.interior = [];
+            }
+            renderOrderProducts();
+        }
+
+        // Рендер товаров заказа
+        function renderOrderProducts() {
+            const container = document.getElementById('orderProductsContainer');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            mockOrder.products.forEach(product => {
+                const assignment = productAssignments[product.id];
+                if (!assignment) return;
+                
+                const name = currentLang === 'th' ? product.name_th : product.name_en;
+                const currentCount = (assignment.cover ? 1 : 0) + (assignment.back ? 1 : 0) + assignment.interior.length;
+                const remaining = assignment.totalSlots - currentCount;
+                
+                const productCard = document.createElement('div');
+                productCard.className = 'order-product-card';
+                productCard.innerHTML = `
+                    <div class="order-product-header">
+                        <div>
+                            <span class="product-name">${name}</span>
+                            <span class="product-sku" style="margin-left: 0.8rem;">${product.sku}</span>
+                        </div>
+                        <div class="photo-count-badge">
+                            📷 ${currentCount}/${assignment.totalSlots} photos
+                        </div>
+                    </div>
+                    <div class="photo-selection-area">
+                        ${renderSlotSection(product.id, 'cover', assignment.cover, assignment.requiresCover, '📘')}
+                        ${renderSlotSection(product.id, 'back', assignment.back, assignment.requiresBack, '📖')}
+                        ${renderInteriorSection(product.id, assignment.interior, remaining)}
+                        <div style="display: flex; gap: 0.8rem; margin-top: 1rem;">
+                            <button class="btn-small btn-random" onclick="randomFillRemaining('${product.id}')" data-i18n="randomFill">🎲 Random fill remaining</button>
+                            <button class="btn-small" onclick="resetProduct('${product.id}')" style="background:#fee2e2; color:#c44536;">🗑️ Reset</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(productCard);
+            });
+            
+            // Обновляем общее количество фото
+            const allUsed = getAllUsedNumbers();
+            document.getElementById('totalPhotosInOrder').textContent = allUsed.size;
+        }
+        
+        function renderSlotSection(productId, position, assignedNumber, required, icon) {
+            const label = translations[currentLang][position] || (position === 'cover' ? 'Cover' : 'Back Cover');
+            const isRequired = required;
+            
+            let content = '';
+            if (assignedNumber) {
+                content = `
+                    <div class="assigned-photo">
+                        <div class="photo-thumb">
+                            <img src="https://picsum.photos/id/${assignedNumber + 30}/60/60" alt="photo ${assignedNumber}" onerror="this.src='https://placehold.co/60x60?text=${assignedNumber}'">
+                        </div>
+                        <div style="flex:1">
+                            <strong>Photo #${assignedNumber}</strong>
+                        </div>
+                        <button class="btn-small" onclick="removePhoto('${productId}', '${position}')">✖ Remove</button>
+                    </div>
+                `;
+            } else {
+                content = `
+                    <div class="photo-number-input">
+                        <span>${translations[currentLang].assignPhoto}:</span>
+                        <input type="number" id="input-${productId}-${position}" placeholder="${translations[currentLang].enterNumber}" min="1" max="50">
+                        <button class="btn-small" onclick="assignFromInput('${productId}', '${position}')">✓ Set</button>
+                        ${!required ? '<span style="font-size:0.7rem; color:#94a3b8;">(optional)</span>' : ''}
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="slot-section">
+                    <div class="slot-title">
+                        ${icon} ${label}
+                        ${isRequired ? '<span class="slot-badge">required</span>' : '<span class="slot-badge optional">optional</span>'}
+                    </div>
+                    ${content}
+                </div>
+            `;
+        }
+        
+        function renderInteriorSection(productId, interiorNumbers, remaining) {
+            const label = translations[currentLang].interior;
+            
+            let listHtml = '';
+            if (interiorNumbers.length > 0) {
+                listHtml = `
+                    <div class="remaining-photos-list">
+                        ${interiorNumbers.map((num, idx) => `
+                            <div class="photo-number-chip">
+                                #${num}
+                                <button onclick="removePhoto('${productId}', 'interior', ${idx})" style="background:none; border:none; margin-left:6px; cursor:pointer; color:#c44536;">✕</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="slot-section">
+                    <div class="slot-title">
+                        🖼️ ${label}
+                        <span class="slot-badge">${interiorNumbers.length} / ${remaining + interiorNumbers.length} filled</span>
+                    </div>
+                    <div class="photo-number-input" style="margin-bottom: 0.8rem;">
+                        <span>➕ Add photo #:</span>
+                        <input type="number" id="input-${productId}-interior" placeholder="1-50" min="1" max="50">
+                        <button class="btn-small" onclick="addInteriorPhoto('${productId}')">Add</button>
+                    </div>
+                    ${listHtml}
+                    ${remaining > 0 ? `<div style="margin-top: 0.5rem; font-size: 0.75rem; color: #64748b;">⚠️ ${remaining} more photo(s) needed to fill this product</div>` : '<div style="margin-top: 0.5rem; color: #2e7d5e;">✓ All slots filled!</div>'}
+                </div>
+            `;
+        }
+        
+        // Глобальные функции для вызова из onclick
+        window.assignFromInput = function(productId, position) {
+            const input = document.getElementById(`input-${productId}-${position}`);
+            if (!input) return;
+            const photoNum = parseInt(input.value);
+            if (isNaN(photoNum) || photoNum < 1 || photoNum > 50) {
+                showToast(translations[currentLang].toastError, 'error');
+                return;
+            }
+            if (assignPhoto(productId, position, photoNum)) {
+                input.value = '';
+            }
+        };
+        
+        window.addInteriorPhoto = function(productId) {
+            const input = document.getElementById(`input-${productId}-interior`);
+            if (!input) return;
+            const photoNum = parseInt(input.value);
+            if (isNaN(photoNum) || photoNum < 1 || photoNum > 50) {
+                showToast(translations[currentLang].toastError, 'error');
+                return;
+            }
+            if (assignPhoto(productId, 'interior', photoNum)) {
+                input.value = '';
+            }
+        };
+        
+        window.removePhoto = function(productId, position, index) {
+            if (position === 'interior' && index !== undefined) {
+                const assignment = productAssignments[productId];
+                if (assignment && assignment.interior[index]) {
+                    assignment.interior.splice(index, 1);
+                    renderOrderProducts();
+                }
+            } else {
+                const assignment = productAssignments[productId];
+                if (assignment) {
+                    if (position === 'cover') assignment.cover = null;
+                    if (position === 'back') assignment.back = null;
+                    renderOrderProducts();
+                }
+            }
+        };
+        
+        window.randomFillRemaining = randomFillRemaining;
+        window.resetProduct = resetProduct;
+        
+        // Подтверждение выбора
+        function confirmSelection() {
+            const allAssignments = [];
+            mockOrder.products.forEach(product => {
+                const assignment = productAssignments[product.id];
+                const currentCount = (assignment.cover ? 1 : 0) + (assignment.back ? 1 : 0) + assignment.interior.length;
+                const status = currentCount === assignment.totalSlots ? '✓ Complete' : `⚠️ ${assignment.totalSlots - currentCount} missing`;
+                allAssignments.push({
+                    product: product.sku,
+                    cover: assignment.cover,
+                    back: assignment.back,
+                    interior: assignment.interior,
+                    status: status
+                });
+            });
+            
+            console.log('Final selection:', allAssignments);
+            showToast(translations[currentLang].toastSuccess);
+            alert(JSON.stringify(allAssignments, null, 2));
+        }
+        
+        // Поиск заказа (демо)
+        function searchOrder() {
+            const orderInput = document.getElementById('orderNumberInput').value.trim();
+            if (orderInput) {
+                document.getElementById('orderNumberDisplay').textContent = orderInput;
+                showToast(`Loaded order: ${orderInput}`, 'success');
+            } else {
+                showToast('Enter order number', 'error');
+            }
+        }
+        
+        // Инициализация
+        function init() {
+            initAssignments();
+            renderOrderProducts();
+            
+            document.getElementById('langToggle').addEventListener('click', () => {
+                currentLang = currentLang === 'en' ? 'th' : 'en';
+                updateLanguage();
+            });
+            
+            document.getElementById('searchOrderBtn').addEventListener('click', searchOrder);
+            document.getElementById('confirmSelectionBtn').addEventListener('click', confirmSelection);
+            document.getElementById('orderNumberInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchOrder();
+            });
+            
+            updateLanguage();
+        }
+        
+        init();
+    </script>
 </body>
 </html>
