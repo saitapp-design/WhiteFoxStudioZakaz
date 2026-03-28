@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio - Photo Selection</title>
+    <title>White Fox Studio - Photo Selection with Sizes</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         :root {
@@ -218,8 +218,8 @@
         .product-info {
             display: flex;
             align-items: baseline;
-            gap: 12px;
             flex-wrap: wrap;
+            gap: 8px;
         }
 
         .product-sku {
@@ -236,6 +236,15 @@
             font-size: 1.1rem;
             font-weight: 700;
             color: var(--accent-primary);
+        }
+
+        .product-size-badge {
+            background: var(--purple);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
         }
 
         .product-type-badge {
@@ -461,7 +470,6 @@
             .search-box { width: 100%; }
             .assignment-grid { grid-template-columns: 1fr; }
             .main-content { padding: 1rem; }
-            .product-info { flex-direction: column; align-items: flex-start; gap: 4px; }
         }
     </style>
 </head>
@@ -507,10 +515,8 @@
         let photoAssignments = {};
         let isLoading = true;
         
-        // Maximum photos limit - 31 total per product
         const MAX_PHOTOS = 31;
         
-        // Detect product type based on number of photos
         function detectProductType(product) {
             const pose = Math.min(product.pose || 0, MAX_PHOTOS);
             
@@ -526,8 +532,17 @@
                 return { type: 'double', hasCover: true, hasBack: true, hasInterior: false, label: '🖼️ Double Photo' };
             }
             
-            // 3+ photos - has cover, back, and interior
             return { type: 'multi', hasCover: true, hasBack: true, hasInterior: true, label: '📚 Book / Calendar' };
+        }
+        
+        // Get all unique sizes from variants
+        function getProductSizes(variants) {
+            if (!variants || variants.length === 0) return [];
+            const sizes = new Set();
+            variants.forEach(v => {
+                if (v.size_label) sizes.add(v.size_label);
+            });
+            return Array.from(sizes);
         }
         
         const translations = {
@@ -541,7 +556,7 @@
                 confirmAll: '✅ Confirm All', backToLogin: '← Back', totalPhotos: 'Total',
                 moreNeeded: 'more needed', filled: 'Complete!', packageContents: 'Package Contents:',
                 cover: 'Front Cover', back: 'Back Cover', interior: 'Interior Pages',
-                mainPhoto: 'Main Photo'
+                mainPhoto: 'Main Photo', size: 'Size'
             },
             th: {
                 title: 'กรุณากรอกหมายเลขคำสั่งซื้อ', subtitle: 'กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ',
@@ -553,7 +568,7 @@
                 confirmAll: '✅ ยืนยันทั้งหมด', backToLogin: '← กลับ', totalPhotos: 'รูปทั้งหมด',
                 moreNeeded: 'ต้องเลือกเพิ่ม', filled: 'ครบถ้วน!', packageContents: 'ส่วนประกอบแพ็คเกจ:',
                 cover: 'ปกหน้า', back: 'ปกหลัง', interior: 'หน้าภายใน',
-                mainPhoto: 'รูปหลัก'
+                mainPhoto: 'รูปหลัก', size: 'ขนาด'
             }
         };
         
@@ -658,12 +673,13 @@
                             name_th: pkg.name_th,
                             pose: totalPhotos,
                             isPackage: true,
-                            packageContents: contents
+                            packageContents: contents,
+                            variants: []
                         });
                     });
                 }
                 
-                console.log(`✅ Loaded ${allProducts.length} products (max ${MAX_PHOTOS} photos per product)`);
+                console.log(`✅ Loaded ${allProducts.length} products`);
                 isLoading = false;
             } catch(e) { 
                 console.error('Error loading products:', e);
@@ -709,6 +725,8 @@
                 const itemId = `item_${idx}_${(item.sku || Date.now()).replace(/[^a-zA-Z0-9]/g, '_')}`;
                 const productType = detectProductType(item);
                 const maxPose = Math.min(item.pose, MAX_PHOTOS);
+                const sizes = getProductSizes(item.variants);
+                const displaySize = sizes.length > 0 ? sizes[0] : null;
                 
                 if (item.isPackage && item.packageContents && item.packageContents.length > 0) {
                     const contentSlots = {};
@@ -731,7 +749,8 @@
                         isPackage: true,
                         packageContents: item.packageContents,
                         contentSlots: contentSlots,
-                        variants: item.variants || []
+                        variants: item.variants || [],
+                        size: displaySize
                     };
                 } else {
                     let displaySku = item.sku;
@@ -748,6 +767,7 @@
                         productType: productType,
                         isPackage: false,
                         variants: item.variants || [],
+                        size: displaySize,
                         cover: null,
                         back: null,
                         interior: []
@@ -785,7 +805,6 @@
         function setBack(itemId, num) {
             const a = photoAssignments[itemId];
             if (!a || a.isPackage) return false;
-            // Only products with 2+ photos have back cover
             if (a.total < 2) {
                 showToast('This product does not have a back cover');
                 return false;
@@ -802,7 +821,6 @@
         function addInterior(itemId, num) {
             const a = photoAssignments[itemId];
             if (!a || a.isPackage) return false;
-            // Only products with 3+ photos have interior pages
             if (a.total < 3) {
                 showToast('This product does not have interior pages');
                 return false;
@@ -844,7 +862,6 @@
         function randomFillInterior(itemId) {
             const a = photoAssignments[itemId];
             if (!a || a.isPackage) return;
-            // Only for products with 3+ photos
             if (a.total < 3) {
                 showToast('This product does not have interior pages');
                 return;
@@ -927,6 +944,7 @@
             let summary = '📸 PHOTO SELECTION CONFIRMED\n\n';
             for (const [id, a] of Object.entries(photoAssignments)) {
                 summary += `━━━ ${a.name} (SKU: ${a.sku}) ━━━\n`;
+                if (a.size) summary += `📏 ${t.size}: ${a.size}\n`;
                 summary += `📦 Type: ${a.productType.label}\n`;
                 summary += `📷 Total photos: ${a.total}\n`;
                 
@@ -992,7 +1010,7 @@
                                     if (v.color) variantParts.push(v.color);
                                     variantText = variantParts.join(' / ');
                                     if (!variantText) variantText = v.sku;
-                                    return `<option value="${v.sku}" data-sku="${v.sku}" ${idx === 0 ? 'selected' : ''}>
+                                    return `<option value="${v.sku}" data-sku="${v.sku}" data-size="${v.size_label || ''}" ${idx === 0 ? 'selected' : ''}>
                                         ${variantText}
                                     </option>`;
                                 }).join('')}
@@ -1034,11 +1052,18 @@
                     </div>`;
                 }
                 
+                // Build product info with size if available
+                let sizeHtml = '';
+                if (a.size) {
+                    sizeHtml = `<span class="product-size-badge">📏 ${t.size}: ${a.size}</span>`;
+                }
+                
                 productsHtml += `<div class="product-card">
                     <div class="product-header">
                         <div class="product-info">
                             <span class="product-sku">${escapeHtml(a.sku)}</span>
                             <span class="product-name">${escapeHtml(a.name)}</span>
+                            ${sizeHtml}
                             <span class="product-type-badge">${a.productType.label}</span>
                         </div>
                         <div class="product-stats">
