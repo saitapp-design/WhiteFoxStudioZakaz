@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>White Fox Studio - Photo Selection</title>
     <style>
-        /* ===== ОСНОВНЫЕ ПЕРЕМЕННЫЕ ===== */
         :root {
             --accent-primary: #007883;
             --accent-hover: #0a6570;
             --accent-light: rgba(0, 120, 131, 0.1);
             --bg-secondary: #ffffff;
-            --bg-form: #f5f5f5;
             --text-primary: #333333;
             --text-secondary: #666666;
             --text-muted: #999999;
@@ -69,7 +67,6 @@
             font-size: 1.4rem;
             font-weight: 800;
             color: var(--accent-primary);
-            letter-spacing: 0.5px;
         }
 
         .right-actions {
@@ -90,13 +87,6 @@
             padding: 0.1rem 0.1rem 0.1rem 1.5rem;
             border: 2px solid var(--accent-primary);
             height: 48px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,120,131,0.1);
-        }
-
-        .search-box:focus-within {
-            box-shadow: 0 4px 20px var(--accent-light);
-            border-color: var(--accent-hover);
         }
 
         .search-box input {
@@ -106,12 +96,6 @@
             width: 100%;
             outline: none;
             font-size: 1rem;
-            color: var(--text-primary);
-        }
-
-        .search-box input::placeholder {
-            color: var(--text-muted);
-            font-size: 0.95rem;
         }
 
         .search-box button {
@@ -121,16 +105,8 @@
             padding: 0.5rem 2rem;
             border-radius: 60px;
             font-weight: 600;
-            font-size: 0.95rem;
             cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
             height: 40px;
-        }
-
-        .search-box button:hover {
-            background: var(--accent-hover);
-            transform: scale(1.02);
         }
 
         .lang-toggle {
@@ -138,23 +114,13 @@
             border: 2px solid var(--accent-primary);
             border-radius: 60px;
             padding: 0.5rem 1.2rem;
-            font-size: 1rem;
             cursor: pointer;
             color: var(--accent-primary);
             font-weight: 600;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
-            flex-shrink: 0;
             height: 48px;
-            min-width: 90px;
-            transition: all 0.2s;
-        }
-
-        .lang-toggle:hover {
-            background: var(--accent-primary);
-            color: white;
         }
 
         .main-content {
@@ -164,7 +130,6 @@
             min-height: calc(100vh - 120px);
         }
 
-        /* Login Screen */
         .login-screen {
             max-width: 500px;
             margin: 3rem auto;
@@ -180,13 +145,11 @@
             font-size: 2.2rem;
             color: var(--accent-primary);
             margin-bottom: 1rem;
-            font-weight: 700;
         }
 
         .subtitle {
             color: var(--text-secondary);
             margin-bottom: 2rem;
-            font-size: 1.1rem;
         }
 
         .order-input {
@@ -196,7 +159,6 @@
             border: 2px solid var(--border-color);
             border-radius: 60px;
             outline: none;
-            transition: all 0.3s;
             text-align: center;
             margin-bottom: 1rem;
         }
@@ -222,10 +184,8 @@
         .btn-primary:hover {
             background: var(--accent-hover);
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px var(--shadow-color);
         }
 
-        /* Order Header */
         .order-header {
             background: white;
             border-radius: 24px;
@@ -241,7 +201,7 @@
 
         .order-info {
             display: flex;
-            gap: 2rem;
+            gap: 1rem;
             flex-wrap: wrap;
         }
 
@@ -261,14 +221,8 @@
             border-radius: 40px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .back-btn:hover {
-            background: var(--accent-light);
-        }
-
-        /* Product Cards */
         .product-card {
             background: white;
             border-radius: 28px;
@@ -293,8 +247,15 @@
             border-bottom: 2px solid var(--accent-light);
         }
 
-        .product-title {
-            font-size: 1.4rem;
+        .product-name-block {
+            display: flex;
+            align-items: baseline;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--accent-primary);
         }
@@ -303,14 +264,15 @@
             background: var(--accent-light);
             padding: 0.3rem 1rem;
             border-radius: 30px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--accent-primary);
+            font-family: monospace;
         }
 
         .photo-stats {
             display: flex;
-            gap: 1rem;
+            gap: 0.8rem;
             align-items: center;
         }
 
@@ -329,12 +291,6 @@
             padding: 0.3rem 1rem;
             border-radius: 30px;
             font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        /* Assignment Sections */
-        .assignment-section {
-            margin-top: 1.2rem;
         }
 
         .slot-group {
@@ -351,10 +307,6 @@
             margin-bottom: 0.8rem;
             font-weight: 700;
             color: var(--accent-primary);
-        }
-
-        .slot-header span:first-child {
-            font-size: 1.2rem;
         }
 
         .required-badge {
@@ -385,7 +337,7 @@
         }
 
         .photo-number {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--accent-primary);
             background: var(--accent-light);
@@ -417,7 +369,6 @@
             border-radius: 30px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.2s;
         }
 
         .btn-small-outline {
@@ -430,10 +381,6 @@
             font-weight: 600;
         }
 
-        .btn-small-outline:hover {
-            background: var(--accent-light);
-        }
-
         .btn-remove {
             background: #fee2e2;
             color: #c44536;
@@ -441,7 +388,6 @@
             padding: 0.3rem 0.8rem;
             border-radius: 30px;
             cursor: pointer;
-            font-size: 0.8rem;
         }
 
         .interior-list {
@@ -467,7 +413,6 @@
             cursor: pointer;
             color: #c44536;
             font-weight: bold;
-            font-size: 1rem;
         }
 
         .remaining-warning {
@@ -490,7 +435,6 @@
             display: inline-block;
         }
 
-        /* Action Buttons */
         .product-actions {
             display: flex;
             gap: 1rem;
@@ -524,8 +468,6 @@
             font-weight: 600;
             z-index: 2000;
             display: none;
-            box-shadow: 0 4px 20px var(--shadow-color);
-            border: 2px solid white;
         }
 
         .toast.show {
@@ -579,14 +521,10 @@
             .main-content {
                 padding: 1rem;
             }
-            .order-header {
-                flex-direction: column;
-                text-align: center;
-            }
             .product-title-section {
                 flex-direction: column;
                 gap: 0.5rem;
-                text-align: center;
+                align-items: flex-start;
             }
         }
     </style>
@@ -598,7 +536,6 @@
                 <img class="logo-img" src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="White Fox Studio">
                 <span class="logo-text">WHITE FOX STUDIO</span>
             </div>
-            
             <div class="right-actions">
                 <div class="search-container">
                     <div class="search-box">
@@ -606,7 +543,6 @@
                         <button id="checkOrderBtn">OK</button>
                     </div>
                 </div>
-                
                 <button class="lang-toggle" id="langToggle">
                     <span id="lang-icon">🇬🇧</span>
                     <span id="lang-text">EN</span>
@@ -628,7 +564,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // ===================== SUPABASE CONFIG =====================
         const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
         
@@ -637,10 +572,8 @@
         let currentOrder = null;
         let photoAssignments = {};
         
-        // Mock order items for demo code 1111 (will match with Supabase products)
         const mockOrderSkus = ['CAL-2025', 'PB-ALBUM', 'MAG-01'];
         
-        // Translations
         const translations = {
             en: {
                 title: 'Enter Order Number',
@@ -650,7 +583,7 @@
                 placeholder: 'Enter order number (1111)',
                 toastOrderLoaded: 'Order loaded! Select photos for each product below.',
                 toastInvalidCode: 'Demo: Only order code 1111 is available',
-                toastPhotoUsed: 'Photo #{num} is already used in this order',
+                toastDuplicateInProduct: 'Photo #{num} is already used in this product',
                 toastAllFilled: 'All slots are filled',
                 toastConfirm: 'Photo selection saved!',
                 cover: 'Cover Photo',
@@ -677,7 +610,7 @@
                 placeholder: 'กรอกหมายเลขคำสั่งซื้อ (1111)',
                 toastOrderLoaded: 'โหลดออเดอร์เรียบร้อย! เลือกรูปสำหรับสินค้าแต่ละรายการด้านล่าง',
                 toastInvalidCode: 'ทดสอบ: ใช้รหัส 1111 เท่านั้น',
-                toastPhotoUsed: 'รูป #{num} ถูกใช้ไปแล้ว',
+                toastDuplicateInProduct: 'รูป #{num} ถูกใช้ในสินค้านี้แล้ว',
                 toastAllFilled: 'ครบทุกตำแหน่งแล้ว',
                 toastConfirm: 'บันทึกการเลือกรูปแล้ว!',
                 cover: 'รูปปก',
@@ -707,7 +640,6 @@
                 document.getElementById('loginBtn').textContent = translations[currentLang].loginBtn;
                 document.getElementById('orderNumberInput').placeholder = translations[currentLang].placeholder;
             }
-            
             const icon = document.getElementById('lang-icon');
             const text = document.getElementById('lang-text');
             if (currentLang === 'en') {
@@ -717,65 +649,40 @@
                 icon.textContent = '🇹🇭';
                 text.textContent = 'TH';
             }
-            
-            if (currentOrder) {
-                renderOrderInterface();
-            }
+            if (currentOrder) renderOrderInterface();
         }
         
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
         
-        // Initialize Supabase
         async function initSupabase() {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-                auth: { persistSession: false }
-            });
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
             await loadProductsFromSupabase();
         }
         
-        // Load all products from Supabase
         async function loadProductsFromSupabase() {
             try {
-                console.log('Loading products from Supabase...');
-                
-                // Load product cards
-                const { data: productCards, error: productsError } = await supabaseClient
-                    .from('product_cards')
-                    .select('*');
-                
+                const { data: productCards, error: productsError } = await supabaseClient.from('product_cards').select('*');
                 if (productsError) throw productsError;
                 
-                // Load packages
-                const { data: packages, error: packagesError } = await supabaseClient
-                    .from('packages_with_price')
-                    .select('*');
-                
+                const { data: packages, error: packagesError } = await supabaseClient.from('packages_with_price').select('*');
                 if (packagesError) console.warn('Packages error:', packagesError);
                 
                 allProducts = [];
                 
-                // Process product cards
                 if (productCards) {
                     productCards.forEach(card => {
                         let poseCount = 0;
-                        
-                        // Try to get pose from variants
                         try {
                             if (card.variants) {
                                 const variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
-                                if (variants.length > 0 && variants[0].pose) {
-                                    poseCount = parseInt(variants[0].pose);
-                                }
+                                if (variants.length > 0 && variants[0].pose) poseCount = parseInt(variants[0].pose);
                             }
                         } catch(e) {}
-                        
                         if (!poseCount && card.pose) poseCount = parseInt(card.pose);
                         if (!poseCount && card.total_photos) poseCount = parseInt(card.total_photos);
                         
@@ -784,13 +691,11 @@
                             sku: card.sku,
                             name_en: card.name_en,
                             name_th: card.name_th,
-                            pose: poseCount || 0,
-                            image_url: card.cover_image
+                            pose: poseCount || 0
                         });
                     });
                 }
                 
-                // Add packages
                 if (packages) {
                     packages.forEach(pkg => {
                         let totalPhotos = pkg.total_photos || 0;
@@ -800,37 +705,26 @@
                                 totalPhotos = contents.reduce((sum, item) => sum + (item.qty || 1), 0);
                             } catch(e) {}
                         }
-                        
                         allProducts.push({
                             id: pkg.id || `pkg_${pkg.sku}`,
                             sku: pkg.sku,
                             name_en: pkg.name_en,
                             name_th: pkg.name_th,
                             pose: totalPhotos || 0,
-                            image_url: pkg.image_url,
                             isPackage: true
                         });
                     });
                 }
                 
-                console.log(`Loaded ${allProducts.length} products from Supabase`);
-                console.log('Products with pose:', allProducts.filter(p => p.pose > 0).map(p => ({ sku: p.sku, pose: p.pose, name: p.name_en })));
-                
+                console.log('Loaded products:', allProducts.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose })));
             } catch (error) {
                 console.error('Error loading products:', error);
-                showToast('Error loading products from database');
             }
         }
         
-        // Check order
         async function checkOrder() {
-            const orderCode = document.getElementById('orderNumberInput')?.value.trim() || 
-                              document.getElementById('orderNumber')?.value.trim();
-            
-            if (!orderCode) {
-                showToast(translations[currentLang].toastError);
-                return;
-            }
+            const orderCode = document.getElementById('orderNumberInput')?.value.trim() || document.getElementById('orderNumber')?.value.trim();
+            if (!orderCode) { showToast(translations[currentLang].toastError); return; }
             
             if (orderCode === '1111') {
                 await loadOrderProducts(orderCode);
@@ -843,7 +737,6 @@
         
         async function loadOrderProducts(orderCode) {
             const orderItems = [];
-            
             for (const sku of mockOrderSkus) {
                 const matchedProduct = allProducts.find(p => p.sku === sku);
                 if (matchedProduct) {
@@ -851,24 +744,14 @@
                         sku: matchedProduct.sku,
                         productId: matchedProduct.id,
                         productName: matchedProduct.name_en || matchedProduct.name_th || matchedProduct.sku,
-                        pose: matchedProduct.pose || 10,
-                        quantity: 1
+                        pose: matchedProduct.pose || 10
                     });
                 } else {
-                    // Fallback with default values
-                    orderItems.push({
-                        sku: sku,
-                        productId: null,
-                        productName: sku,
-                        pose: 10,
-                        quantity: 1
-                    });
+                    orderItems.push({ sku: sku, productId: null, productName: sku, pose: 10 });
                 }
             }
-            
             currentOrder = { orderNumber: orderCode, items: orderItems };
             
-            // Initialize assignments
             photoAssignments = {};
             currentOrder.items.forEach(item => {
                 photoAssignments[item.sku] = {
@@ -876,33 +759,33 @@
                     back: null,
                     interior: [],
                     totalSlots: item.pose,
-                    productName: item.productName
+                    productName: item.productName,
+                    productSku: item.sku
                 };
             });
         }
         
-        function getUsedNumbers() {
-            const used = new Set();
-            Object.values(photoAssignments).forEach(assign => {
-                if (assign.cover) used.add(assign.cover);
-                if (assign.back) used.add(assign.back);
-                assign.interior.forEach(n => used.add(n));
-            });
-            return used;
+        // Check duplicate ONLY within the same product (not across products)
+        function isPhotoUsedInProduct(sku, photoNum, excludePosition = null) {
+            const assignment = photoAssignments[sku];
+            if (!assignment) return false;
+            if (excludePosition !== 'cover' && assignment.cover === photoNum) return true;
+            if (excludePosition !== 'back' && assignment.back === photoNum) return true;
+            if (assignment.interior.includes(photoNum)) return true;
+            return false;
         }
         
         function assignPhoto(sku, position, photoNum) {
             const assignment = photoAssignments[sku];
             if (!assignment) return false;
             
-            const usedNumbers = getUsedNumbers();
-            if (usedNumbers.has(photoNum)) {
-                showToast(translations[currentLang].toastPhotoUsed.replace('{num}', photoNum));
+            if (isPhotoUsedInProduct(sku, photoNum, position)) {
+                showToast(translations[currentLang].toastDuplicateInProduct.replace('{num}', photoNum));
                 return false;
             }
             
             const currentCount = (assignment.cover ? 1 : 0) + (assignment.back ? 1 : 0) + assignment.interior.length;
-            if (currentCount >= assignment.totalSlots && position !== 'cover' && position !== 'back') {
+            if (currentCount >= assignment.totalSlots) {
                 showToast(translations[currentLang].toastAllFilled);
                 return false;
             }
@@ -918,9 +801,8 @@
             const assignment = photoAssignments[sku];
             if (!assignment) return false;
             
-            const usedNumbers = getUsedNumbers();
-            if (usedNumbers.has(photoNum)) {
-                showToast(translations[currentLang].toastPhotoUsed.replace('{num}', photoNum));
+            if (isPhotoUsedInProduct(sku, photoNum)) {
+                showToast(translations[currentLang].toastDuplicateInProduct.replace('{num}', photoNum));
                 return false;
             }
             
@@ -938,12 +820,9 @@
         function removePhoto(sku, position, index = null) {
             const assignment = photoAssignments[sku];
             if (!assignment) return;
-            
             if (position === 'cover') assignment.cover = null;
             else if (position === 'back') assignment.back = null;
-            else if (position === 'interior' && index !== null) {
-                assignment.interior.splice(index, 1);
-            }
+            else if (position === 'interior' && index !== null) assignment.interior.splice(index, 1);
             renderOrderInterface();
         }
         
@@ -953,16 +832,16 @@
             
             const currentCount = (assignment.cover ? 1 : 0) + (assignment.back ? 1 : 0) + assignment.interior.length;
             const needed = assignment.totalSlots - currentCount;
+            if (needed <= 0) { showToast(translations[currentLang].toastAllFilled); return; }
             
-            if (needed <= 0) {
-                showToast(translations[currentLang].toastAllFilled);
-                return;
-            }
+            const usedInProduct = new Set();
+            if (assignment.cover) usedInProduct.add(assignment.cover);
+            if (assignment.back) usedInProduct.add(assignment.back);
+            assignment.interior.forEach(n => usedInProduct.add(n));
             
-            const usedNumbers = getUsedNumbers();
             const available = [];
             for (let i = 1; i <= 999; i++) {
-                if (!usedNumbers.has(i)) available.push(i);
+                if (!usedInProduct.has(i)) available.push(i);
                 if (available.length >= needed) break;
             }
             
@@ -979,11 +858,7 @@
         
         function resetProduct(sku) {
             const assignment = photoAssignments[sku];
-            if (assignment) {
-                assignment.cover = null;
-                assignment.back = null;
-                assignment.interior = [];
-            }
+            if (assignment) { assignment.cover = null; assignment.back = null; assignment.interior = []; }
             renderOrderInterface();
         }
         
@@ -994,9 +869,7 @@
                 summary += `📘 Cover: ${assign.cover || '❌ NOT SET'}\n`;
                 summary += `📖 Back: ${assign.back || '❌ NOT SET'}\n`;
                 summary += `🖼️ Interior: ${assign.interior.length}/${assign.totalSlots - (assign.cover ? 1 : 0) - (assign.back ? 1 : 0)}\n`;
-                if (assign.interior.length > 0) {
-                    summary += `   Photos: ${assign.interior.join(', ')}\n`;
-                }
+                if (assign.interior.length > 0) summary += `   Photos: ${assign.interior.join(', ')}\n`;
                 summary += '\n';
             }
             alert(summary);
@@ -1015,9 +888,7 @@
                 </div>
             `;
             document.getElementById('loginBtn').addEventListener('click', checkOrder);
-            document.getElementById('orderNumberInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') checkOrder();
-            });
+            document.getElementById('orderNumberInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkOrder(); });
         }
         
         function renderOrderInterface() {
@@ -1025,8 +896,7 @@
             const t = translations[currentLang];
             
             let productsHtml = '';
-            let totalProducts = 0;
-            let totalFilled = 0;
+            let totalProducts = 0, totalFilled = 0;
             
             currentOrder.items.forEach(item => {
                 const assignment = photoAssignments[item.sku];
@@ -1034,15 +904,14 @@
                 const remaining = assignment.totalSlots - currentCount;
                 totalProducts += assignment.totalSlots;
                 totalFilled += currentCount;
-                
                 const safeSku = item.sku.replace(/[-\s]/g, '_');
                 
                 productsHtml += `
                     <div class="product-card">
                         <div class="product-title-section">
-                            <div>
-                                <span class="product-title">${escapeHtml(item.productName)}</span>
-                                <span class="product-sku" style="margin-left: 0.8rem;">${item.sku}</span>
+                            <div class="product-name-block">
+                                <span class="product-name">${escapeHtml(item.productName)}</span>
+                                <span class="product-sku">${item.sku}</span>
                             </div>
                             <div class="photo-stats">
                                 <span class="total-photos-badge">📷 ${t.totalPhotos}: ${assignment.totalSlots}</span>
@@ -1051,12 +920,8 @@
                         </div>
                         
                         <div class="assignment-section">
-                            <!-- Cover -->
                             <div class="slot-group">
-                                <div class="slot-header">
-                                    <span>📘</span> ${t.cover}
-                                    <span class="required-badge">${t.required}</span>
-                                </div>
+                                <div class="slot-header"><span>📘</span> ${t.cover} <span class="required-badge">${t.required}</span></div>
                                 ${assignment.cover ? `
                                     <div class="assigned-display">
                                         <span class="photo-number">Photo #${assignment.cover}</span>
@@ -1070,12 +935,8 @@
                                 `}
                             </div>
                             
-                            <!-- Back Cover -->
                             <div class="slot-group">
-                                <div class="slot-header">
-                                    <span>📖</span> ${t.back}
-                                    <span class="optional-badge">${t.optional}</span>
-                                </div>
+                                <div class="slot-header"><span>📖</span> ${t.back} <span class="optional-badge">${t.optional}</span></div>
                                 ${assignment.back ? `
                                     <div class="assigned-display">
                                         <span class="photo-number">Photo #${assignment.back}</span>
@@ -1089,11 +950,8 @@
                                 `}
                             </div>
                             
-                            <!-- Interior -->
                             <div class="slot-group">
-                                <div class="slot-header">
-                                    <span>🖼️</span> ${t.interior} (${assignment.interior.length}/${assignment.totalSlots - (assignment.cover ? 1 : 0) - (assignment.back ? 1 : 0)})
-                                </div>
+                                <div class="slot-header"><span>🖼️</span> ${t.interior} (${assignment.interior.length}/${assignment.totalSlots - (assignment.cover ? 1 : 0) - (assignment.back ? 1 : 0)})</div>
                                 <div class="input-group" style="margin-bottom: 0.8rem;">
                                     <input type="number" id="interior-input-${safeSku}" placeholder="Photo #" min="1" max="999">
                                     <button class="btn-small" onclick="addInteriorFromInput('${item.sku}')">${t.setPhoto}</button>
@@ -1101,16 +959,10 @@
                                 </div>
                                 <div class="interior-list">
                                     ${assignment.interior.map((num, idx) => `
-                                        <div class="photo-chip">
-                                            #${num}
-                                            <button onclick="removePhoto('${item.sku}', 'interior', ${idx})">✕</button>
-                                        </div>
+                                        <div class="photo-chip">#${num}<button onclick="removePhoto('${item.sku}', 'interior', ${idx})">✕</button></div>
                                     `).join('')}
                                 </div>
-                                ${remaining > 0 ? 
-                                    `<div class="remaining-warning">⚠️ ${remaining} ${t.moreNeeded}</div>` : 
-                                    `<div class="complete-success">${t.complete}</div>`
-                                }
+                                ${remaining > 0 ? `<div class="remaining-warning">⚠️ ${remaining} ${t.moreNeeded}</div>` : `<div class="complete-success">${t.complete}</div>`}
                             </div>
                         </div>
                         
@@ -1131,26 +983,19 @@
                     </div>
                     <button class="back-btn" id="backToLoginBtn">${t.backToLogin}</button>
                 </div>
-                
                 ${productsHtml}
-                
                 <div class="global-actions">
                     <button class="btn-primary btn-large" id="confirmAllBtn">${t.confirmAll}</button>
                 </div>
             `;
             
-            document.getElementById('backToLoginBtn').addEventListener('click', backToLogin);
-            document.getElementById('confirmAllBtn').addEventListener('click', confirmAllSelections);
+            document.getElementById('backToLoginBtn')?.addEventListener('click', backToLogin);
+            document.getElementById('confirmAllBtn')?.addEventListener('click', confirmAllSelections);
         }
         
         function escapeHtml(str) {
             if (!str) return '';
-            return String(str).replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
+            return String(str).replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
         }
         
         window.assignFromInput = function(sku, position) {
@@ -1158,13 +1003,8 @@
             const input = document.getElementById(`${position}-input-${safeSku}`);
             if (!input) return;
             const photoNum = parseInt(input.value);
-            if (isNaN(photoNum) || photoNum < 1) {
-                showToast('Please enter a valid photo number');
-                return;
-            }
-            if (assignPhoto(sku, position, photoNum)) {
-                input.value = '';
-            }
+            if (isNaN(photoNum) || photoNum < 1) { showToast('Please enter a valid photo number'); return; }
+            if (assignPhoto(sku, position, photoNum)) input.value = '';
         };
         
         window.addInteriorFromInput = function(sku) {
@@ -1172,29 +1012,17 @@
             const input = document.getElementById(`interior-input-${safeSku}`);
             if (!input) return;
             const photoNum = parseInt(input.value);
-            if (isNaN(photoNum) || photoNum < 1) {
-                showToast('Please enter a valid photo number');
-                return;
-            }
-            if (addInteriorPhoto(sku, photoNum)) {
-                input.value = '';
-            }
+            if (isNaN(photoNum) || photoNum < 1) { showToast('Please enter a valid photo number'); return; }
+            if (addInteriorPhoto(sku, photoNum)) input.value = '';
         };
         
         window.removePhoto = removePhoto;
         window.randomFillRemaining = randomFillRemaining;
         window.resetProduct = resetProduct;
         
-        // Event listeners
-        document.getElementById('langToggle').addEventListener('click', function() {
-            currentLang = currentLang === 'en' ? 'th' : 'en';
-            updateLanguage();
-        });
-        
+        document.getElementById('langToggle').addEventListener('click', () => { currentLang = currentLang === 'en' ? 'th' : 'en'; updateLanguage(); });
         document.getElementById('checkOrderBtn').addEventListener('click', checkOrder);
-        document.getElementById('orderNumber').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') checkOrder();
-        });
+        document.getElementById('orderNumber').addEventListener('keypress', e => { if (e.key === 'Enter') checkOrder(); });
         
         updateLanguage();
         initSupabase();
