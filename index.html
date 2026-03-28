@@ -543,13 +543,6 @@
             return { type: 'multi', hasCover: true, hasBack: true, hasInterior: true, label: '📚 Book / Calendar' };
         }
         
-        function getInteriorCapacity(total, hasCover, hasBack) {
-            let interiorCapacity = total;
-            if (hasCover) interiorCapacity--;
-            if (hasBack) interiorCapacity--;
-            return Math.max(0, interiorCapacity);
-        }
-        
         function getProductSizes(variants) {
             if (!variants || variants.length === 0) return [];
             const sizes = new Set();
@@ -849,8 +842,8 @@
                 return false;
             }
             
-            // Interior capacity = total - (cover?1:0) - (back?1:0)
-            const interiorCapacity = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
+            // Interior capacity = total - 2 (cover and back)
+            const interiorCapacity = a.total - 2;
             if (a.interior.length >= interiorCapacity) {
                 showToast(translations[currentLang].toastAllFilled);
                 return false;
@@ -898,8 +891,8 @@
             if (a.back) used.add(a.back);
             a.interior.forEach(n => used.add(n));
             
-            // Interior capacity = total - (cover?1:0) - (back?1:0)
-            const interiorCapacity = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
+            // Interior capacity = total - 2 (cover and back)
+            const interiorCapacity = a.total - 2;
             const currentInterior = a.interior.length;
             const need = interiorCapacity - currentInterior;
             
@@ -908,12 +901,13 @@
                 return; 
             }
             
+            // Generate random numbers from 1 to MAX_PHOTOS (31), excluding used ones
             const available = [];
             for (let i = 1; i <= MAX_PHOTOS; i++) {
                 if (!used.has(i)) available.push(i);
-                if (available.length >= need) break;
             }
             
+            // Shuffle available numbers
             for (let i = available.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [available[i], available[j]] = [available[j], available[i]];
@@ -922,7 +916,7 @@
             const added = available.slice(0, need);
             added.forEach(n => a.interior.push(n));
             renderOrderInterface();
-            showToast(`Added ${added.length} random photos (${need} needed)`);
+            showToast(`Added ${added.length} random photos (${need} needed) from 1-${MAX_PHOTOS}`);
         }
         
         function randomFillPackage(itemId) {
@@ -931,6 +925,7 @@
             const used = new Set();
             for (const slot of Object.values(a.contentSlots)) slot.assigned.forEach(n => used.add(n));
             
+            // Generate random numbers from 1 to MAX_PHOTOS (31)
             const available = [];
             for (let i = 1; i <= MAX_PHOTOS; i++) if (!used.has(i)) available.push(i);
             for (let i = available.length - 1; i > 0; i--) {
@@ -985,7 +980,7 @@
                 } else {
                     summary += `📘 ${t.cover}: ${a.cover || '❌ NOT SET'}\n`;
                     summary += `📖 ${t.back}: ${a.back || '❌ NOT SET'}\n`;
-                    const interiorCapacity = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
+                    const interiorCapacity = a.total - 2;
                     summary += `🖼️ ${t.interior}: ${a.interior.length}/${interiorCapacity} - [${a.interior.join(', ') || 'none'}]\n`;
                 }
                 summary += '\n';
@@ -1065,8 +1060,8 @@
                         <div class="slot-card"><div class="slot-title"><span class="slot-icon">📖</span><span class="slot-name">${t.back}</span><span class="slot-badge required">${t.required}</span></div>${a.back ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.back}</span><button class="remove-btn" onclick="removeBack('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="back-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="setBackFromInput('${id}')">${t.set}</button></div>`}</div>
                     </div>`;
                 } else {
-                    // For 3+ photos: total = cover + back + interior
-                    const interiorCapacity = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
+                    // For 3+ photos: total = cover + back + interior (interior = total - 2)
+                    const interiorCapacity = a.total - 2;
                     slotsHtml = `<div class="assignment-grid">
                         <div class="slot-card"><div class="slot-title"><span class="slot-icon">📘</span><span class="slot-name">${t.cover}</span><span class="slot-badge required">${t.required}</span></div>${a.cover ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.cover}</span><button class="remove-btn" onclick="removeCover('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="setCoverFromInput('${id}')">${t.set}</button></div>`}</div>
                         <div class="slot-card"><div class="slot-title"><span class="slot-icon">📖</span><span class="slot-name">${t.back}</span><span class="slot-badge">${t.optional}</span></div>${a.back ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.back}</span><button class="remove-btn" onclick="removeBack('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="back-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="setBackFromInput('${id}')">${t.set}</button></div>`}</div>
