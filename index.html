@@ -573,6 +573,7 @@
         }
         
         async function initSupabase() {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
             await loadProductsFromSupabase();
             // Auto check order after loading
             if (document.getElementById('orderNumberInput')?.value === '1111') {
@@ -588,7 +589,7 @@
                 
                 allProducts = [];
                 
-                // Process product cards - only include those with valid SKU and pose > 0
+                // Process ALL product cards (no filtering)
                 if (productCards) {
                     productCards.forEach(card => {
                         let pose = 0;
@@ -601,20 +602,29 @@
                         if (!pose && card.pose) pose = parseInt(card.pose);
                         if (!pose && card.total_photos) pose = parseInt(card.total_photos);
                         
-                        // Only include if SKU exists and not empty, and pose > 0
-                        if (card.sku && card.sku !== 'undefined' && card.sku !== 'null' && card.sku !== '' && pose > 0) {
-                            allProducts.push({
-                                sku: card.sku,
-                                name_en: card.name_en,
-                                name_th: card.name_th,
-                                pose: pose,
-                                isPackage: false
-                            });
+                        // If still no pose, set default based on product name
+                        if (pose === 0) {
+                            const name = (card.name_en || card.name_th || '').toLowerCase();
+                            if (name.includes('calendar') || name.includes('book') || name.includes('album')) {
+                                pose = 10;
+                            } else if (name.includes('canvas') || name.includes('poster') || name.includes('mug')) {
+                                pose = 1;
+                            } else {
+                                pose = 1; // Default to 1 photo
+                            }
                         }
+                        
+                        allProducts.push({
+                            sku: card.sku || `CARD_${card.id || Math.random().toString(36).substr(2, 6)}`,
+                            name_en: card.name_en,
+                            name_th: card.name_th,
+                            pose: pose,
+                            isPackage: false
+                        });
                     });
                 }
                 
-                // Process packages
+                // Process ALL packages
                 if (packages) {
                     packages.forEach(pkg => {
                         let contents = [];
@@ -629,21 +639,26 @@
                             totalPhotos = contents.reduce((s, i) => s + (i.qty || 1), 0);
                         }
                         
-                        if (pkg.sku && pkg.sku !== 'undefined' && pkg.sku !== 'null' && pkg.sku !== '' && totalPhotos > 0) {
-                            allProducts.push({
-                                sku: pkg.sku,
-                                name_en: pkg.name_en,
-                                name_th: pkg.name_th,
-                                pose: totalPhotos,
-                                isPackage: true,
-                                packageContents: contents
-                            });
-                        }
+                        if (totalPhotos === 0) totalPhotos = contents.length || 1;
+                        
+                        allProducts.push({
+                            sku: pkg.sku || `PKG_${pkg.id || Math.random().toString(36).substr(2, 6)}`,
+                            name_en: pkg.name_en,
+                            name_th: pkg.name_th,
+                            pose: totalPhotos,
+                            isPackage: true,
+                            packageContents: contents
+                        });
                     });
                 }
                 
                 console.log(`✅ Loaded ${allProducts.length} products from Supabase`);
-                console.log('Sample products:', allProducts.slice(0, 10).map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose, isPackage: p.isPackage })));
+                console.log('Sample products:', allProducts.slice(0, 15).map(p => ({ 
+                    sku: p.sku, 
+                    name: p.name_en || p.name_th, 
+                    pose: p.pose, 
+                    isPackage: p.isPackage 
+                })));
                 
                 if (allProducts.length === 0) {
                     showToast('No products found in database');
@@ -679,15 +694,10 @@
                 return;
             }
             
-            // Filter out products with pose 0
-            const validProducts = allProducts.filter(p => p.pose > 0);
+            // Use all products (no filtering)
+            const validProducts = [...allProducts];
             
-            if (validProducts.length === 0) {
-                showToast('No valid products found');
-                return;
-            }
-            
-            // Select random number of products between 4 and 6
+            // Select random number of products between 4 and 6 (or less if not enough)
             const numProducts = Math.min(Math.floor(Math.random() * 3) + 4, validProducts.length);
             
             // Shuffle and select random products
@@ -701,7 +711,7 @@
             
             console.log('🎲 Randomly selected products:', selectedItems.map(i => ({ 
                 sku: i.sku, 
-                name: i.name_en, 
+                name: i.name_en || i.name_th, 
                 pose: i.pose, 
                 isPackage: i.isPackage 
             })));
@@ -713,7 +723,7 @@
                 const itemId = `item_${idx}_${(item.sku || Date.now()).replace(/[^a-zA-Z0-9]/g, '_')}`;
                 const productType = detectProductType(item);
                 
-                if (item.isPackage && item.packageContents?.length) {
+                if (item.isPackage && item.packageContents && item.packageContents.length > 0) {
                     const contentSlots = {};
                     item.packageContents.forEach(content => {
                         const qty = content.qty || 1;
@@ -938,12 +948,12 @@
                 totalFilled += used;
                 
                 let packageContentsHtml = '';
-                if (a.isPackage && a.contentSlots) {
+                if (a.isPackage && a.contentSlots && Object.keys(a.contentSlots).length > 0) {
                     packageContentsHtml = `<div class="package-contents"><span style="font-weight:600;">${t.packageContents}</span> ${Object.values(a.contentSlots).map(s => `${s.label}: ${s.required} photo(s)`).join(' • ')}</div>`;
                 }
                 
                 let slotsHtml = '';
-                if (a.isPackage && a.contentSlots) {
+                if (a.isPackage && a.contentSlots && Object.keys(a.contentSlots).length > 0) {
                     slotsHtml = `<div class="assignment-grid">`;
                     for (const [slotKey, slot] of Object.entries(a.contentSlots)) {
                         const slotSafe = slotKey.replace(/[^a-zA-Z0-9]/g, '_');
@@ -992,8 +1002,6 @@
         document.getElementById('checkOrderBtn').addEventListener('click', checkOrder);
         document.getElementById('orderNumber').addEventListener('keypress', e => { if (e.key === 'Enter') checkOrder(); });
         
-        // Initialize Supabase client first
-        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
         updateLanguage();
         initSupabase();
     </script>
