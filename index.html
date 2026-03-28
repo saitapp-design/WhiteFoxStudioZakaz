@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio - Photo Selection</title>
+    <title>White Fox Studio - Smart Photo Selection</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         :root {
@@ -217,23 +217,20 @@
 
         .product-info {
             display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         .product-sku {
-            background: var(--accent-soft);
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            font-family: monospace;
-            display: inline-block;
+            font-weight: 700;
+            font-size: 1.1rem;
             color: var(--accent-primary);
+            font-family: monospace;
         }
 
         .product-name {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--accent-primary);
         }
@@ -461,6 +458,7 @@
             .search-box { width: 100%; }
             .assignment-grid { grid-template-columns: 1fr; }
             .main-content { padding: 1rem; }
+            .product-info { flex-direction: column; align-items: flex-start; gap: 4px; }
         }
     </style>
 </head>
@@ -506,9 +504,12 @@
         let photoAssignments = {};
         let isLoading = true;
         
+        // Maximum photos limit
+        const MAX_PHOTOS = 31;
+        
         function detectProductType(product) {
             const name = ((product.name_en || '') + ' ' + (product.name_th || '')).toLowerCase();
-            const pose = product.pose || 0;
+            const pose = Math.min(product.pose || 0, MAX_PHOTOS);
             
             if (product.isPackage) {
                 return { type: 'package', hasCover: false, hasBack: false, hasInterior: false, label: '📦 Package' };
@@ -589,40 +590,31 @@
                 
                 allProducts = [];
                 
-                // Process product cards - following original logic for SKU
                 if (productCards) {
                     productCards.forEach(card => {
                         let pose = 0;
                         let variants = [];
                         
-                        // Parse variants if exists
                         try {
                             if (card.variants) {
                                 variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
                                 if (variants.length > 0 && variants[0].pose) {
-                                    pose = parseInt(variants[0].pose);
+                                    pose = Math.min(parseInt(variants[0].pose), MAX_PHOTOS);
                                 }
                             }
                         } catch(e) {}
                         
-                        if (!pose && card.pose) pose = parseInt(card.pose);
-                        if (!pose && card.total_photos) pose = parseInt(card.total_photos);
+                        if (!pose && card.pose) pose = Math.min(parseInt(card.pose), MAX_PHOTOS);
+                        if (!pose && card.total_photos) pose = Math.min(parseInt(card.total_photos), MAX_PHOTOS);
                         
-                        // If still no pose, set default based on product name
                         if (pose === 0) {
                             const name = (card.name_en || card.name_th || '').toLowerCase();
-                            if (name.includes('calendar') && name.includes('13')) {
-                                pose = 13;
-                            } else if (name.includes('calendar')) {
-                                pose = 12;
-                            } else if (name.includes('book') || name.includes('album') || name.includes('notebook')) {
-                                pose = 10;
-                            } else {
-                                pose = 1;
-                            }
+                            if (name.includes('calendar') && name.includes('13')) pose = 13;
+                            else if (name.includes('calendar')) pose = Math.min(12, MAX_PHOTOS);
+                            else if (name.includes('book') || name.includes('album') || name.includes('notebook')) pose = Math.min(10, MAX_PHOTOS);
+                            else pose = 1;
                         }
                         
-                        // KEY LOGIC: Get SKU from card.sku, or from first variant, or generate fallback
                         let cardSku = card.sku;
                         if (!cardSku && variants.length > 0) {
                             cardSku = variants[0].sku;
@@ -643,7 +635,6 @@
                     });
                 }
                 
-                // Process packages
                 if (packages) {
                     packages.forEach(pkg => {
                         let contents = [];
@@ -657,7 +648,8 @@
                         if (!totalPhotos && contents.length) {
                             totalPhotos = contents.reduce((s, i) => s + (i.qty || 1), 0);
                         }
-                        if (totalPhotos === 0) totalPhotos = contents.length || 1;
+                        totalPhotos = Math.min(totalPhotos, MAX_PHOTOS);
+                        if (totalPhotos === 0) totalPhotos = 1;
                         
                         allProducts.push({
                             id: pkg.id || `pkg_${pkg.sku}`,
@@ -671,20 +663,7 @@
                     });
                 }
                 
-                console.log(`✅ Loaded ${allProducts.length} products`);
-                console.log('Sample products with SKU:', allProducts.slice(0, 10).map(p => ({ 
-                    sku: p.sku, 
-                    name: p.name_en || p.name_th, 
-                    pose: p.pose, 
-                    isPackage: p.isPackage,
-                    variantsCount: p.variants?.length || 0
-                })));
-                
-                if (allProducts.length === 0) {
-                    showToast('No products found in database');
-                } else {
-                    showToast(`Loaded ${allProducts.length} products`);
-                }
+                console.log(`✅ Loaded ${allProducts.length} products (max ${MAX_PHOTOS} photos per product)`);
                 isLoading = false;
             } catch(e) { 
                 console.error('Error loading products:', e);
@@ -714,10 +693,7 @@
                 return;
             }
             
-            // Select random number of products between 4 and 6
             const numProducts = Math.min(Math.floor(Math.random() * 3) + 4, allProducts.length);
-            
-            // Shuffle and select random products
             const shuffled = [...allProducts];
             for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -726,24 +702,18 @@
             
             const selectedItems = shuffled.slice(0, numProducts);
             
-            console.log('🎲 Randomly selected products:', selectedItems.map(i => ({ 
-                sku: i.sku, 
-                name: i.name_en || i.name_th, 
-                pose: i.pose, 
-                isPackage: i.isPackage 
-            })));
-            
             currentOrder = { number: '1111', items: selectedItems };
             photoAssignments = {};
             
             selectedItems.forEach((item, idx) => {
                 const itemId = `item_${idx}_${(item.sku || Date.now()).replace(/[^a-zA-Z0-9]/g, '_')}`;
                 const productType = detectProductType(item);
+                const maxPose = Math.min(item.pose, MAX_PHOTOS);
                 
                 if (item.isPackage && item.packageContents && item.packageContents.length > 0) {
                     const contentSlots = {};
                     item.packageContents.forEach(content => {
-                        const qty = content.qty || 1;
+                        const qty = Math.min(content.qty || 1, maxPose);
                         const slotKey = `${content.sku || 'photo'}_${content.size || content.name_en || ''}`.replace(/[^a-zA-Z0-9]/g, '_');
                         contentSlots[slotKey] = {
                             label: `${content.name_en || content.sku || 'Photo'} ${content.size ? `(${content.size})` : ''}`,
@@ -756,7 +726,7 @@
                         id: itemId,
                         sku: item.sku,
                         name: item.name_en || item.name_th || item.sku,
-                        total: item.pose,
+                        total: maxPose,
                         productType: productType,
                         isPackage: true,
                         packageContents: item.packageContents,
@@ -764,34 +734,20 @@
                         variants: item.variants || []
                     };
                 } else {
-                    // For regular products - get current SKU from variants if exists
-                    let currentSku = item.sku;
-                    let currentPrice = 0;
-                    let currentImage = '';
-                    let currentDescription = '';
-                    
-                    if (item.variants && item.variants.length > 0) {
-                        const firstVariant = item.variants[0];
-                        if (firstVariant) {
-                            currentSku = firstVariant.sku || item.sku;
-                            currentPrice = firstVariant.price || 0;
-                            currentImage = firstVariant.image_url || '';
-                            currentDescription = firstVariant.descriptions || '';
-                        }
+                    let displaySku = item.sku;
+                    if (item.variants && item.variants.length > 0 && item.variants[0]?.sku) {
+                        displaySku = item.variants[0].sku;
                     }
                     
                     photoAssignments[itemId] = {
                         id: itemId,
-                        sku: item.sku,
-                        currentSku: currentSku,
+                        sku: displaySku,
+                        originalSku: item.sku,
                         name: item.name_en || item.name_th || item.sku,
-                        total: item.pose,
+                        total: maxPose,
                         productType: productType,
                         isPackage: false,
                         variants: item.variants || [],
-                        currentPrice: currentPrice,
-                        currentImage: currentImage,
-                        currentDescription: currentDescription,
                         cover: null,
                         back: null,
                         interior: []
@@ -816,7 +772,7 @@
         
         function setCover(itemId, num) {
             const a = photoAssignments[itemId];
-            if (!a) return false;
+            if (!a || a.isPackage) return false;
             if (isPhotoUsedInProduct(itemId, num)) {
                 showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
                 return false;
@@ -828,7 +784,7 @@
         
         function setBack(itemId, num) {
             const a = photoAssignments[itemId];
-            if (!a || a.isSingle) return false;
+            if (!a || a.isPackage || a.productType.type === 'single') return false;
             if (isPhotoUsedInProduct(itemId, num)) {
                 showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
                 return false;
@@ -840,7 +796,7 @@
         
         function addInterior(itemId, num) {
             const a = photoAssignments[itemId];
-            if (!a || a.isPackage || a.isSingle) return false;
+            if (!a || a.isPackage || a.productType.type === 'single') return false;
             if (isPhotoUsedInProduct(itemId, num)) {
                 showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
                 return false;
@@ -877,19 +833,39 @@
         
         function randomFillInterior(itemId) {
             const a = photoAssignments[itemId];
-            if (!a || a.isPackage || a.isSingle) return;
+            if (!a || a.isPackage || a.productType.type === 'single') return;
+            
             const used = new Set();
             if (a.cover) used.add(a.cover);
             if (a.back) used.add(a.back);
             a.interior.forEach(n => used.add(n));
-            const need = a.total - used.size;
-            if (need <= 0) { showToast(translations[currentLang].toastAllFilled); return; }
-            const available = []; for (let i = 1; i <= 500; i++) if (!used.has(i)) available.push(i);
-            for (let i = available.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [available[i], available[j]] = [available[j], available[i]]; }
+            
+            const coverSlot = (a.cover ? 1 : 0);
+            const backSlot = (a.back ? 1 : 0);
+            const interiorNeeded = a.total - coverSlot - backSlot;
+            const currentInterior = a.interior.length;
+            const need = interiorNeeded - currentInterior;
+            
+            if (need <= 0) { 
+                showToast(translations[currentLang].toastAllFilled); 
+                return; 
+            }
+            
+            const available = [];
+            for (let i = 1; i <= 500; i++) {
+                if (!used.has(i)) available.push(i);
+                if (available.length >= need) break;
+            }
+            
+            for (let i = available.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [available[i], available[j]] = [available[j], available[i]];
+            }
+            
             const added = available.slice(0, need);
             added.forEach(n => a.interior.push(n));
             renderOrderInterface();
-            showToast(`Added ${added.length} random photos`);
+            showToast(`Added ${added.length} random photos (${need} needed)`);
         }
         
         function randomFillPackage(itemId) {
@@ -898,8 +874,12 @@
             const used = new Set();
             for (const slot of Object.values(a.contentSlots)) slot.assigned.forEach(n => used.add(n));
             
-            const available = []; for (let i = 1; i <= 500; i++) if (!used.has(i)) available.push(i);
-            for (let i = available.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [available[i], available[j]] = [available[j], available[i]]; }
+            const available = [];
+            for (let i = 1; i <= 500; i++) if (!used.has(i)) available.push(i);
+            for (let i = available.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [available[i], available[j]] = [available[j], available[i]];
+            }
             
             let availIdx = 0;
             for (const [slotKey, slot] of Object.entries(a.contentSlots)) {
@@ -939,7 +919,7 @@
                     for (const [key, slot] of Object.entries(a.contentSlots)) {
                         summary += `📷 ${slot.label}: ${slot.assigned.length}/${slot.required} - [${slot.assigned.join(', ') || 'none'}]\n`;
                     }
-                } else if (a.isSingle) {
+                } else if (a.productType.type === 'single') {
                     summary += `📷 Main Photo: ${a.cover || '❌ NOT SET'}\n`;
                 } else {
                     summary += `📘 ${t.cover}: ${a.cover || '❌ NOT SET'}\n`;
@@ -975,18 +955,11 @@
                 totalSlots += a.total;
                 totalFilled += used;
                 
-                // Determine SKU to display - use variant SKU if available
-                let displaySku = a.sku;
-                if (a.variants && a.variants.length > 0 && a.variants[0]?.sku) {
-                    displaySku = a.variants[0].sku;
-                }
-                
                 let packageContentsHtml = '';
                 if (a.isPackage && a.contentSlots && Object.keys(a.contentSlots).length > 0) {
                     packageContentsHtml = `<div class="package-contents"><span style="font-weight:600;">${t.packageContents}</span> ${Object.values(a.contentSlots).map(s => `${s.label}: ${s.required} photo(s)`).join(' • ')}</div>`;
                 }
                 
-                // Variant selector for products with multiple variants
                 let variantSelectorHtml = '';
                 if (!a.isPackage && a.variants && a.variants.length > 1) {
                     variantSelectorHtml = `
@@ -1001,8 +974,8 @@
                                     if (v.color) variantParts.push(v.color);
                                     variantText = variantParts.join(' / ');
                                     if (!variantText) variantText = v.sku;
-                                    return `<option value="${v.sku}" data-price="${v.price || 0}" data-sku="${v.sku}" ${idx === 0 ? 'selected' : ''}>
-                                        ${variantText} — ฿${v.price || 0}
+                                    return `<option value="${v.sku}" data-sku="${v.sku}" ${idx === 0 ? 'selected' : ''}>
+                                        ${variantText}
                                     </option>`;
                                 }).join('')}
                             </select>
@@ -1023,7 +996,7 @@
                             </div></div>`;
                     }
                     slotsHtml += `</div>`;
-                } else if (a.isSingle) {
+                } else if (a.productType.type === 'single') {
                     slotsHtml = `<div class="assignment-grid"><div class="slot-card"><div class="slot-title"><span class="slot-icon">📷</span><span class="slot-name">Main Photo</span><span class="slot-badge required">${t.required}</span></div>${a.cover ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.cover}</span><button class="remove-btn" onclick="removeCover('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover-${safeId}" class="photo-input" placeholder="#"><button class="action-btn" onclick="setCoverFromInput('${id}')">${t.set}</button></div>`}</div></div>`;
                 } else {
                     const interiorCount = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
@@ -1041,8 +1014,9 @@
                 productsHtml += `<div class="product-card">
                     <div class="product-header">
                         <div class="product-info">
-                            <div class="product-sku" id="sku-${safeId}">${escapeHtml(displaySku)}</div>
-                            <div class="product-name">${escapeHtml(a.name)}</div>
+                            <span class="product-sku">${escapeHtml(a.sku)}</span>
+                            <span class="product-name">${escapeHtml(a.name)}</span>
+                            <span class="product-type-badge">${a.productType.label}</span>
                         </div>
                         <div class="product-stats">
                             <div class="photos-counter">${used}/${a.total}</div>
@@ -1059,7 +1033,7 @@
             }
             
             const percent = totalSlots > 0 ? Math.round((totalFilled / totalSlots) * 100) : 0;
-            document.getElementById('mainContent').innerHTML = `<div class="order-header"><div class="order-badge">📦 Order: <strong>${currentOrder.number}</strong></div><div class="order-badge">🎯 ${totalFilled}/${totalSlots} photos (${percent}%)</div><div class="order-badge">🔄 ${Object.keys(photoAssignments).length} random products</div><button class="back-btn" id="backBtn">${t.backToLogin}</button></div>${productsHtml}<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width: auto; padding: 0.8rem 2rem;">${t.confirmAll}</button></div>`;
+            document.getElementById('mainContent').innerHTML = `<div class="order-header"><div class="order-badge">📦 Order: <strong>${currentOrder.number}</strong></div><div class="order-badge">🎯 ${totalFilled}/${totalSlots} photos (${percent}%)</div><div class="order-badge">🔄 ${Object.keys(photoAssignments).length} products (max ${MAX_PHOTOS} photos each)</div><button class="back-btn" id="backBtn">${t.backToLogin}</button></div>${productsHtml}<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width: auto; padding: 0.8rem 2rem;">${t.confirmAll}</button></div>`;
             document.getElementById('backBtn')?.addEventListener('click', backToLogin);
             document.getElementById('confirmBtn')?.addEventListener('click', confirmAll);
         }
