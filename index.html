@@ -582,8 +582,9 @@
         let currentOrder = null;
         let photoAssignments = {};
         
-        // Real SKUs that exist in Supabase
-        const purchasedSkus = ['CAL-2025', 'PB-ALBUM', 'MAG-01'];
+        // Use REAL products from Supabase for the demo order
+        // These are the SKUs that exist in your database from the console output
+        const purchasedSkus = ['Q11', 'Q12', 'Q13'];  // Package S, Package M, Package L - all have pose values
         
         const translations = {
             en: {
@@ -669,7 +670,7 @@
                 if (document.getElementById('orderNumberInput')?.value === '1111') {
                     checkOrder();
                 }
-            }, 1000);
+            }, 500);
         }
         
         async function loadProductsFromSupabase() {
@@ -680,6 +681,7 @@
                 
                 allProducts = [];
                 
+                // Process product cards
                 if (productCards) {
                     productCards.forEach(card => {
                         let pose = 0;
@@ -701,6 +703,7 @@
                     });
                 }
                 
+                // Process packages
                 if (packages) {
                     packages.forEach(pkg => {
                         let total = pkg.total_photos || 0;
@@ -722,11 +725,12 @@
                 console.log('✅ Products loaded:', allProducts.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose })));
             } catch(e) { 
                 console.error('Error loading products:', e);
-                // Fallback with mock data if Supabase fails
+                // Fallback with real data from console
                 allProducts = [
-                    { sku: 'CAL-2025', name_en: 'Desk Calendar 2025', name_th: 'ปฏิทินตั้งโต๊ะ 2025', pose: 13 },
-                    { sku: 'PB-ALBUM', name_en: 'Premium Photo Album', name_th: 'อัลบั้มภาพ Premium', pose: 20 },
-                    { sku: 'MAG-01', name_en: 'Hardcover Magazine', name_th: 'นิตยสารปกแข็ง', pose: 30 }
+                    { sku: 'Q11', name_en: 'Package S', name_th: 'แพ็คเกจ S', pose: 6 },
+                    { sku: 'Q12', name_en: 'Package M', name_th: 'แพ็คเกจ M', pose: 11 },
+                    { sku: 'Q13', name_en: 'Package L', name_th: 'แพ็คเกจ L', pose: 14 },
+                    { sku: 'CAL-001', name_en: 'Desk Calendar', name_th: 'ปฏิทินตั้งโต๊ะ', pose: 13 }
                 ];
             }
         }
@@ -747,18 +751,33 @@
             const items = [];
             for (const sku of purchasedSkus) {
                 const product = allProducts.find(p => p.sku === sku);
-                if (product) {
+                if (product && product.pose > 0) {
                     items.push({
                         sku: product.sku,
                         name: product.name_en || product.name_th || sku,
-                        pose: product.pose || 10
+                        pose: product.pose
                     });
-                    console.log(`📦 Added: ${product.name_en} (${sku}) - ${product.pose} photos`);
+                    console.log(`✅ Added: ${product.name_en || product.name_th} (${sku}) - ${product.pose} photos`);
+                } else if (product && product.pose === 0) {
+                    console.log(`⚠️ Product ${sku} has 0 photos, skipping`);
                 } else {
-                    items.push({ sku: sku, name: sku, pose: 10 });
                     console.log(`⚠️ Product not found: ${sku}`);
                 }
             }
+            
+            // If no products found with pose > 0, add some fallback
+            if (items.length === 0) {
+                console.log('No products with pose found, adding fallback products');
+                const fallbackProducts = allProducts.filter(p => p.pose > 0).slice(0, 3);
+                fallbackProducts.forEach(p => {
+                    items.push({
+                        sku: p.sku,
+                        name: p.name_en || p.name_th || p.sku,
+                        pose: p.pose
+                    });
+                });
+            }
+            
             currentOrder = { number: '1111', items: items };
             
             photoAssignments = {};
@@ -772,6 +791,8 @@
                     sku: item.sku
                 };
             });
+            
+            console.log('Order loaded with items:', items);
         }
         
         function isPhotoUsedInProduct(sku, num, exclude = null) {
@@ -884,6 +905,7 @@
             
             for (const item of currentOrder.items) {
                 const a = photoAssignments[item.sku];
+                if (!a) continue;
                 const used = (a.cover?1:0) + (a.back?1:0) + a.interior.length;
                 totalSlots += a.total;
                 totalFilled += used;
