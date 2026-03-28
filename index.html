@@ -543,6 +543,13 @@
             return { type: 'multi', hasCover: true, hasBack: true, hasInterior: true, label: '📚 Book / Calendar' };
         }
         
+        function getInteriorCapacity(total, hasCover, hasBack) {
+            let interiorCapacity = total;
+            if (hasCover) interiorCapacity--;
+            if (hasBack) interiorCapacity--;
+            return Math.max(0, interiorCapacity);
+        }
+        
         function getProductSizes(variants) {
             if (!variants || variants.length === 0) return [];
             const sizes = new Set();
@@ -885,11 +892,10 @@
             if (a.back) used.add(a.back);
             a.interior.forEach(n => used.add(n));
             
-            const coverSlot = (a.cover ? 1 : 0);
-            const backSlot = (a.back ? 1 : 0);
-            const interiorNeeded = a.total - coverSlot - backSlot;
+            // Interior capacity = total - (cover?1:0) - (back?1:0)
+            const interiorCapacity = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
             const currentInterior = a.interior.length;
-            const need = interiorNeeded - currentInterior;
+            const need = interiorCapacity - currentInterior;
             
             if (need <= 0) { 
                 showToast(translations[currentLang].toastAllFilled); 
@@ -1053,14 +1059,15 @@
                         <div class="slot-card"><div class="slot-title"><span class="slot-icon">📖</span><span class="slot-name">${t.back}</span><span class="slot-badge required">${t.required}</span></div>${a.back ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.back}</span><button class="remove-btn" onclick="removeBack('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="back-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="setBackFromInput('${id}')">${t.set}</button></div>`}</div>
                     </div>`;
                 } else {
-                    const interiorCount = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
+                    // For 3+ photos: total = cover + back + interior
+                    const interiorCapacity = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
                     slotsHtml = `<div class="assignment-grid">
                         <div class="slot-card"><div class="slot-title"><span class="slot-icon">📘</span><span class="slot-name">${t.cover}</span><span class="slot-badge required">${t.required}</span></div>${a.cover ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.cover}</span><button class="remove-btn" onclick="removeCover('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="setCoverFromInput('${id}')">${t.set}</button></div>`}</div>
                         <div class="slot-card"><div class="slot-title"><span class="slot-icon">📖</span><span class="slot-name">${t.back}</span><span class="slot-badge">${t.optional}</span></div>${a.back ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.back}</span><button class="remove-btn" onclick="removeBack('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="back-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="setBackFromInput('${id}')">${t.set}</button></div>`}</div>
-                        <div class="slot-card"><div class="slot-title"><span class="slot-icon">🖼️</span><span class="slot-name">${t.interior}</span><span class="slot-badge">${a.interior?.length || 0}/${interiorCount}</span></div>
+                        <div class="slot-card"><div class="slot-title"><span class="slot-icon">🖼️</span><span class="slot-name">${t.interior}</span><span class="slot-badge">${a.interior?.length || 0}/${interiorCapacity}</span></div>
                             <div class="photo-input-wrapper"><input type="number" id="int-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="addInteriorFromInput('${id}')">${t.set}</button><button class="action-btn-outline" onclick="randomFillInterior('${id}')">${t.randomFill}</button></div>
                             <div class="interior-list">${(a.interior || []).map((num, idx) => `<div class="photo-tag">#${num}<button onclick="removeInterior('${id}', ${idx})">✕</button></div>`).join('')}</div>
-                            ${(a.interior?.length || 0) < interiorCount ? `<div class="status-message status-warning">⚠️ ${interiorCount - (a.interior?.length || 0)} ${t.moreNeeded}</div>` : `<div class="status-message status-success">✓ ${t.filled}</div>`}
+                            ${(a.interior?.length || 0) < interiorCapacity ? `<div class="status-message status-warning">⚠️ ${interiorCapacity - (a.interior?.length || 0)} ${t.moreNeeded}</div>` : `<div class="status-message status-success">✓ ${t.filled}</div>`}
                         </div>
                     </div>`;
                 }
