@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio - Smart Photo Selection</title>
+    <title>White Fox Studio - Photo Selection</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         :root {
@@ -224,9 +224,12 @@
 
         .product-sku {
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--accent-primary);
             font-family: monospace;
+            background: var(--accent-soft);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
         }
 
         .product-name {
@@ -504,11 +507,11 @@
         let photoAssignments = {};
         let isLoading = true;
         
-        // Maximum photos limit
+        // Maximum photos limit - 31 total per product
         const MAX_PHOTOS = 31;
         
+        // Detect product type based on number of photos
         function detectProductType(product) {
-            const name = ((product.name_en || '') + ' ' + (product.name_th || '')).toLowerCase();
             const pose = Math.min(product.pose || 0, MAX_PHOTOS);
             
             if (product.isPackage) {
@@ -519,17 +522,12 @@
                 return { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '📷 Single Photo' };
             }
             
-            if (name.includes('book') || name.includes('album') || name.includes('notebook') || 
-                name.includes('folder') || name.includes('calendar') || name.includes('ปฏิทิน') ||
-                name.includes('magazine') || name.includes('diary') || pose >= 3) {
-                return { type: 'book', hasCover: true, hasBack: true, hasInterior: true, label: '📚 Book / Calendar' };
-            }
-            
             if (pose === 2) {
-                return { type: 'double', hasCover: true, hasBack: false, hasInterior: true, label: '🖼️ Double Photo' };
+                return { type: 'double', hasCover: true, hasBack: true, hasInterior: false, label: '🖼️ Double Photo' };
             }
             
-            return { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '📷 Photo' };
+            // 3+ photos - has cover, back, and interior
+            return { type: 'multi', hasCover: true, hasBack: true, hasInterior: true, label: '📚 Book / Calendar' };
         }
         
         const translations = {
@@ -542,7 +540,8 @@
                 set: 'Set', randomFill: '🎲 Random', reset: 'Reset',
                 confirmAll: '✅ Confirm All', backToLogin: '← Back', totalPhotos: 'Total',
                 moreNeeded: 'more needed', filled: 'Complete!', packageContents: 'Package Contents:',
-                cover: 'Front Cover', back: 'Back Cover', interior: 'Interior Pages'
+                cover: 'Front Cover', back: 'Back Cover', interior: 'Interior Pages',
+                mainPhoto: 'Main Photo'
             },
             th: {
                 title: 'กรุณากรอกหมายเลขคำสั่งซื้อ', subtitle: 'กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ',
@@ -553,7 +552,8 @@
                 set: 'ตั้งค่า', randomFill: '🎲 สุ่ม', reset: 'รีเซ็ต',
                 confirmAll: '✅ ยืนยันทั้งหมด', backToLogin: '← กลับ', totalPhotos: 'รูปทั้งหมด',
                 moreNeeded: 'ต้องเลือกเพิ่ม', filled: 'ครบถ้วน!', packageContents: 'ส่วนประกอบแพ็คเกจ:',
-                cover: 'ปกหน้า', back: 'ปกหลัง', interior: 'หน้าภายใน'
+                cover: 'ปกหน้า', back: 'ปกหลัง', interior: 'หน้าภายใน',
+                mainPhoto: 'รูปหลัก'
             }
         };
         
@@ -784,7 +784,12 @@
         
         function setBack(itemId, num) {
             const a = photoAssignments[itemId];
-            if (!a || a.isPackage || a.productType.type === 'single') return false;
+            if (!a || a.isPackage) return false;
+            // Only products with 2+ photos have back cover
+            if (a.total < 2) {
+                showToast('This product does not have a back cover');
+                return false;
+            }
             if (isPhotoUsedInProduct(itemId, num)) {
                 showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
                 return false;
@@ -796,7 +801,12 @@
         
         function addInterior(itemId, num) {
             const a = photoAssignments[itemId];
-            if (!a || a.isPackage || a.productType.type === 'single') return false;
+            if (!a || a.isPackage) return false;
+            // Only products with 3+ photos have interior pages
+            if (a.total < 3) {
+                showToast('This product does not have interior pages');
+                return false;
+            }
             if (isPhotoUsedInProduct(itemId, num)) {
                 showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
                 return false;
@@ -833,7 +843,12 @@
         
         function randomFillInterior(itemId) {
             const a = photoAssignments[itemId];
-            if (!a || a.isPackage || a.productType.type === 'single') return;
+            if (!a || a.isPackage) return;
+            // Only for products with 3+ photos
+            if (a.total < 3) {
+                showToast('This product does not have interior pages');
+                return;
+            }
             
             const used = new Set();
             if (a.cover) used.add(a.cover);
@@ -919,8 +934,11 @@
                     for (const [key, slot] of Object.entries(a.contentSlots)) {
                         summary += `📷 ${slot.label}: ${slot.assigned.length}/${slot.required} - [${slot.assigned.join(', ') || 'none'}]\n`;
                     }
-                } else if (a.productType.type === 'single') {
-                    summary += `📷 Main Photo: ${a.cover || '❌ NOT SET'}\n`;
+                } else if (a.total === 1) {
+                    summary += `📷 ${t.mainPhoto}: ${a.cover || '❌ NOT SET'}\n`;
+                } else if (a.total === 2) {
+                    summary += `📘 ${t.cover}: ${a.cover || '❌ NOT SET'}\n`;
+                    summary += `📖 ${t.back}: ${a.back || '❌ NOT SET'}\n`;
                 } else {
                     summary += `📘 ${t.cover}: ${a.cover || '❌ NOT SET'}\n`;
                     summary += `📖 ${t.back}: ${a.back || '❌ NOT SET'}\n`;
@@ -996,8 +1014,13 @@
                             </div></div>`;
                     }
                     slotsHtml += `</div>`;
-                } else if (a.productType.type === 'single') {
-                    slotsHtml = `<div class="assignment-grid"><div class="slot-card"><div class="slot-title"><span class="slot-icon">📷</span><span class="slot-name">Main Photo</span><span class="slot-badge required">${t.required}</span></div>${a.cover ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.cover}</span><button class="remove-btn" onclick="removeCover('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover-${safeId}" class="photo-input" placeholder="#"><button class="action-btn" onclick="setCoverFromInput('${id}')">${t.set}</button></div>`}</div></div>`;
+                } else if (a.total === 1) {
+                    slotsHtml = `<div class="assignment-grid"><div class="slot-card"><div class="slot-title"><span class="slot-icon">📷</span><span class="slot-name">${t.mainPhoto}</span><span class="slot-badge required">${t.required}</span></div>${a.cover ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.cover}</span><button class="remove-btn" onclick="removeCover('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover-${safeId}" class="photo-input" placeholder="#"><button class="action-btn" onclick="setCoverFromInput('${id}')">${t.set}</button></div>`}</div></div>`;
+                } else if (a.total === 2) {
+                    slotsHtml = `<div class="assignment-grid">
+                        <div class="slot-card"><div class="slot-title"><span class="slot-icon">📘</span><span class="slot-name">${t.cover}</span><span class="slot-badge required">${t.required}</span></div>${a.cover ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.cover}</span><button class="remove-btn" onclick="removeCover('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover-${safeId}" class="photo-input" placeholder="#"><button class="action-btn" onclick="setCoverFromInput('${id}')">${t.set}</button></div>`}</div>
+                        <div class="slot-card"><div class="slot-title"><span class="slot-icon">📖</span><span class="slot-name">${t.back}</span><span class="slot-badge required">${t.required}</span></div>${a.back ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.back}</span><button class="remove-btn" onclick="removeBack('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="back-${safeId}" class="photo-input" placeholder="#"><button class="action-btn" onclick="setBackFromInput('${id}')">${t.set}</button></div>`}</div>
+                    </div>`;
                 } else {
                     const interiorCount = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
                     slotsHtml = `<div class="assignment-grid">
@@ -1033,7 +1056,7 @@
             }
             
             const percent = totalSlots > 0 ? Math.round((totalFilled / totalSlots) * 100) : 0;
-            document.getElementById('mainContent').innerHTML = `<div class="order-header"><div class="order-badge">📦 Order: <strong>${currentOrder.number}</strong></div><div class="order-badge">🎯 ${totalFilled}/${totalSlots} photos (${percent}%)</div><div class="order-badge">🔄 ${Object.keys(photoAssignments).length} products (max ${MAX_PHOTOS} photos each)</div><button class="back-btn" id="backBtn">${t.backToLogin}</button></div>${productsHtml}<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width: auto; padding: 0.8rem 2rem;">${t.confirmAll}</button></div>`;
+            document.getElementById('mainContent').innerHTML = `<div class="order-header"><div class="order-badge">📦 Order: <strong>${currentOrder.number}</strong></div><div class="order-badge">🎯 ${totalFilled}/${totalSlots} photos (${percent}%)</div><div class="order-badge">🔄 ${Object.keys(photoAssignments).length} products (max ${MAX_PHOTOS} photos)</div><button class="back-btn" id="backBtn">${t.backToLogin}</button></div>${productsHtml}<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width: auto; padding: 0.8rem 2rem;">${t.confirmAll}</button></div>`;
             document.getElementById('backBtn')?.addEventListener('click', backToLogin);
             document.getElementById('confirmBtn')?.addEventListener('click', confirmAll);
         }
