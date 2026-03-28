@@ -848,8 +848,14 @@
                 showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
                 return false;
             }
-            const usedCount = (a.cover ? 1 : 0) + (a.back ? 1 : 0) + a.interior.length;
-            if (usedCount >= a.total) { showToast(translations[currentLang].toastAllFilled); return false; }
+            
+            // Interior capacity = total - (cover?1:0) - (back?1:0)
+            const interiorCapacity = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
+            if (a.interior.length >= interiorCapacity) {
+                showToast(translations[currentLang].toastAllFilled);
+                return false;
+            }
+            
             a.interior.push(num);
             renderOrderInterface();
             return true;
@@ -979,8 +985,8 @@
                 } else {
                     summary += `📘 ${t.cover}: ${a.cover || '❌ NOT SET'}\n`;
                     summary += `📖 ${t.back}: ${a.back || '❌ NOT SET'}\n`;
-                    const interiorCount = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
-                    summary += `🖼️ ${t.interior}: ${a.interior.length}/${interiorCount} - [${a.interior.join(', ') || 'none'}]\n`;
+                    const interiorCapacity = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
+                    summary += `🖼️ ${t.interior}: ${a.interior.length}/${interiorCapacity} - [${a.interior.join(', ') || 'none'}]\n`;
                 }
                 summary += '\n';
             }
