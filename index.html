@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio - Photo Selection for Your Order</title>
+    <title>White Fox Studio - Smart Photo Selection</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         :root {
@@ -20,6 +20,7 @@
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
+            --info: #3b82f6;
         }
 
         * {
@@ -105,11 +106,6 @@
             border-radius: 60px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .search-box button:hover {
-            background: var(--accent-hover);
         }
 
         .lang-toggle {
@@ -124,12 +120,6 @@
             align-items: center;
             gap: 8px;
             height: 48px;
-            transition: all 0.2s;
-        }
-
-        .lang-toggle:hover {
-            background: var(--accent-primary);
-            color: white;
         }
 
         .main-content {
@@ -184,11 +174,6 @@
             cursor: pointer;
         }
 
-        .btn-primary:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-        }
-
         .order-header {
             background: white;
             border-radius: 24px;
@@ -208,41 +193,6 @@
             border-radius: 40px;
             font-weight: 600;
             color: var(--accent-primary);
-        }
-
-        .progress-bar-container {
-            flex: 1;
-            max-width: 300px;
-        }
-
-        .progress-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.2rem;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: var(--border-color);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--accent-primary);
-            border-radius: 10px;
-            transition: width 0.3s;
-        }
-
-        .back-btn {
-            background: transparent;
-            border: 2px solid var(--accent-primary);
-            color: var(--accent-primary);
-            padding: 0.5rem 1.5rem;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
         }
 
         .product-card {
@@ -282,13 +232,6 @@
             color: var(--accent-primary);
         }
 
-        .product-sku-box {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
         .product-sku-code {
             background: var(--accent-soft);
             padding: 0.2rem 0.8rem;
@@ -297,6 +240,15 @@
             font-weight: 600;
             font-family: monospace;
             color: var(--accent-primary);
+        }
+
+        .product-type-badge {
+            background: var(--info);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
         }
 
         .product-pose {
@@ -330,10 +282,6 @@
             border-radius: 20px;
             padding: 1rem;
             border: 1px solid var(--border-color);
-        }
-
-        .slot-card:hover {
-            border-color: var(--accent-primary);
         }
 
         .slot-title {
@@ -407,11 +355,6 @@
             font-size: 0.9rem;
             font-weight: 600;
             width: 90px;
-        }
-
-        .photo-input:focus {
-            border-color: var(--accent-primary);
-            outline: none;
         }
 
         .action-btn {
@@ -510,7 +453,6 @@
             font-weight: 600;
             z-index: 2000;
             display: none;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
 
         .toast.show {
@@ -523,12 +465,6 @@
             to { opacity: 1; transform: translate(-50%, 0); }
         }
 
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-muted);
-        }
-
         @media (max-width: 768px) {
             .top-bar { flex-direction: column; padding: 0.8rem 1rem; }
             .right-actions { width: 100%; flex-direction: column; }
@@ -537,7 +473,6 @@
             .lang-toggle { width: 100%; justify-content: center; }
             .main-content { padding: 1rem; }
             .assignment-grid { grid-template-columns: 1fr; }
-            .product-header { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -582,9 +517,37 @@
         let currentOrder = null;
         let photoAssignments = {};
         
-        // Use REAL products from Supabase for the demo order
-        // These are the SKUs that exist in your database from the console output
-        const purchasedSkus = ['Q11', 'Q12', 'Q13'];  // Package S, Package M, Package L - all have pose values
+        // Product type detection based on name and SKU
+        function detectProductType(product) {
+            const name = (product.name_en + ' ' + product.name_th + ' ' + product.sku).toLowerCase();
+            
+            // Single photo items (no back cover needed)
+            if (name.includes('canvas') || name.includes('poster') || name.includes('photo') && product.pose === 1 ||
+                name.includes('mug') || name.includes('keyring') || name.includes('magnet') ||
+                name.includes('card holder') || name.includes('acrylic') && product.pose === 1) {
+                return { type: 'single', hasCover: true, hasBack: false, hasInterior: false };
+            }
+            
+            // Calendar type (has back cover)
+            if (name.includes('calendar') || name.includes('ปฏิทิน')) {
+                return { type: 'calendar', hasCover: true, hasBack: true, hasInterior: true };
+            }
+            
+            // Book/Album type (has back cover)
+            if (name.includes('book') || name.includes('album') || name.includes('package') ||
+                name.includes('notebook') || name.includes('magazine')) {
+                return { type: 'book', hasCover: true, hasBack: true, hasInterior: true };
+            }
+            
+            // Default: has cover and interior, optional back
+            if (product.pose > 2) {
+                return { type: 'multi', hasCover: true, hasBack: true, hasInterior: true };
+            } else if (product.pose === 2) {
+                return { type: 'double', hasCover: true, hasBack: false, hasInterior: true };
+            } else {
+                return { type: 'single', hasCover: true, hasBack: false, hasInterior: false };
+            }
+        }
         
         const translations = {
             en: {
@@ -593,16 +556,17 @@
                 loginBtn: 'Continue',
                 toastError: 'Please enter order number',
                 placeholder: 'Enter order number (1111)',
-                toastOrderLoaded: '✅ Order loaded! Select photos for each product below.',
+                toastOrderLoaded: '✅ Order loaded! Select photos for each product.',
                 toastInvalidCode: 'Demo: Use code 1111',
                 toastDuplicate: '⚠️ Photo #{num} already used in this product',
                 toastAllFilled: '✓ All slots filled!',
-                toastConfirm: '✅ Selection saved! Check console for details.',
-                cover: 'Cover Photo',
+                toastConfirm: '✅ Selection saved!',
+                cover: 'Cover / Main Photo',
                 back: 'Back Cover',
                 interior: 'Interior Photos',
                 required: 'required',
                 optional: 'optional',
+                notApplicable: 'not needed',
                 set: 'Set',
                 randomFill: '🎲 Random',
                 reset: 'Reset',
@@ -610,7 +574,8 @@
                 backToLogin: '← Back',
                 totalPhotos: 'Total photos',
                 moreNeeded: 'more needed',
-                filled: 'Complete!'
+                filled: 'Complete!',
+                productType: 'Product Type'
             },
             th: {
                 title: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
@@ -623,11 +588,12 @@
                 toastDuplicate: '⚠️ รูป #{num} ถูกใช้ในสินค้านี้แล้ว',
                 toastAllFilled: '✓ ครบทุกตำแหน่งแล้ว!',
                 toastConfirm: '✅ บันทึกการเลือกแล้ว!',
-                cover: 'รูปปก',
+                cover: 'รูปปก / รูปหลัก',
                 back: 'รูปปกหลัง',
                 interior: 'รูปภายใน',
                 required: 'จำเป็น',
                 optional: 'ไม่จำเป็น',
+                notApplicable: 'ไม่ต้องใช้',
                 set: 'ตั้งค่า',
                 randomFill: '🎲 สุ่ม',
                 reset: 'รีเซ็ต',
@@ -635,7 +601,8 @@
                 backToLogin: '← กลับ',
                 totalPhotos: 'รูปทั้งหมด',
                 moreNeeded: 'ต้องเลือกเพิ่ม',
-                filled: 'ครบถ้วน!'
+                filled: 'ครบถ้วน!',
+                productType: 'ประเภทสินค้า'
             }
         };
         
@@ -665,7 +632,6 @@
         async function initSupabase() {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
             await loadProductsFromSupabase();
-            // Auto-check order on load with demo code
             setTimeout(() => {
                 if (document.getElementById('orderNumberInput')?.value === '1111') {
                     checkOrder();
@@ -675,13 +641,11 @@
         
         async function loadProductsFromSupabase() {
             try {
-                console.log('📦 Loading products from Supabase...');
                 const { data: productCards } = await supabaseClient.from('product_cards').select('*');
                 const { data: packages } = await supabaseClient.from('packages_with_price').select('*');
                 
                 allProducts = [];
                 
-                // Process product cards
                 if (productCards) {
                     productCards.forEach(card => {
                         let pose = 0;
@@ -703,7 +667,6 @@
                     });
                 }
                 
-                // Process packages
                 if (packages) {
                     packages.forEach(pkg => {
                         let total = pkg.total_photos || 0;
@@ -725,13 +688,6 @@
                 console.log('✅ Products loaded:', allProducts.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose })));
             } catch(e) { 
                 console.error('Error loading products:', e);
-                // Fallback with real data from console
-                allProducts = [
-                    { sku: 'Q11', name_en: 'Package S', name_th: 'แพ็คเกจ S', pose: 6 },
-                    { sku: 'Q12', name_en: 'Package M', name_th: 'แพ็คเกจ M', pose: 11 },
-                    { sku: 'Q13', name_en: 'Package L', name_th: 'แพ็คเกจ L', pose: 14 },
-                    { sku: 'CAL-001', name_en: 'Desk Calendar', name_th: 'ปฏิทินตั้งโต๊ะ', pose: 13 }
-                ];
             }
         }
         
@@ -739,7 +695,7 @@
             const code = document.getElementById('orderNumberInput')?.value.trim() || document.getElementById('orderNumber')?.value.trim();
             if (!code) { showToast(translations[currentLang].toastError); return; }
             if (code === '1111') {
-                await loadOrderFromPurchasedItems();
+                await loadDemoOrder();
                 renderOrderInterface();
                 showToast(translations[currentLang].toastOrderLoaded);
             } else {
@@ -747,35 +703,38 @@
             }
         }
         
-        async function loadOrderFromPurchasedItems() {
+        async function loadDemoOrder() {
+            // Select 3 different products from Supabase with different types
+            const demoSkus = ['Q11', 'DESK CALENDAR FLIP', 'CANVAS'];
+            
             const items = [];
-            for (const sku of purchasedSkus) {
-                const product = allProducts.find(p => p.sku === sku);
+            for (const sku of demoSkus) {
+                let product = allProducts.find(p => p.sku === sku);
+                if (!product && sku === 'DESK CALENDAR FLIP') {
+                    product = allProducts.find(p => p.name_en?.includes('DESK CALENDAR') || p.name_th?.includes('ปฏิทิน'));
+                }
+                if (!product && sku === 'CANVAS') {
+                    product = allProducts.find(p => p.name_en?.includes('CANVAS') || p.name_th?.includes('แคนวาส'));
+                }
+                
                 if (product && product.pose > 0) {
+                    const productType = detectProductType(product);
                     items.push({
                         sku: product.sku,
-                        name: product.name_en || product.name_th || sku,
-                        pose: product.pose
+                        name: product.name_en || product.name_th || product.sku,
+                        pose: product.pose,
+                        productType: productType
                     });
-                    console.log(`✅ Added: ${product.name_en || product.name_th} (${sku}) - ${product.pose} photos`);
-                } else if (product && product.pose === 0) {
-                    console.log(`⚠️ Product ${sku} has 0 photos, skipping`);
-                } else {
-                    console.log(`⚠️ Product not found: ${sku}`);
-                }
-            }
-            
-            // If no products found with pose > 0, add some fallback
-            if (items.length === 0) {
-                console.log('No products with pose found, adding fallback products');
-                const fallbackProducts = allProducts.filter(p => p.pose > 0).slice(0, 3);
-                fallbackProducts.forEach(p => {
+                    console.log(`✅ Added: ${product.name_en} (${product.sku}) - ${product.pose} photos - Type: ${productType.type}`);
+                } else if (product) {
+                    console.log(`⚠️ Product ${sku} has 0 photos, using default`);
                     items.push({
-                        sku: p.sku,
-                        name: p.name_en || p.name_th || p.sku,
-                        pose: p.pose
+                        sku: product.sku,
+                        name: product.name_en || product.name_th || product.sku,
+                        pose: 5,
+                        productType: detectProductType({ ...product, pose: 5 })
                     });
-                });
+                }
             }
             
             currentOrder = { number: '1111', items: items };
@@ -788,11 +747,10 @@
                     interior: [],
                     total: item.pose,
                     name: item.name,
-                    sku: item.sku
+                    sku: item.sku,
+                    productType: item.productType
                 };
             });
-            
-            console.log('Order loaded with items:', items);
         }
         
         function isPhotoUsedInProduct(sku, num, exclude = null) {
@@ -821,6 +779,10 @@
         function addInterior(sku, num) {
             const a = photoAssignments[sku];
             if (!a) return false;
+            if (!a.productType.hasInterior) {
+                showToast('This product does not have interior photos');
+                return false;
+            }
             if (isPhotoUsedInProduct(sku, num)) {
                 showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
                 return false;
@@ -843,7 +805,8 @@
         
         function randomFill(sku) {
             const a = photoAssignments[sku];
-            if (!a) return;
+            if (!a || !a.productType.hasInterior) return;
+            
             const used = new Set();
             if (a.cover) used.add(a.cover);
             if (a.back) used.add(a.back);
@@ -851,6 +814,7 @@
             const current = used.size;
             const need = a.total - current;
             if (need <= 0) { showToast(translations[currentLang].toastAllFilled); return; }
+            
             const available = [];
             for (let i = 1; i <= 500; i++) if (!used.has(i)) available.push(i);
             for (let i = available.length - 1; i > 0; i--) {
@@ -873,11 +837,16 @@
             let summary = '📸 PHOTO SELECTION CONFIRMED\n\n';
             for (const [sku, a] of Object.entries(photoAssignments)) {
                 summary += `━━━ ${a.name} (${a.sku}) ━━━\n`;
-                summary += `📘 Cover: ${a.cover || '❌ NOT SET'}\n`;
-                summary += `📖 Back: ${a.back || '❌ NOT SET'}\n`;
-                summary += `🖼️ Interior (${a.interior.length}/${a.total - (a.cover?1:0) - (a.back?1:0)}): `;
-                if (a.interior.length) summary += `${a.interior.join(', ')}\n`;
-                else summary += 'none\n';
+                summary += `📘 ${translations[currentLang].cover}: ${a.cover || '❌'}\n`;
+                if (a.productType.hasBack) {
+                    summary += `📖 ${translations[currentLang].back}: ${a.back || '❌'}\n`;
+                }
+                if (a.productType.hasInterior) {
+                    const interiorCount = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
+                    summary += `🖼️ ${translations[currentLang].interior} (${a.interior.length}/${interiorCount}): `;
+                    if (a.interior.length) summary += `${a.interior.join(', ')}\n`;
+                    else summary += 'none\n';
+                }
                 summary += '\n';
             }
             alert(summary);
@@ -898,6 +867,17 @@
             document.getElementById('orderNumberInput').addEventListener('keypress', e => { if (e.key === 'Enter') checkOrder(); });
         }
         
+        function getProductTypeName(type) {
+            const names = {
+                single: '📷 Single Photo',
+                double: '🖼️ Double Photo',
+                calendar: '📅 Calendar / Album',
+                book: '📚 Book / Album',
+                multi: '📸 Multi-photo'
+            };
+            return names[type.type] || '📷 Photo Product';
+        }
+        
         function renderOrderInterface() {
             const t = translations[currentLang];
             let totalSlots = 0, totalFilled = 0;
@@ -911,14 +891,16 @@
                 totalFilled += used;
                 const remain = a.total - used;
                 const safeSku = item.sku.replace(/[-\s]/g, '_');
+                const productType = a.productType;
                 
                 productsHtml += `
                     <div class="product-card">
                         <div class="product-header">
                             <div class="product-info">
                                 <div class="product-name">${escapeHtml(a.name)}</div>
-                                <div class="product-sku-box">
-                                    <span class="product-sku-code">${item.sku}</span>
+                                <div class="product-sku-code">${item.sku}</div>
+                                <div style="display: flex; gap: 0.5rem; margin-top: 0.3rem;">
+                                    <span class="product-type-badge">${getProductTypeName(productType)}</span>
                                     <span class="product-pose">📷 ${a.total} photos</span>
                                 </div>
                             </div>
@@ -929,6 +911,7 @@
                         </div>
                         
                         <div class="assignment-grid">
+                            <!-- Cover - always required for all products -->
                             <div class="slot-card">
                                 <div class="slot-title">
                                     <span class="slot-icon">📘</span>
@@ -948,6 +931,8 @@
                                 `}
                             </div>
                             
+                            <!-- Back Cover - only for products that need it -->
+                            ${productType.hasBack ? `
                             <div class="slot-card">
                                 <div class="slot-title">
                                     <span class="slot-icon">📖</span>
@@ -966,7 +951,21 @@
                                     </div>
                                 `}
                             </div>
+                            ` : `
+                            <div class="slot-card" style="background: #f1f5f9; opacity: 0.7;">
+                                <div class="slot-title">
+                                    <span class="slot-icon">📖</span>
+                                    <span class="slot-name">${t.back}</span>
+                                    <span class="slot-badge">${t.notApplicable}</span>
+                                </div>
+                                <div style="padding: 0.5rem; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
+                                    ⚡ Not applicable for this product type
+                                </div>
+                            </div>
+                            `}
                             
+                            <!-- Interior Photos - only for products with multiple photos -->
+                            ${productType.hasInterior ? `
                             <div class="slot-card">
                                 <div class="slot-title">
                                     <span class="slot-icon">🖼️</span>
@@ -988,6 +987,18 @@
                                 </div>
                                 ${remain > 0 ? `<div class="status-message status-warning">⚠️ ${remain} ${t.moreNeeded}</div>` : `<div class="status-message status-success">✓ ${t.filled}</div>`}
                             </div>
+                            ` : `
+                            <div class="slot-card" style="background: #f1f5f9; opacity: 0.7;">
+                                <div class="slot-title">
+                                    <span class="slot-icon">🖼️</span>
+                                    <span class="slot-name">${t.interior}</span>
+                                    <span class="slot-badge">${t.notApplicable}</span>
+                                </div>
+                                <div style="padding: 0.5rem; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
+                                    ⚡ Single photo product - no interior pages
+                                </div>
+                            </div>
+                            `}
                         </div>
                         
                         <div class="product-footer">
@@ -1002,10 +1013,7 @@
             document.getElementById('mainContent').innerHTML = `
                 <div class="order-header">
                     <div class="order-badge">📦 Order: <strong>${currentOrder.number}</strong></div>
-                    <div class="progress-bar-container">
-                        <div class="progress-label">${totalFilled}/${totalSlots} photos (${percent}%)</div>
-                        <div class="progress-bar"><div class="progress-fill" style="width: ${percent}%"></div></div>
-                    </div>
+                    <div class="order-badge">🎯 Smart detection: ${currentOrder.items.length} products</div>
                     <button class="back-btn" id="backBtn">${t.backToLogin}</button>
                 </div>
                 ${productsHtml}
