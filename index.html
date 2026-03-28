@@ -505,6 +505,19 @@
         let photoAssignments = {};
         let isLoading = true;
         
+        // Function to generate readable SKU from product name
+        function generateSKUFromName(name) {
+            if (!name) return 'UNKNOWN';
+            // Convert to uppercase, replace spaces with underscore, remove special characters
+            let sku = name.toUpperCase()
+                .replace(/[^\w\s]/g, '')
+                .replace(/\s+/g, '_')
+                .replace(/[^A-Z0-9_]/g, '');
+            // Limit length
+            if (sku.length > 30) sku = sku.substring(0, 30);
+            return sku;
+        }
+        
         function detectProductType(product) {
             const name = ((product.name_en || '') + ' ' + (product.name_th || '')).toLowerCase();
             const pose = product.pose || 0;
@@ -588,7 +601,7 @@
                 
                 allProducts = [];
                 
-                // Process product cards - use original SKU if exists
+                // Process product cards - generate readable SKU from name
                 if (productCards) {
                     productCards.forEach(card => {
                         let pose = 0;
@@ -604,22 +617,20 @@
                         // If still no pose, set default based on product name
                         if (pose === 0) {
                             const name = (card.name_en || card.name_th || '').toLowerCase();
-                            if (name.includes('calendar') || name.includes('book') || name.includes('album')) {
+                            if (name.includes('calendar') && name.includes('13')) {
+                                pose = 13;
+                            } else if (name.includes('calendar')) {
+                                pose = 12;
+                            } else if (name.includes('book') || name.includes('album') || name.includes('notebook')) {
                                 pose = 10;
-                            } else if (name.includes('canvas') || name.includes('poster') || name.includes('mug')) {
-                                pose = 1;
                             } else {
                                 pose = 1;
                             }
                         }
                         
-                        // Use original SKU or generate from name if missing
-                        let sku = card.sku;
-                        if (!sku || sku === 'undefined' || sku === 'null' || sku === '') {
-                            // Generate SKU from name
-                            const namePart = (card.name_en || card.name_th || 'product').toUpperCase().replace(/[^A-Z0-9]/g, '_').substring(0, 15);
-                            sku = namePart;
-                        }
+                        // Get name for SKU generation
+                        const nameForSku = card.name_en || card.name_th || 'PRODUCT';
+                        const sku = generateSKUFromName(nameForSku);
                         
                         allProducts.push({
                             sku: sku,
@@ -631,7 +642,7 @@
                     });
                 }
                 
-                // Process packages - use original SKU
+                // Process packages - use existing SKU or generate from name
                 if (packages) {
                     packages.forEach(pkg => {
                         let contents = [];
@@ -648,11 +659,11 @@
                         
                         if (totalPhotos === 0) totalPhotos = contents.length || 1;
                         
-                        // Use original SKU
+                        // Use existing SKU or generate from name
                         let sku = pkg.sku;
                         if (!sku || sku === 'undefined' || sku === 'null' || sku === '') {
-                            const namePart = (pkg.name_en || pkg.name_th || 'package').toUpperCase().replace(/[^A-Z0-9]/g, '_').substring(0, 15);
-                            sku = namePart;
+                            const nameForSku = pkg.name_en || pkg.name_th || 'PACKAGE';
+                            sku = generateSKUFromName(nameForSku);
                         }
                         
                         allProducts.push({
