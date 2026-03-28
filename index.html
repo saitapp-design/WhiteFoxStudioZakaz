@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio - Smart Photo Selection</title>
+    <title>White Fox Studio - Smart Photo Selection with Sizes</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         :root {
@@ -21,6 +21,7 @@
             --warning: #f59e0b;
             --danger: #ef4444;
             --info: #3b82f6;
+            --purple: #8b5cf6;
         }
 
         * {
@@ -196,7 +197,6 @@
             margin-bottom: 1.8rem;
             border: 1px solid var(--border-color);
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
 
         .product-card:hover {
@@ -234,26 +234,7 @@
             font-size: 0.7rem;
             font-weight: 600;
             font-family: monospace;
-            color: var(--accent-primary);
             display: inline-block;
-        }
-
-        .product-type-badge {
-            background: var(--info);
-            color: white;
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .product-pose {
-            background: #e2e8f0;
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-secondary);
         }
 
         .product-stats {
@@ -266,10 +247,28 @@
             color: var(--accent-primary);
         }
 
+        /* Package Contents Section */
+        .package-contents {
+            background: #fefce8;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.8rem;
+        }
+
+        .content-item {
+            background: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid var(--accent-soft);
+        }
+
         .assignment-grid {
             padding: 1.5rem;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.2rem;
         }
 
@@ -298,6 +297,14 @@
             color: var(--text-primary);
         }
 
+        .size-badge {
+            font-size: 0.7rem;
+            background: var(--purple);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+        }
+
         .slot-badge {
             font-size: 0.65rem;
             padding: 0.2rem 0.5rem;
@@ -322,15 +329,15 @@
         }
 
         .photo-number-large {
-            font-size: 1.2rem;
-            font-weight: 800;
+            font-size: 1.1rem;
+            font-weight: 700;
             color: var(--accent-primary);
         }
 
         .remove-btn {
             background: none;
             border: none;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             color: var(--danger);
         }
@@ -343,63 +350,45 @@
         }
 
         .photo-input {
-            flex: 1;
-            padding: 0.6rem 0.8rem;
+            padding: 0.5rem 0.8rem;
             border: 2px solid var(--border-color);
             border-radius: 40px;
             text-align: center;
-            font-size: 0.9rem;
-            font-weight: 600;
-            width: 90px;
+            width: 80px;
         }
 
         .action-btn {
             background: var(--accent-primary);
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .action-btn-outline {
-            background: transparent;
-            border: 1px solid var(--accent-primary);
-            color: var(--accent-primary);
             padding: 0.4rem 0.8rem;
             border-radius: 40px;
             font-size: 0.7rem;
+            font-weight: 600;
             cursor: pointer;
         }
 
-        .interior-list {
+        .multiple-inputs {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 0.5rem;
-            margin-top: 0.8rem;
-            max-height: 150px;
-            overflow-y: auto;
         }
 
-        .photo-tag {
-            background: var(--accent-soft);
-            padding: 0.3rem 0.7rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
+        .photo-row {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
+            justify-content: space-between;
+            background: white;
+            padding: 0.4rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
         }
 
-        .photo-tag button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--danger);
-            font-weight: bold;
+        .photo-row span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 60px;
         }
 
         .status-message {
@@ -465,10 +454,8 @@
             .top-bar { flex-direction: column; padding: 0.8rem 1rem; }
             .right-actions { width: 100%; flex-direction: column; }
             .search-box { width: 100%; }
-            .search-box input { width: 100%; }
-            .lang-toggle { width: 100%; justify-content: center; }
-            .main-content { padding: 1rem; }
             .assignment-grid { grid-template-columns: 1fr; }
+            .main-content { padding: 1rem; }
         }
     </style>
 </head>
@@ -510,105 +497,38 @@
         
         let supabaseClient = null;
         let allProducts = [];
+        let allPackages = [];
         let currentOrder = null;
         let photoAssignments = {};
         
-        // Product type detection based on name and pose
-        function detectProductType(product) {
-            const name = ((product.name_en || '') + ' ' + (product.name_th || '') + ' ' + (product.sku || '')).toLowerCase();
-            const pose = product.pose || 0;
-            
-            // Single photo items (no interior, no back)
-            if (pose === 1 || name.includes('canvas') || name.includes('poster') || 
-                name.includes('mug') || name.includes('keyring') || name.includes('magnet') ||
-                name.includes('card holder') || (name.includes('acrylic') && pose === 1)) {
-                return { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '📷 Single Photo' };
-            }
-            
-            // Calendar type (has back cover)
-            if (name.includes('calendar') || name.includes('ปฏิทิน')) {
-                return { type: 'calendar', hasCover: true, hasBack: true, hasInterior: true, label: '📅 Calendar / Album' };
-            }
-            
-            // Book/Album/Package type (has back cover)
-            if (name.includes('book') || name.includes('album') || name.includes('package') ||
-                name.includes('notebook') || name.includes('magazine') || pose >= 10) {
-                return { type: 'book', hasCover: true, hasBack: true, hasInterior: true, label: '📚 Book / Album' };
-            }
-            
-            // Default for multi-photo
-            if (pose > 2) {
-                return { type: 'multi', hasCover: true, hasBack: true, hasInterior: true, label: '📸 Multi-photo' };
-            } else if (pose === 2) {
-                return { type: 'double', hasCover: true, hasBack: false, hasInterior: true, label: '🖼️ Double Photo' };
-            } else {
-                return { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '📷 Single Photo' };
-            }
-        }
-        
         const translations = {
             en: {
-                title: 'Enter Order Number',
-                subtitle: 'Please enter your order number to select photos',
-                loginBtn: 'Continue',
-                toastError: 'Please enter order number',
-                placeholder: 'Enter order number (1111)',
-                toastOrderLoaded: '✅ Order loaded! Select photos for each product.',
-                toastInvalidCode: 'Demo: Use code 1111',
-                toastDuplicate: '⚠️ Photo #{num} already used in this product',
-                toastAllFilled: '✓ All slots filled!',
-                toastConfirm: '✅ Selection saved!',
-                cover: 'Cover / Main Photo',
-                back: 'Back Cover',
-                interior: 'Interior Photos',
-                required: 'required',
-                optional: 'optional',
-                notApplicable: 'not needed',
-                set: 'Set',
-                randomFill: '🎲 Random',
-                reset: 'Reset',
-                confirmAll: '✅ Confirm All Selections',
-                backToLogin: '← Back',
-                totalPhotos: 'Total photos',
-                moreNeeded: 'more needed',
-                filled: 'Complete!'
+                title: 'Enter Order Number', subtitle: 'Please enter your order number to select photos',
+                loginBtn: 'Continue', toastError: 'Please enter order number',
+                placeholder: 'Enter order number (1111)', toastOrderLoaded: '✅ Order loaded!',
+                toastInvalidCode: 'Demo: Use code 1111', toastDuplicate: '⚠️ Photo #{num} already used',
+                toastAllFilled: '✓ All slots filled!', toastConfirm: '✅ Selection saved!',
+                cover: 'Cover Photo', back: 'Back Cover', interior: 'Photos', required: 'required',
+                optional: 'optional', set: 'Set', randomFill: '🎲 Random', reset: 'Reset',
+                confirmAll: '✅ Confirm All', backToLogin: '← Back', totalPhotos: 'Total',
+                moreNeeded: 'more needed', filled: 'Complete!', packageContents: 'Package Contents:'
             },
             th: {
-                title: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
-                subtitle: 'กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ',
-                loginBtn: 'ดำเนินการต่อ',
-                toastError: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
-                placeholder: 'กรอกหมายเลขคำสั่งซื้อ (1111)',
-                toastOrderLoaded: '✅ โหลดออเดอร์เรียบร้อย! เลือกรูปภาพด้านล่าง',
-                toastInvalidCode: 'ทดสอบ: ใช้รหัส 1111',
-                toastDuplicate: '⚠️ รูป #{num} ถูกใช้ในสินค้านี้แล้ว',
-                toastAllFilled: '✓ ครบทุกตำแหน่งแล้ว!',
-                toastConfirm: '✅ บันทึกการเลือกแล้ว!',
-                cover: 'รูปปก / รูปหลัก',
-                back: 'รูปปกหลัง',
-                interior: 'รูปภายใน',
-                required: 'จำเป็น',
-                optional: 'ไม่จำเป็น',
-                notApplicable: 'ไม่ต้องใช้',
-                set: 'ตั้งค่า',
-                randomFill: '🎲 สุ่ม',
-                reset: 'รีเซ็ต',
-                confirmAll: '✅ ยืนยันการเลือกทั้งหมด',
-                backToLogin: '← กลับ',
-                totalPhotos: 'รูปทั้งหมด',
-                moreNeeded: 'ต้องเลือกเพิ่ม',
-                filled: 'ครบถ้วน!'
+                title: 'กรุณากรอกหมายเลขคำสั่งซื้อ', subtitle: 'กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ',
+                loginBtn: 'ดำเนินการต่อ', toastError: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
+                placeholder: 'กรอกหมายเลขคำสั่งซื้อ (1111)', toastOrderLoaded: '✅ โหลดออเดอร์เรียบร้อย!',
+                toastInvalidCode: 'ทดสอบ: ใช้รหัส 1111', toastDuplicate: '⚠️ รูป #{num} ถูกใช้แล้ว',
+                toastAllFilled: '✓ ครบทุกตำแหน่งแล้ว!', toastConfirm: '✅ บันทึกการเลือกแล้ว!',
+                cover: 'รูปปก', back: 'รูปปกหลัง', interior: 'รูปภาพ', required: 'จำเป็น',
+                optional: 'ไม่จำเป็น', set: 'ตั้งค่า', randomFill: '🎲 สุ่ม', reset: 'รีเซ็ต',
+                confirmAll: '✅ ยืนยันทั้งหมด', backToLogin: '← กลับ', totalPhotos: 'รูปทั้งหมด',
+                moreNeeded: 'ต้องเลือกเพิ่ม', filled: 'ครบถ้วน!', packageContents: 'ส่วนประกอบแพ็คเกจ:'
             }
         };
         
         let currentLang = 'en';
         
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
+        function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
         
         function updateLanguage() {
             if (document.getElementById('title')) {
@@ -617,8 +537,7 @@
                 document.getElementById('loginBtn').textContent = translations[currentLang].loginBtn;
                 document.getElementById('orderNumberInput').placeholder = translations[currentLang].placeholder;
             }
-            const icon = document.getElementById('lang-icon');
-            const text = document.getElementById('lang-text');
+            const icon = document.getElementById('lang-icon'), text = document.getElementById('lang-text');
             icon.textContent = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
             text.textContent = currentLang === 'en' ? 'EN' : 'TH';
             if (currentOrder) renderOrderInterface();
@@ -627,11 +546,7 @@
         async function initSupabase() {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
             await loadProductsFromSupabase();
-            setTimeout(() => {
-                if (document.getElementById('orderNumberInput')?.value === '1111') {
-                    checkOrder();
-                }
-            }, 500);
+            setTimeout(() => { if (document.getElementById('orderNumberInput')?.value === '1111') checkOrder(); }, 500);
         }
         
         async function loadProductsFromSupabase() {
@@ -640,6 +555,7 @@
                 const { data: packages } = await supabaseClient.from('packages_with_price').select('*');
                 
                 allProducts = [];
+                allPackages = packages || [];
                 
                 if (productCards) {
                     productCards.forEach(card => {
@@ -657,33 +573,39 @@
                             sku: card.sku || `card_${card.id}`,
                             name_en: card.name_en,
                             name_th: card.name_th,
-                            pose: pose || 0
+                            pose: pose || 0,
+                            isPackage: false
                         });
                     });
                 }
                 
                 if (packages) {
                     packages.forEach(pkg => {
-                        let total = pkg.total_photos || 0;
-                        if (!total && pkg.contents) {
-                            try {
-                                const contents = typeof pkg.contents === 'string' ? JSON.parse(pkg.contents) : pkg.contents;
-                                total = contents.reduce((s, i) => s + (i.qty || 1), 0);
-                            } catch(e) {}
+                        let contents = [];
+                        try {
+                            if (pkg.contents) {
+                                contents = typeof pkg.contents === 'string' ? JSON.parse(pkg.contents) : pkg.contents;
+                            }
+                        } catch(e) { console.warn('Error parsing package contents:', e); }
+                        
+                        let totalPhotos = pkg.total_photos || 0;
+                        if (!totalPhotos && contents.length) {
+                            totalPhotos = contents.reduce((s, i) => s + (i.qty || 1), 0);
                         }
+                        
                         allProducts.push({
                             sku: pkg.sku || `pkg_${pkg.id}`,
                             name_en: pkg.name_en,
                             name_th: pkg.name_th,
-                            pose: total || 0
+                            pose: totalPhotos || 0,
+                            isPackage: true,
+                            packageContents: contents
                         });
                     });
                 }
                 
-                console.log('✅ Products loaded:', allProducts.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose })));
-            } catch(e) { 
-                console.error('Error loading products:', e);
-            }
+                console.log('✅ Loaded:', allProducts.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose, isPackage: p.isPackage, contents: p.packageContents?.length })));
+            } catch(e) { console.error('Error loading products:', e); }
         }
         
         async function checkOrder() {
@@ -693,189 +615,223 @@
                 await loadDemoOrder();
                 renderOrderInterface();
                 showToast(translations[currentLang].toastOrderLoaded);
-            } else {
-                showToast(translations[currentLang].toastInvalidCode);
-            }
+            } else { showToast(translations[currentLang].toastInvalidCode); }
         }
         
         async function loadDemoOrder() {
-            // Find 3 different products from Supabase
             const items = [];
             
-            // Find Package S (Q11 or similar)
-            let packageProduct = allProducts.find(p => p.sku === 'Q11' || (p.name_en && p.name_en.includes('Package')));
-            if (!packageProduct) {
-                packageProduct = allProducts.find(p => p.pose >= 6 && p.pose <= 15);
-            }
+            // Find Package with contents
+            let packageProduct = allProducts.find(p => p.isPackage && p.packageContents?.length > 0);
+            if (!packageProduct) packageProduct = allProducts.find(p => p.isPackage);
             
-            // Find Calendar product
-            let calendarProduct = allProducts.find(p => p.name_en && (p.name_en.includes('CALENDAR') || p.name_en.includes('ปฏิทิน')));
-            if (!calendarProduct) {
-                calendarProduct = allProducts.find(p => p.pose >= 13 && p.pose <= 30);
-            }
+            // Find Calendar
+            let calendarProduct = allProducts.find(p => p.name_en?.includes('CALENDAR') || p.name_th?.includes('ปฏิทิน'));
+            if (!calendarProduct) calendarProduct = allProducts.find(p => p.pose >= 10 && !p.isPackage);
             
-            // Find Canvas or Single photo product
-            let canvasProduct = allProducts.find(p => p.name_en && p.name_en.includes('CANVAS'));
-            if (!canvasProduct) {
-                canvasProduct = allProducts.find(p => p.pose === 1);
-            }
+            // Find Single photo product
+            let singleProduct = allProducts.find(p => p.pose === 1 && !p.isPackage);
+            if (!singleProduct) singleProduct = allProducts.find(p => p.name_en?.includes('CANVAS'));
             
-            if (packageProduct) {
-                items.push({
-                    sku: packageProduct.sku,
-                    name: packageProduct.name_en || packageProduct.name_th || 'Package Product',
-                    pose: packageProduct.pose || 6,
-                    productType: detectProductType(packageProduct)
-                });
-                console.log(`✅ Added: ${packageProduct.name_en || packageProduct.name_th} (${packageProduct.sku}) - ${packageProduct.pose} photos`);
-            }
+            if (packageProduct) items.push(packageProduct);
+            if (calendarProduct) items.push(calendarProduct);
+            if (singleProduct) items.push(singleProduct);
             
-            if (calendarProduct) {
-                items.push({
-                    sku: calendarProduct.sku,
-                    name: calendarProduct.name_en || calendarProduct.name_th || 'Calendar',
-                    pose: calendarProduct.pose || 13,
-                    productType: detectProductType(calendarProduct)
-                });
-                console.log(`✅ Added: ${calendarProduct.name_en || calendarProduct.name_th} (${calendarProduct.sku}) - ${calendarProduct.pose} photos`);
-            }
-            
-            if (canvasProduct) {
-                items.push({
-                    sku: canvasProduct.sku,
-                    name: canvasProduct.name_en || canvasProduct.name_th || 'Canvas / Photo',
-                    pose: canvasProduct.pose || 1,
-                    productType: detectProductType(canvasProduct)
-                });
-                console.log(`✅ Added: ${canvasProduct.name_en || canvasProduct.name_th} (${canvasProduct.sku}) - ${canvasProduct.pose} photos`);
-            }
-            
-            // If we couldn't find 3 products, add some defaults
             if (items.length < 3) {
                 const defaults = [
-                    { sku: 'PKG-001', name: 'Package Set', pose: 6, productType: { type: 'book', hasCover: true, hasBack: true, hasInterior: true, label: '📚 Package' } },
-                    { sku: 'CAL-2025', name: 'Desk Calendar', pose: 13, productType: { type: 'calendar', hasCover: true, hasBack: true, hasInterior: true, label: '📅 Calendar' } },
-                    { sku: 'CANVAS-01', name: 'Canvas Print', pose: 1, productType: { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '🖼️ Canvas' } }
+                    { sku: 'PKG-001', name_en: 'Photo Package Set', pose: 12, isPackage: true, packageContents: [{ sku: 'PHOTO-4x6', name_en: '4x6 Photo', qty: 4 }, { sku: 'PHOTO-5x7', name_en: '5x7 Photo', qty: 3 }, { sku: 'PHOTO-8x10', name_en: '8x10 Photo', qty: 1 }] },
+                    { sku: 'CAL-2025', name_en: 'Desk Calendar 2025', pose: 13, isPackage: false },
+                    { sku: 'CANVAS-01', name_en: 'Canvas Print 8x10', pose: 1, isPackage: false }
                 ];
-                
-                for (let i = items.length; i < 3; i++) {
-                    if (defaults[i]) {
-                        items.push(defaults[i]);
-                    }
-                }
+                for (let i = items.length; i < 3; i++) if (defaults[i]) items.push(defaults[i]);
             }
             
             currentOrder = { number: '1111', items: items };
-            
             photoAssignments = {};
-            items.forEach(item => {
-                const safeSku = (item.sku || `product_${Date.now()}_${Math.random()}`).replace(/[^a-zA-Z0-9]/g, '_');
-                photoAssignments[safeSku] = {
-                    cover: null,
-                    back: null,
-                    interior: [],
-                    total: item.pose,
-                    name: item.name,
-                    sku: item.sku,
-                    originalSku: safeSku,
-                    productType: item.productType
-                };
+            
+            items.forEach((item, idx) => {
+                const itemId = `item_${idx}_${item.sku || Date.now()}`.replace(/[^a-zA-Z0-9]/g, '_');
+                
+                if (item.isPackage && item.packageContents?.length) {
+                    // Create slots for each content item
+                    const contentSlots = {};
+                    item.packageContents.forEach(content => {
+                        const qty = content.qty || 1;
+                        const slotKey = `${content.sku || content.name_en || 'photo'}_${content.size || ''}`.replace(/[^a-zA-Z0-9]/g, '_');
+                        contentSlots[slotKey] = {
+                            label: `${content.name_en || content.sku || 'Photo'} ${content.size ? `(${content.size})` : ''}`,
+                            required: qty,
+                            assigned: []
+                        };
+                    });
+                    
+                    photoAssignments[itemId] = {
+                        id: itemId,
+                        sku: item.sku,
+                        name: item.name_en || item.name_th || item.sku,
+                        total: item.pose,
+                        isPackage: true,
+                        packageContents: item.packageContents,
+                        contentSlots: contentSlots,
+                        cover: null,
+                        back: null
+                    };
+                } else {
+                    photoAssignments[itemId] = {
+                        id: itemId,
+                        sku: item.sku,
+                        name: item.name_en || item.name_th || item.sku,
+                        total: item.pose,
+                        isPackage: false,
+                        cover: null,
+                        back: null,
+                        interior: []
+                    };
+                }
             });
         }
         
-        function isPhotoUsedInProduct(sku, num, exclude = null) {
-            const a = photoAssignments[sku];
+        function isPhotoUsedInProduct(itemId, num, excludeSlot = null) {
+            const a = photoAssignments[itemId];
             if (!a) return false;
-            if (exclude !== 'cover' && a.cover === num) return true;
-            if (exclude !== 'back' && a.back === num) return true;
-            return a.interior.includes(num);
+            if (a.cover === num) return true;
+            if (a.back === num) return true;
+            if (a.interior?.includes(num)) return true;
+            if (a.contentSlots) {
+                for (const slot of Object.values(a.contentSlots)) {
+                    if (slot.assigned?.includes(num)) return true;
+                }
+            }
+            return false;
         }
         
-        function setPhoto(sku, pos, num) {
-            const a = photoAssignments[sku];
+        function setCover(itemId, num) {
+            const a = photoAssignments[itemId];
             if (!a) return false;
-            if (isPhotoUsedInProduct(sku, num, pos)) {
+            if (isPhotoUsedInProduct(itemId, num, 'cover')) {
                 showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
                 return false;
             }
-            const count = (a.cover ? 1 : 0) + (a.back ? 1 : 0) + a.interior.length;
-            if (count >= a.total) { showToast(translations[currentLang].toastAllFilled); return false; }
-            if (pos === 'cover') a.cover = num;
-            else if (pos === 'back') a.back = num;
+            a.cover = num;
             renderOrderInterface();
             return true;
         }
         
-        function addInterior(sku, num) {
-            const a = photoAssignments[sku];
+        function setBack(itemId, num) {
+            const a = photoAssignments[itemId];
             if (!a) return false;
-            if (!a.productType.hasInterior) {
-                showToast('This product does not have interior photos');
-                return false;
-            }
-            if (isPhotoUsedInProduct(sku, num)) {
+            if (isPhotoUsedInProduct(itemId, num, 'back')) {
                 showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
                 return false;
             }
-            const count = (a.cover ? 1 : 0) + (a.back ? 1 : 0) + a.interior.length;
-            if (count >= a.total) { showToast(translations[currentLang].toastAllFilled); return false; }
+            a.back = num;
+            renderOrderInterface();
+            return true;
+        }
+        
+        function addInterior(itemId, num) {
+            const a = photoAssignments[itemId];
+            if (!a || a.isPackage) return false;
+            if (isPhotoUsedInProduct(itemId, num)) {
+                showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
+                return false;
+            }
+            const usedCount = (a.cover ? 1 : 0) + (a.back ? 1 : 0) + a.interior.length;
+            if (usedCount >= a.total) { showToast(translations[currentLang].toastAllFilled); return false; }
             a.interior.push(num);
             renderOrderInterface();
             return true;
         }
         
-        function removePhoto(sku, pos, idx = null) {
-            const a = photoAssignments[sku];
-            if (!a) return;
-            if (pos === 'cover') a.cover = null;
-            else if (pos === 'back') a.back = null;
-            else if (pos === 'interior' && idx !== null) a.interior.splice(idx, 1);
+        function addPackagePhoto(itemId, slotKey, num) {
+            const a = photoAssignments[itemId];
+            if (!a || !a.contentSlots) return false;
+            const slot = a.contentSlots[slotKey];
+            if (!slot) return false;
+            if (isPhotoUsedInProduct(itemId, num)) {
+                showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
+                return false;
+            }
+            if (slot.assigned.length >= slot.required) {
+                showToast(`All ${slot.required} photos for ${slot.label} are filled`);
+                return false;
+            }
+            slot.assigned.push(num);
             renderOrderInterface();
+            return true;
         }
         
-        function randomFill(sku) {
-            const a = photoAssignments[sku];
-            if (!a || !a.productType.hasInterior) return;
-            
+        function removeCover(itemId) { const a = photoAssignments[itemId]; if (a) a.cover = null; renderOrderInterface(); }
+        function removeBack(itemId) { const a = photoAssignments[itemId]; if (a) a.back = null; renderOrderInterface(); }
+        function removeInterior(itemId, idx) { const a = photoAssignments[itemId]; if (a && a.interior) a.interior.splice(idx, 1); renderOrderInterface(); }
+        function removePackagePhoto(itemId, slotKey, idx) { const a = photoAssignments[itemId]; if (a && a.contentSlots?.[slotKey]) a.contentSlots[slotKey].assigned.splice(idx, 1); renderOrderInterface(); }
+        
+        function randomFillInterior(itemId) {
+            const a = photoAssignments[itemId];
+            if (!a || a.isPackage) return;
             const used = new Set();
             if (a.cover) used.add(a.cover);
             if (a.back) used.add(a.back);
             a.interior.forEach(n => used.add(n));
-            const current = used.size;
-            const need = a.total - current;
+            const need = a.total - used.size;
             if (need <= 0) { showToast(translations[currentLang].toastAllFilled); return; }
-            
-            const available = [];
-            for (let i = 1; i <= 500; i++) if (!used.has(i)) available.push(i);
-            for (let i = available.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [available[i], available[j]] = [available[j], available[i]];
-            }
+            const available = []; for (let i = 1; i <= 500; i++) if (!used.has(i)) available.push(i);
+            for (let i = available.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [available[i], available[j]] = [available[j], available[i]]; }
             const added = available.slice(0, need);
             added.forEach(n => a.interior.push(n));
             renderOrderInterface();
             showToast(`Added ${added.length} random photos`);
         }
         
-        function resetProduct(sku) {
-            const a = photoAssignments[sku];
-            if (a) { a.cover = null; a.back = null; a.interior = []; }
+        function randomFillPackage(itemId) {
+            const a = photoAssignments[itemId];
+            if (!a || !a.contentSlots) return;
+            const used = new Set();
+            if (a.cover) used.add(a.cover);
+            if (a.back) used.add(a.back);
+            for (const slot of Object.values(a.contentSlots)) slot.assigned.forEach(n => used.add(n));
+            
+            const available = []; for (let i = 1; i <= 500; i++) if (!used.has(i)) available.push(i);
+            for (let i = available.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [available[i], available[j]] = [available[j], available[i]]; }
+            
+            let availIdx = 0;
+            for (const [slotKey, slot] of Object.entries(a.contentSlots)) {
+                const need = slot.required - slot.assigned.length;
+                if (need > 0 && availIdx + need <= available.length) {
+                    const toAdd = available.slice(availIdx, availIdx + need);
+                    toAdd.forEach(n => slot.assigned.push(n));
+                    availIdx += need;
+                }
+            }
+            renderOrderInterface();
+            showToast('Random photos assigned to package slots');
+        }
+        
+        function resetProduct(itemId) {
+            const a = photoAssignments[itemId];
+            if (a) {
+                a.cover = null;
+                a.back = null;
+                if (a.interior) a.interior = [];
+                if (a.contentSlots) {
+                    for (const slot of Object.values(a.contentSlots)) slot.assigned = [];
+                }
+            }
             renderOrderInterface();
         }
         
         function confirmAll() {
             let summary = '📸 PHOTO SELECTION CONFIRMED\n\n';
-            for (const [sku, a] of Object.entries(photoAssignments)) {
+            for (const [id, a] of Object.entries(photoAssignments)) {
                 summary += `━━━ ${a.name} (${a.sku}) ━━━\n`;
-                summary += `📘 ${translations[currentLang].cover}: ${a.cover || '❌ NOT SET'}\n`;
-                if (a.productType.hasBack) {
-                    summary += `📖 ${translations[currentLang].back}: ${a.back || '❌ NOT SET'}\n`;
-                }
-                if (a.productType.hasInterior) {
-                    const interiorCount = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
-                    summary += `🖼️ ${translations[currentLang].interior} (${a.interior.length}/${interiorCount}): `;
-                    if (a.interior.length) summary += `${a.interior.join(', ')}\n`;
-                    else summary += 'none\n';
+                summary += `📘 Cover: ${a.cover || '❌'}\n`;
+                if (!a.isPackage) summary += `📖 Back: ${a.back || '❌'}\n`;
+                if (a.isPackage && a.contentSlots) {
+                    for (const [key, slot] of Object.entries(a.contentSlots)) {
+                        summary += `📷 ${slot.label}: ${slot.assigned.length}/${slot.required} - [${slot.assigned.join(', ') || 'none'}]\n`;
+                    }
+                } else if (a.interior) {
+                    summary += `🖼️ Interior: ${a.interior.length}/${a.total - (a.cover?1:0) - (a.back?1:0)} - [${a.interior.join(', ') || 'none'}]\n`;
                 }
                 summary += '\n';
             }
@@ -883,189 +839,74 @@
             showToast(translations[currentLang].toastConfirm);
         }
         
-        function backToLogin() {
-            currentOrder = null;
-            document.getElementById('mainContent').innerHTML = `
-                <div class="login-screen">
-                    <h1 id="title">${translations[currentLang].title}</h1>
-                    <p class="subtitle">${translations[currentLang].subtitle}</p>
-                    <input type="text" id="orderNumberInput" class="order-input" placeholder="${translations[currentLang].placeholder}" value="1111">
-                    <button class="btn-primary" id="loginBtn">${translations[currentLang].loginBtn}</button>
-                </div>
-            `;
-            document.getElementById('loginBtn').addEventListener('click', checkOrder);
-            document.getElementById('orderNumberInput').addEventListener('keypress', e => { if (e.key === 'Enter') checkOrder(); });
-        }
+        function backToLogin() { currentOrder = null; document.getElementById('mainContent').innerHTML = `<div class="login-screen"><h1 id="title">${translations[currentLang].title}</h1><p class="subtitle">${translations[currentLang].subtitle}</p><input type="text" id="orderNumberInput" class="order-input" placeholder="${translations[currentLang].placeholder}" value="1111"><button class="btn-primary" id="loginBtn">${translations[currentLang].loginBtn}</button></div>`; document.getElementById('loginBtn').addEventListener('click', checkOrder); document.getElementById('orderNumberInput').addEventListener('keypress', e => { if (e.key === 'Enter') checkOrder(); }); }
         
         function renderOrderInterface() {
             const t = translations[currentLang];
             let totalSlots = 0, totalFilled = 0;
             let productsHtml = '';
             
-            for (const [sku, a] of Object.entries(photoAssignments)) {
-                const used = (a.cover?1:0) + (a.back?1:0) + a.interior.length;
+            for (const [id, a] of Object.entries(photoAssignments)) {
+                const safeId = id.replace(/[^a-zA-Z0-9]/g, '_');
+                let used = 0;
+                if (a.cover) used++;
+                if (a.back && !a.isPackage) used++;
+                if (a.interior) used += a.interior.length;
+                if (a.contentSlots) for (const slot of Object.values(a.contentSlots)) used += slot.assigned.length;
                 totalSlots += a.total;
                 totalFilled += used;
-                const remain = a.total - used;
-                const safeSku = sku.replace(/[^a-zA-Z0-9]/g, '_');
-                const productType = a.productType;
                 
-                productsHtml += `
-                    <div class="product-card">
-                        <div class="product-header">
-                            <div class="product-info">
-                                <div class="product-name">${escapeHtml(a.name)}</div>
-                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.3rem;">
-                                    <span class="product-sku-code">${escapeHtml(a.sku || 'N/A')}</span>
-                                    <span class="product-type-badge">${productType.label}</span>
-                                    <span class="product-pose">📷 ${a.total} photos</span>
-                                </div>
-                            </div>
-                            <div class="product-stats">
-                                <div class="photos-counter">${used}/${a.total}</div>
-                                <div class="photos-label">${t.totalPhotos}</div>
-                            </div>
+                let packageContentsHtml = '';
+                if (a.isPackage && a.contentSlots) {
+                    packageContentsHtml = `<div class="package-contents"><span style="font-weight:600;">${t.packageContents}</span> ${Object.values(a.contentSlots).map(s => `${s.label}: ${s.required} photo(s)`).join(' • ')}</div>`;
+                }
+                
+                let slotsHtml = '';
+                if (a.isPackage && a.contentSlots) {
+                    slotsHtml = `<div class="assignment-grid">`;
+                    slotsHtml += `<div class="slot-card"><div class="slot-title"><span class="slot-icon">📘</span><span class="slot-name">${t.cover}</span><span class="slot-badge required">${t.required}</span></div>${a.cover ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.cover}</span><button class="remove-btn" onclick="removeCover('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover-${safeId}" class="photo-input" placeholder="#"><button class="action-btn" onclick="setCoverFromInput('${id}')">${t.set}</button></div>`}</div>`;
+                    slotsHtml += `<div class="slot-card"><div class="slot-title"><span class="slot-icon">📖</span><span class="slot-name">${t.back}</span><span class="slot-badge">${t.optional}</span></div>${a.back ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.back}</span><button class="remove-btn" onclick="removeBack('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="back-${safeId}" class="photo-input" placeholder="#"><button class="action-btn" onclick="setBackFromInput('${id}')">${t.set}</button></div>`}</div>`;
+                    
+                    for (const [slotKey, slot] of Object.entries(a.contentSlots)) {
+                        const slotSafe = slotKey.replace(/[^a-zA-Z0-9]/g, '_');
+                        slotsHtml += `<div class="slot-card"><div class="slot-title"><span class="slot-icon">🖼️</span><span class="slot-name">${slot.label}</span><span class="size-badge">${slot.required} photo(s)</span></div>
+                            <div class="multiple-inputs">
+                                <div class="photo-input-wrapper"><input type="number" id="pkg-${safeId}-${slotSafe}" class="photo-input" placeholder="#"><button class="action-btn" onclick="addPackageFromInput('${id}', '${slotKey}')">${t.set}</button><button class="action-btn-outline" style="margin-left:0.3rem;" onclick="randomFillPackage('${id}')">${t.randomFill}</button></div>
+                                <div class="interior-list">${slot.assigned.map((num, idx) => `<div class="photo-tag">#${num}<button onclick="removePackagePhoto('${id}', '${slotKey}', ${idx})">✕</button></div>`).join('')}</div>
+                                ${slot.assigned.length < slot.required ? `<div class="status-message status-warning">⚠️ ${slot.required - slot.assigned.length} ${t.moreNeeded}</div>` : `<div class="status-message status-success">✓ ${t.filled}</div>`}
+                            </div></div>`;
+                    }
+                    slotsHtml += `</div>`;
+                } else {
+                    const interiorCount = a.total - (a.cover ? 1 : 0) - (a.back ? 1 : 0);
+                    slotsHtml = `<div class="assignment-grid">
+                        <div class="slot-card"><div class="slot-title"><span class="slot-icon">📘</span><span class="slot-name">${t.cover}</span><span class="slot-badge required">${t.required}</span></div>${a.cover ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.cover}</span><button class="remove-btn" onclick="removeCover('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover-${safeId}" class="photo-input" placeholder="#"><button class="action-btn" onclick="setCoverFromInput('${id}')">${t.set}</button></div>`}</div>
+                        <div class="slot-card"><div class="slot-title"><span class="slot-icon">📖</span><span class="slot-name">${t.back}</span><span class="slot-badge">${t.optional}</span></div>${a.back ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.back}</span><button class="remove-btn" onclick="removeBack('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="back-${safeId}" class="photo-input" placeholder="#"><button class="action-btn" onclick="setBackFromInput('${id}')">${t.set}</button></div>`}</div>
+                        <div class="slot-card"><div class="slot-title"><span class="slot-icon">🖼️</span><span class="slot-name">${t.interior}</span><span class="slot-badge">${a.interior?.length || 0}/${interiorCount}</span></div>
+                            <div class="photo-input-wrapper"><input type="number" id="int-${safeId}" class="photo-input" placeholder="#"><button class="action-btn" onclick="addInteriorFromInput('${id}')">${t.set}</button><button class="action-btn-outline" onclick="randomFillInterior('${id}')">${t.randomFill}</button></div>
+                            <div class="interior-list">${(a.interior || []).map((num, idx) => `<div class="photo-tag">#${num}<button onclick="removeInterior('${id}', ${idx})">✕</button></div>`).join('')}</div>
+                            ${(a.interior?.length || 0) < interiorCount ? `<div class="status-message status-warning">⚠️ ${interiorCount - (a.interior?.length || 0)} ${t.moreNeeded}</div>` : `<div class="status-message status-success">✓ ${t.filled}</div>`}
                         </div>
-                        
-                        <div class="assignment-grid">
-                            <!-- Cover - always required -->
-                            <div class="slot-card">
-                                <div class="slot-title">
-                                    <span class="slot-icon">📘</span>
-                                    <span class="slot-name">${t.cover}</span>
-                                    <span class="slot-badge required">${t.required}</span>
-                                </div>
-                                ${a.cover ? `
-                                    <div class="assigned-photo-card">
-                                        <span class="photo-number-large">#${a.cover}</span>
-                                        <button class="remove-btn" onclick="removePhoto('${sku}', 'cover')">✕</button>
-                                    </div>
-                                ` : `
-                                    <div class="photo-input-wrapper">
-                                        <input type="number" id="cover-in-${safeSku}" class="photo-input" placeholder="#" min="1">
-                                        <button class="action-btn" onclick="setFromInput('${sku}', 'cover')">${t.set}</button>
-                                    </div>
-                                `}
-                            </div>
-                            
-                            <!-- Back Cover - only if needed -->
-                            ${productType.hasBack ? `
-                            <div class="slot-card">
-                                <div class="slot-title">
-                                    <span class="slot-icon">📖</span>
-                                    <span class="slot-name">${t.back}</span>
-                                    <span class="slot-badge">${t.optional}</span>
-                                </div>
-                                ${a.back ? `
-                                    <div class="assigned-photo-card">
-                                        <span class="photo-number-large">#${a.back}</span>
-                                        <button class="remove-btn" onclick="removePhoto('${sku}', 'back')">✕</button>
-                                    </div>
-                                ` : `
-                                    <div class="photo-input-wrapper">
-                                        <input type="number" id="back-in-${safeSku}" class="photo-input" placeholder="#" min="1">
-                                        <button class="action-btn" onclick="setFromInput('${sku}', 'back')">${t.set}</button>
-                                    </div>
-                                `}
-                            </div>
-                            ` : `
-                            <div class="slot-card" style="background: #f1f5f9; opacity: 0.7;">
-                                <div class="slot-title">
-                                    <span class="slot-icon">📖</span>
-                                    <span class="slot-name">${t.back}</span>
-                                    <span class="slot-badge">${t.notApplicable}</span>
-                                </div>
-                                <div style="padding: 0.5rem; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
-                                    ⚡ ${t.notApplicable} for this product
-                                </div>
-                            </div>
-                            `}
-                            
-                            <!-- Interior Photos - only if needed -->
-                            ${productType.hasInterior ? `
-                            <div class="slot-card">
-                                <div class="slot-title">
-                                    <span class="slot-icon">🖼️</span>
-                                    <span class="slot-name">${t.interior}</span>
-                                    <span class="slot-badge">${a.interior.length}/${a.total - (a.cover?1:0) - (a.back?1:0)}</span>
-                                </div>
-                                <div class="photo-input-wrapper" style="margin-bottom: 0.6rem;">
-                                    <input type="number" id="int-in-${safeSku}" class="photo-input" placeholder="#" min="1">
-                                    <button class="action-btn" onclick="addFromInput('${sku}')">${t.set}</button>
-                                    <button class="action-btn-outline" onclick="randomFill('${sku}')">${t.randomFill}</button>
-                                </div>
-                                <div class="interior-list">
-                                    ${a.interior.map((num, idx) => `
-                                        <div class="photo-tag">
-                                            #${num}
-                                            <button onclick="removePhoto('${sku}', 'interior', ${idx})">✕</button>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                ${remain > 0 ? `<div class="status-message status-warning">⚠️ ${remain} ${t.moreNeeded}</div>` : `<div class="status-message status-success">✓ ${t.filled}</div>`}
-                            </div>
-                            ` : `
-                            <div class="slot-card" style="background: #f1f5f9; opacity: 0.7;">
-                                <div class="slot-title">
-                                    <span class="slot-icon">🖼️</span>
-                                    <span class="slot-name">${t.interior}</span>
-                                    <span class="slot-badge">${t.notApplicable}</span>
-                                </div>
-                                <div style="padding: 0.5rem; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
-                                    ⚡ Single photo product - no interior pages
-                                </div>
-                            </div>
-                            `}
-                        </div>
-                        
-                        <div class="product-footer">
-                            <button class="action-btn-outline" onclick="resetProduct('${sku}')">🔄 ${t.reset}</button>
-                        </div>
-                    </div>
-                `;
+                    </div>`;
+                }
+                
+                productsHtml += `<div class="product-card"><div class="product-header"><div class="product-info"><div class="product-name">${escapeHtml(a.name)}</div><div><span class="product-sku-code">${escapeHtml(a.sku || 'N/A')}</span></div></div><div class="product-stats"><div class="photos-counter">${used}/${a.total}</div><div class="photos-label">${t.totalPhotos}</div></div></div>${packageContentsHtml}${slotsHtml}<div class="product-footer"><button class="action-btn-outline" onclick="resetProduct('${id}')">🔄 ${t.reset}</button></div></div>`;
             }
             
             const percent = totalSlots > 0 ? Math.round((totalFilled / totalSlots) * 100) : 0;
-            
-            document.getElementById('mainContent').innerHTML = `
-                <div class="order-header">
-                    <div class="order-badge">📦 Order: <strong>${currentOrder.number}</strong></div>
-                    <div class="order-badge">🎯 ${totalFilled}/${totalSlots} photos selected (${percent}%)</div>
-                    <button class="back-btn" id="backBtn">${t.backToLogin}</button>
-                </div>
-                ${productsHtml}
-                <div class="global-actions">
-                    <button class="btn-primary" id="confirmBtn" style="width: auto; padding: 0.8rem 2rem;">${t.confirmAll}</button>
-                </div>
-            `;
-            
+            document.getElementById('mainContent').innerHTML = `<div class="order-header"><div class="order-badge">📦 Order: <strong>${currentOrder.number}</strong></div><div class="order-badge">🎯 ${totalFilled}/${totalSlots} photos (${percent}%)</div><button class="back-btn" id="backBtn">${t.backToLogin}</button></div>${productsHtml}<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width: auto; padding: 0.8rem 2rem;">${t.confirmAll}</button></div>`;
             document.getElementById('backBtn')?.addEventListener('click', backToLogin);
             document.getElementById('confirmBtn')?.addEventListener('click', confirmAll);
         }
         
         function escapeHtml(s) { if (!s) return ''; return String(s).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
         
-        window.setFromInput = function(sku, pos) {
-            const safe = sku.replace(/[^a-zA-Z0-9]/g, '_');
-            const input = document.getElementById(`${pos}-in-${safe}`);
-            if (!input) return;
-            const num = parseInt(input.value);
-            if (isNaN(num) || num < 1) { showToast('Enter valid number'); return; }
-            if (setPhoto(sku, pos, num)) input.value = '';
-        };
-        
-        window.addFromInput = function(sku) {
-            const safe = sku.replace(/[^a-zA-Z0-9]/g, '_');
-            const input = document.getElementById(`int-in-${safe}`);
-            if (!input) return;
-            const num = parseInt(input.value);
-            if (isNaN(num) || num < 1) { showToast('Enter valid number'); return; }
-            if (addInterior(sku, num)) input.value = '';
-        };
-        
-        window.removePhoto = removePhoto;
-        window.randomFill = randomFill;
-        window.resetProduct = resetProduct;
+        window.setCoverFromInput = function(id) { const input = document.getElementById(`cover-${id.replace(/[^a-zA-Z0-9]/g, '_')}`); if(input){ const num = parseInt(input.value); if(!isNaN(num) && num>0 && setCover(id, num)) input.value=''; else showToast('Enter valid number'); } };
+        window.setBackFromInput = function(id) { const input = document.getElementById(`back-${id.replace(/[^a-zA-Z0-9]/g, '_')}`); if(input){ const num = parseInt(input.value); if(!isNaN(num) && num>0 && setBack(id, num)) input.value=''; else showToast('Enter valid number'); } };
+        window.addInteriorFromInput = function(id) { const input = document.getElementById(`int-${id.replace(/[^a-zA-Z0-9]/g, '_')}`); if(input){ const num = parseInt(input.value); if(!isNaN(num) && num>0 && addInterior(id, num)) input.value=''; else showToast('Enter valid number'); } };
+        window.addPackageFromInput = function(id, slotKey) { const input = document.getElementById(`pkg-${id.replace(/[^a-zA-Z0-9]/g, '_')}-${slotKey.replace(/[^a-zA-Z0-9]/g, '_')}`); if(input){ const num = parseInt(input.value); if(!isNaN(num) && num>0 && addPackagePhoto(id, slotKey, num)) input.value=''; else showToast('Enter valid number'); } };
+        window.removeCover = removeCover; window.removeBack = removeBack; window.removeInterior = removeInterior; window.removePackagePhoto = removePackagePhoto;
+        window.randomFillInterior = randomFillInterior; window.randomFillPackage = randomFillPackage; window.resetProduct = resetProduct;
         
         document.getElementById('langToggle').addEventListener('click', () => { currentLang = currentLang === 'en' ? 'th' : 'en'; updateLanguage(); });
         document.getElementById('checkOrderBtn').addEventListener('click', checkOrder);
