@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio - Photo Selection</title>
+    <title>White Fox Studio - Photo Selection for Your Order</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         :root {
@@ -34,7 +34,6 @@
             min-height: 100vh;
         }
 
-        /* Header */
         .header {
             position: sticky;
             top: 0;
@@ -98,10 +97,6 @@
             font-size: 1rem;
         }
 
-        .search-box input::placeholder {
-            color: var(--text-muted);
-        }
-
         .search-box button {
             background: var(--accent-primary);
             border: none;
@@ -137,7 +132,6 @@
             color: white;
         }
 
-        /* Main Content */
         .main-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -145,7 +139,6 @@
             min-height: calc(100vh - 120px);
         }
 
-        /* Login Screen */
         .login-screen {
             max-width: 500px;
             margin: 3rem auto;
@@ -172,7 +165,6 @@
             outline: none;
             text-align: center;
             margin-bottom: 1rem;
-            transition: all 0.3s;
         }
 
         .order-input:focus {
@@ -190,7 +182,6 @@
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
         }
 
         .btn-primary:hover {
@@ -198,7 +189,6 @@
             transform: translateY(-2px);
         }
 
-        /* Order Header */
         .order-header {
             background: white;
             border-radius: 24px;
@@ -253,21 +243,14 @@
             border-radius: 40px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .back-btn:hover {
-            background: var(--accent-light);
-        }
-
-        /* Product Cards */
         .product-card {
             background: white;
             border-radius: 28px;
             margin-bottom: 1.8rem;
             border: 1px solid var(--border-color);
             overflow: hidden;
-            transition: all 0.2s;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
 
@@ -335,12 +318,6 @@
             color: var(--accent-primary);
         }
 
-        .photos-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        /* Assignment Grid */
         .assignment-grid {
             padding: 1.5rem;
             display: grid;
@@ -353,12 +330,10 @@
             border-radius: 20px;
             padding: 1rem;
             border: 1px solid var(--border-color);
-            transition: all 0.2s;
         }
 
         .slot-card:hover {
             border-color: var(--accent-primary);
-            background: white;
         }
 
         .slot-title {
@@ -414,7 +389,6 @@
             font-size: 1.2rem;
             cursor: pointer;
             color: var(--danger);
-            padding: 0 0.3rem;
         }
 
         .photo-input-wrapper {
@@ -449,7 +423,6 @@
             font-size: 0.75rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .action-btn-outline {
@@ -546,14 +519,8 @@
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translate(-50%, 20px);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, 0);
-            }
+            from { opacity: 0; transform: translate(-50%, 20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
         }
 
         .loading {
@@ -563,37 +530,14 @@
         }
 
         @media (max-width: 768px) {
-            .top-bar {
-                flex-direction: column;
-                padding: 0.8rem 1rem;
-            }
-            .right-actions {
-                width: 100%;
-                flex-direction: column;
-            }
-            .search-box {
-                width: 100%;
-            }
-            .search-box input {
-                width: 100%;
-            }
-            .lang-toggle {
-                width: 100%;
-                justify-content: center;
-            }
-            .main-content {
-                padding: 1rem;
-            }
-            .assignment-grid {
-                grid-template-columns: 1fr;
-            }
-            .product-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .product-stats {
-                text-align: left;
-            }
+            .top-bar { flex-direction: column; padding: 0.8rem 1rem; }
+            .right-actions { width: 100%; flex-direction: column; }
+            .search-box { width: 100%; }
+            .search-box input { width: 100%; }
+            .lang-toggle { width: 100%; justify-content: center; }
+            .main-content { padding: 1rem; }
+            .assignment-grid { grid-template-columns: 1fr; }
+            .product-header { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -606,7 +550,7 @@
             </div>
             <div class="right-actions">
                 <div class="search-box">
-                    <input type="text" id="orderNumber" placeholder="Order number (1111)">
+                    <input type="text" id="orderNumber" placeholder="Order number (1111)" value="1111">
                     <button id="checkOrderBtn">OK</button>
                 </div>
                 <button class="lang-toggle" id="langToggle">
@@ -621,7 +565,7 @@
         <div class="login-screen" id="loginScreen">
             <h1 id="title">Enter Order Number</h1>
             <p class="subtitle" id="subtitle">Please enter your order number to select photos</p>
-            <input type="text" id="orderNumberInput" class="order-input" placeholder="Enter order number (1111)">
+            <input type="text" id="orderNumberInput" class="order-input" placeholder="Enter order number (1111)" value="1111">
             <button class="btn-primary" id="loginBtn">Continue</button>
         </div>
     </main>
@@ -638,7 +582,8 @@
         let currentOrder = null;
         let photoAssignments = {};
         
-        const mockOrderSkus = ['CAL-2025', 'PB-ALBUM', 'MAG-01'];
+        // Real SKUs that exist in Supabase
+        const purchasedSkus = ['CAL-2025', 'PB-ALBUM', 'MAG-01'];
         
         const translations = {
             en: {
@@ -647,25 +592,24 @@
                 loginBtn: 'Continue',
                 toastError: 'Please enter order number',
                 placeholder: 'Enter order number (1111)',
-                toastOrderLoaded: 'Order loaded! Select photos for each product.',
+                toastOrderLoaded: '✅ Order loaded! Select photos for each product below.',
                 toastInvalidCode: 'Demo: Use code 1111',
-                toastDuplicate: 'Photo #{num} already used in this product',
-                toastAllFilled: 'All slots filled',
-                toastConfirm: 'Selection saved!',
+                toastDuplicate: '⚠️ Photo #{num} already used in this product',
+                toastAllFilled: '✓ All slots filled!',
+                toastConfirm: '✅ Selection saved! Check console for details.',
                 cover: 'Cover Photo',
                 back: 'Back Cover',
                 interior: 'Interior Photos',
                 required: 'required',
                 optional: 'optional',
                 set: 'Set',
-                remove: 'Remove',
-                randomFill: '🎲 Random Fill',
+                randomFill: '🎲 Random',
                 reset: 'Reset',
-                confirmAll: '✅ Confirm All',
+                confirmAll: '✅ Confirm All Selections',
                 backToLogin: '← Back',
-                totalPhotos: 'Total',
-                filled: 'filled',
-                moreNeeded: 'more needed'
+                totalPhotos: 'Total photos',
+                moreNeeded: 'more needed',
+                filled: 'Complete!'
             },
             th: {
                 title: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
@@ -673,25 +617,24 @@
                 loginBtn: 'ดำเนินการต่อ',
                 toastError: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
                 placeholder: 'กรอกหมายเลขคำสั่งซื้อ (1111)',
-                toastOrderLoaded: 'โหลดออเดอร์เรียบร้อย! เลือกรูปภาพ',
+                toastOrderLoaded: '✅ โหลดออเดอร์เรียบร้อย! เลือกรูปภาพด้านล่าง',
                 toastInvalidCode: 'ทดสอบ: ใช้รหัส 1111',
-                toastDuplicate: 'รูป #{num} ถูกใช้ในสินค้านี้แล้ว',
-                toastAllFilled: 'ครบทุกตำแหน่งแล้ว',
-                toastConfirm: 'บันทึกการเลือกแล้ว!',
+                toastDuplicate: '⚠️ รูป #{num} ถูกใช้ในสินค้านี้แล้ว',
+                toastAllFilled: '✓ ครบทุกตำแหน่งแล้ว!',
+                toastConfirm: '✅ บันทึกการเลือกแล้ว!',
                 cover: 'รูปปก',
                 back: 'รูปปกหลัง',
                 interior: 'รูปภายใน',
                 required: 'จำเป็น',
                 optional: 'ไม่จำเป็น',
                 set: 'ตั้งค่า',
-                remove: 'ลบ',
-                randomFill: '🎲 สุ่มอัตโนมัติ',
+                randomFill: '🎲 สุ่ม',
                 reset: 'รีเซ็ต',
-                confirmAll: '✅ ยืนยันทั้งหมด',
+                confirmAll: '✅ ยืนยันการเลือกทั้งหมด',
                 backToLogin: '← กลับ',
-                totalPhotos: 'ทั้งหมด',
-                filled: 'เลือกแล้ว',
-                moreNeeded: 'ต้องเลือกเพิ่ม'
+                totalPhotos: 'รูปทั้งหมด',
+                moreNeeded: 'ต้องเลือกเพิ่ม',
+                filled: 'ครบถ้วน!'
             }
         };
         
@@ -720,11 +663,18 @@
         
         async function initSupabase() {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
-            await loadProducts();
+            await loadProductsFromSupabase();
+            // Auto-check order on load with demo code
+            setTimeout(() => {
+                if (document.getElementById('orderNumberInput')?.value === '1111') {
+                    checkOrder();
+                }
+            }, 1000);
         }
         
-        async function loadProducts() {
+        async function loadProductsFromSupabase() {
             try {
+                console.log('📦 Loading products from Supabase...');
                 const { data: productCards } = await supabaseClient.from('product_cards').select('*');
                 const { data: packages } = await supabaseClient.from('packages_with_price').select('*');
                 
@@ -769,15 +719,23 @@
                     });
                 }
                 
-                console.log('Products loaded:', allProducts.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose })));
-            } catch(e) { console.error(e); }
+                console.log('✅ Products loaded:', allProducts.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose })));
+            } catch(e) { 
+                console.error('Error loading products:', e);
+                // Fallback with mock data if Supabase fails
+                allProducts = [
+                    { sku: 'CAL-2025', name_en: 'Desk Calendar 2025', name_th: 'ปฏิทินตั้งโต๊ะ 2025', pose: 13 },
+                    { sku: 'PB-ALBUM', name_en: 'Premium Photo Album', name_th: 'อัลบั้มภาพ Premium', pose: 20 },
+                    { sku: 'MAG-01', name_en: 'Hardcover Magazine', name_th: 'นิตยสารปกแข็ง', pose: 30 }
+                ];
+            }
         }
         
         async function checkOrder() {
             const code = document.getElementById('orderNumberInput')?.value.trim() || document.getElementById('orderNumber')?.value.trim();
             if (!code) { showToast(translations[currentLang].toastError); return; }
             if (code === '1111') {
-                await loadOrder(code);
+                await loadOrderFromPurchasedItems();
                 renderOrderInterface();
                 showToast(translations[currentLang].toastOrderLoaded);
             } else {
@@ -785,9 +743,9 @@
             }
         }
         
-        async function loadOrder(code) {
+        async function loadOrderFromPurchasedItems() {
             const items = [];
-            for (const sku of mockOrderSkus) {
+            for (const sku of purchasedSkus) {
                 const product = allProducts.find(p => p.sku === sku);
                 if (product) {
                     items.push({
@@ -795,11 +753,13 @@
                         name: product.name_en || product.name_th || sku,
                         pose: product.pose || 10
                     });
+                    console.log(`📦 Added: ${product.name_en} (${sku}) - ${product.pose} photos`);
                 } else {
                     items.push({ sku: sku, name: sku, pose: 10 });
+                    console.log(`⚠️ Product not found: ${sku}`);
                 }
             }
-            currentOrder = { number: code, items: items };
+            currentOrder = { number: '1111', items: items };
             
             photoAssignments = {};
             items.forEach(item => {
@@ -889,13 +849,15 @@
         }
         
         function confirmAll() {
-            let summary = '📸 PHOTO SELECTION\n\n';
+            let summary = '📸 PHOTO SELECTION CONFIRMED\n\n';
             for (const [sku, a] of Object.entries(photoAssignments)) {
                 summary += `━━━ ${a.name} (${a.sku}) ━━━\n`;
-                summary += `📘 Cover: ${a.cover || '❌'}\n`;
-                summary += `📖 Back: ${a.back || '❌'}\n`;
-                summary += `🖼️ Interior: ${a.interior.length}/${a.total - (a.cover?1:0) - (a.back?1:0)}\n`;
-                if (a.interior.length) summary += `   ${a.interior.join(', ')}\n\n`;
+                summary += `📘 Cover: ${a.cover || '❌ NOT SET'}\n`;
+                summary += `📖 Back: ${a.back || '❌ NOT SET'}\n`;
+                summary += `🖼️ Interior (${a.interior.length}/${a.total - (a.cover?1:0) - (a.back?1:0)}): `;
+                if (a.interior.length) summary += `${a.interior.join(', ')}\n`;
+                else summary += 'none\n';
+                summary += '\n';
             }
             alert(summary);
             showToast(translations[currentLang].toastConfirm);
@@ -907,7 +869,7 @@
                 <div class="login-screen">
                     <h1 id="title">${translations[currentLang].title}</h1>
                     <p class="subtitle">${translations[currentLang].subtitle}</p>
-                    <input type="text" id="orderNumberInput" class="order-input" placeholder="${translations[currentLang].placeholder}">
+                    <input type="text" id="orderNumberInput" class="order-input" placeholder="${translations[currentLang].placeholder}" value="1111">
                     <button class="btn-primary" id="loginBtn">${translations[currentLang].loginBtn}</button>
                 </div>
             `;
@@ -945,7 +907,6 @@
                         </div>
                         
                         <div class="assignment-grid">
-                            <!-- Cover -->
                             <div class="slot-card">
                                 <div class="slot-title">
                                     <span class="slot-icon">📘</span>
@@ -965,7 +926,6 @@
                                 `}
                             </div>
                             
-                            <!-- Back Cover -->
                             <div class="slot-card">
                                 <div class="slot-title">
                                     <span class="slot-icon">📖</span>
@@ -985,7 +945,6 @@
                                 `}
                             </div>
                             
-                            <!-- Interior -->
                             <div class="slot-card">
                                 <div class="slot-title">
                                     <span class="slot-icon">🖼️</span>
