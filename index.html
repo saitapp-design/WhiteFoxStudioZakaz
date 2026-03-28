@@ -514,13 +514,6 @@
                 return { type: 'package', hasCover: false, hasBack: false, hasInterior: false, label: '📦 Package' };
             }
             
-            // Single photo items (pose = 1) - only main photo
-            if (pose === 1 || name.includes('canvas') || name.includes('poster') || name.includes('mug') || 
-                name.includes('keyring') || name.includes('magnet') || name.includes('card holder') ||
-                (name.includes('acrylic') && pose === 1)) {
-                return { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '📷 Single Photo' };
-            }
-            
             // Books, albums, notebooks, folders, calendars - have cover + back + interior
             if (name.includes('book') || name.includes('album') || name.includes('notebook') || 
                 name.includes('folder') || name.includes('calendar') || name.includes('ปฏิทิน') ||
@@ -528,14 +521,13 @@
                 return { type: 'book', hasCover: true, hasBack: true, hasInterior: true, label: '📚 Book / Calendar' };
             }
             
-            // Default for multi-photo items
-            if (pose > 2) {
-                return { type: 'multi', hasCover: true, hasBack: true, hasInterior: true, label: '📸 Multi-photo' };
-            } else if (pose === 2) {
-                return { type: 'double', hasCover: true, hasBack: false, hasInterior: true, label: '🖼️ Double Photo' };
-            } else {
+            // Single photo items (pose = 1)
+            if (pose === 1) {
                 return { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '📷 Single Photo' };
             }
+            
+            // Default
+            return { type: 'book', hasCover: true, hasBack: true, hasInterior: true, label: '📸 Multi-photo' };
         }
         
         const translations = {
@@ -593,7 +585,7 @@
                 
                 allProducts = [];
                 
-                // Process product cards - ensure every product has SKU
+                // Process product cards
                 if (productCards) {
                     productCards.forEach(card => {
                         let pose = 0;
@@ -606,15 +598,8 @@
                         if (!pose && card.pose) pose = parseInt(card.pose);
                         if (!pose && card.total_photos) pose = parseInt(card.total_photos);
                         
-                        // Generate SKU if missing
-                        let sku = card.sku;
-                        if (!sku || sku === 'undefined' || sku === 'null') {
-                            const name = (card.name_en || card.name_th || 'product').toUpperCase().replace(/[^A-Z0-9]/g, '_');
-                            sku = `${name}_${card.id || Math.floor(Math.random() * 1000)}`;
-                        }
-                        
                         allProducts.push({
-                            sku: sku,
+                            sku: card.sku,
                             name_en: card.name_en,
                             name_th: card.name_th,
                             pose: pose || 0,
@@ -623,7 +608,7 @@
                     });
                 }
                 
-                // Process packages - ensure every package has SKU
+                // Process packages
                 if (packages) {
                     packages.forEach(pkg => {
                         let contents = [];
@@ -638,14 +623,8 @@
                             totalPhotos = contents.reduce((s, i) => s + (i.qty || 1), 0);
                         }
                         
-                        let sku = pkg.sku;
-                        if (!sku || sku === 'undefined' || sku === 'null') {
-                            const name = (pkg.name_en || pkg.name_th || 'package').toUpperCase().replace(/[^A-Z0-9]/g, '_');
-                            sku = `${name}_${pkg.id || Math.floor(Math.random() * 1000)}`;
-                        }
-                        
                         allProducts.push({
-                            sku: sku,
+                            sku: pkg.sku,
                             name_en: pkg.name_en,
                             name_th: pkg.name_th,
                             pose: totalPhotos || 0,
@@ -655,7 +634,7 @@
                     });
                 }
                 
-                console.log('✅ Loaded products:', allProducts.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose, isPackage: p.isPackage })));
+                console.log('✅ Products loaded from Supabase:', allProducts.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose, isPackage: p.isPackage })));
             } catch(e) { console.error('Error loading products:', e); }
         }
         
@@ -672,36 +651,38 @@
         async function loadDemoOrder() {
             const items = [];
             
-            // Find a Package (has contents)
-            let packageProduct = allProducts.find(p => p.isPackage && p.packageContents?.length > 0);
+            // Find REAL products from Supabase with their actual SKUs
+            // Package with contents (Q11, Q12, Q13, etc.)
+            let packageProduct = allProducts.find(p => p.isPackage && p.packageContents?.length > 0 && p.sku);
             if (!packageProduct) {
-                packageProduct = { 
-                    sku: 'PKG-PHOTO-001', name_en: 'Photo Package Set', name_th: 'แพ็คเกจภาพถ่าย', pose: 12, isPackage: true,
-                    packageContents: [
-                        { sku: '4x6', name_en: '4x6 Photo', qty: 4, size: '4x6 inch' },
-                        { sku: '5x7', name_en: '5x7 Photo', qty: 3, size: '5x7 inch' },
-                        { sku: '8x10', name_en: '8x10 Photo', qty: 1, size: '8x10 inch' }
-                    ]
-                };
+                packageProduct = allProducts.find(p => p.isPackage && p.sku);
             }
             
-            // Find a Book/Calendar/Notebook/Folder (has cover + back + interior)
-            let bookProduct = allProducts.find(p => !p.isPackage && (p.name_en?.toLowerCase().includes('calendar') || 
-                p.name_en?.toLowerCase().includes('book') || p.name_en?.toLowerCase().includes('notebook') ||
-                p.name_en?.toLowerCase().includes('folder')) && p.pose >= 5);
+            // Book/Calendar product (with cover + back + interior)
+            let bookProduct = allProducts.find(p => !p.isPackage && p.pose >= 5 && p.sku && 
+                (p.name_en?.toLowerCase().includes('calendar') || p.name_en?.toLowerCase().includes('book') || 
+                 p.name_en?.toLowerCase().includes('notebook') || p.name_en?.toLowerCase().includes('folder')));
             if (!bookProduct) {
-                bookProduct = { sku: 'CAL-13P-2025', name_en: 'Wall Calendar 13 Pages', name_th: 'ปฏิทินติดผนัง 13 หน้า', pose: 13, isPackage: false };
+                bookProduct = allProducts.find(p => !p.isPackage && p.pose >= 5 && p.sku);
             }
             
-            // Find a Single photo product
-            let singleProduct = allProducts.find(p => !p.isPackage && p.pose === 1);
+            // Single photo product (pose = 1)
+            let singleProduct = allProducts.find(p => !p.isPackage && p.pose === 1 && p.sku);
             if (!singleProduct) {
-                singleProduct = { sku: 'CANVAS-8X10', name_en: 'Canvas Print 8x10', name_th: 'แคนวาส 8x10 นิ้ว', pose: 1, isPackage: false };
+                singleProduct = allProducts.find(p => !p.isPackage && p.pose === 1);
             }
             
-            items.push(packageProduct);
-            items.push(bookProduct);
-            items.push(singleProduct);
+            if (packageProduct) items.push(packageProduct);
+            if (bookProduct) items.push(bookProduct);
+            if (singleProduct) items.push(singleProduct);
+            
+            // If we couldn't find real products, show message
+            if (items.length === 0) {
+                showToast('No products found in database. Please check Supabase connection.');
+                return;
+            }
+            
+            console.log('Demo order items:', items.map(i => ({ sku: i.sku, name: i.name_en, pose: i.pose, isPackage: i.isPackage })));
             
             currentOrder = { number: '1111', items: items };
             photoAssignments = {};
@@ -732,12 +713,12 @@
                         packageContents: item.packageContents,
                         contentSlots: contentSlots
                     };
-                } else if (productType.type === 'single') {
+                } else if (productType.type === 'single' || item.pose === 1) {
                     photoAssignments[itemId] = {
                         id: itemId,
                         sku: item.sku,
                         name: item.name_en || item.name_th || item.sku,
-                        total: 1,
+                        total: item.pose || 1,
                         productType: productType,
                         isPackage: false,
                         isSingle: true,
@@ -890,7 +871,7 @@
             const t = translations[currentLang];
             let summary = '📸 PHOTO SELECTION CONFIRMED\n\n';
             for (const [id, a] of Object.entries(photoAssignments)) {
-                summary += `━━━ ${a.name} (${a.sku}) ━━━\n`;
+                summary += `━━━ ${a.name} (SKU: ${a.sku}) ━━━\n`;
                 summary += `📦 Type: ${a.productType.label}\n`;
                 
                 if (a.isPackage && a.contentSlots) {
