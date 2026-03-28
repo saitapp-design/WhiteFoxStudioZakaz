@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>White Fox Studio - Photo Selection for Order</title>
+    <title>White Fox Studio - Photo Selection</title>
     <style>
         /* ===== ОСНОВНЫЕ ПЕРЕМЕННЫЕ ===== */
         :root {
@@ -17,6 +17,8 @@
             --text-muted: #999999;
             --border-color: #e0e0e0;
             --shadow-color: rgba(0, 120, 131, 0.2);
+            --success: #2e7d5e;
+            --warning: #f59e0b;
         }
 
         * {
@@ -155,17 +157,14 @@
             color: white;
         }
 
-        #lang-icon {
-            font-size: 1.2rem;
-        }
-
         .main-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 3rem 2rem;
+            padding: 2rem;
             min-height: calc(100vh - 120px);
         }
 
+        /* Login Screen */
         .login-screen {
             max-width: 500px;
             margin: 3rem auto;
@@ -226,250 +225,293 @@
             box-shadow: 0 5px 20px var(--shadow-color);
         }
 
-        /* Modal Styles */
-        .photo-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 10000;
-            backdrop-filter: blur(4px);
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .photo-modal.active {
-            display: flex;
-        }
-        
-        .photo-modal-content {
+        /* Order Header */
+        .order-header {
             background: white;
-            border-radius: 32px;
-            max-width: 950px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
+            border-radius: 24px;
             padding: 1.5rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            border: 3px solid var(--accent-primary);
-        }
-        
-        .photo-modal-header {
+            margin-bottom: 2rem;
+            border: 2px solid var(--accent-primary);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--accent-primary);
-            margin-bottom: 1.5rem;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        
-        .photo-modal-header h2 {
+
+        .order-info {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .order-badge {
+            background: var(--accent-light);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
             color: var(--accent-primary);
-            font-size: 1.5rem;
         }
-        
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 2rem;
+
+        .back-btn {
+            background: transparent;
+            border: 2px solid var(--accent-primary);
+            color: var(--accent-primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
             cursor: pointer;
-            color: var(--text-muted);
+            transition: all 0.2s;
         }
-        
-        .order-product-item {
-            background: #f8fafc;
-            border-radius: 24px;
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
+
+        .back-btn:hover {
+            background: var(--accent-light);
+        }
+
+        /* Product Cards */
+        .product-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
             border: 2px solid var(--border-color);
+            transition: all 0.2s;
         }
-        
-        .product-header {
+
+        .product-card:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 8px 25px var(--shadow-color);
+        }
+
+        .product-title-section {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--accent-light);
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--accent-light);
         }
-        
-        .product-name {
-            font-size: 1.2rem;
+
+        .product-title {
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--accent-primary);
         }
-        
-        .product-sku-badge {
+
+        .product-sku {
             background: var(--accent-light);
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
             font-weight: 600;
+            color: var(--accent-primary);
         }
-        
-        .photo-count-badge {
+
+        .photo-stats {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .total-photos-badge {
             background: var(--accent-primary);
             color: white;
             padding: 0.3rem 1rem;
             border-radius: 30px;
-            font-weight: 600;
             font-size: 0.85rem;
+            font-weight: 600;
         }
-        
-        .photo-assignment-area {
-            margin-top: 1rem;
+
+        .progress-badge {
+            background: #e2e8f0;
+            color: var(--text-secondary);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
-        
-        .slot-row {
+
+        /* Assignment Sections */
+        .assignment-section {
+            margin-top: 1.2rem;
+        }
+
+        .slot-group {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .slot-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .slot-header span:first-child {
+            font-size: 1.2rem;
+        }
+
+        .required-badge {
+            background: var(--accent-primary);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+
+        .optional-badge {
+            background: #94a3b8;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+
+        .assigned-display {
             display: flex;
             align-items: center;
             gap: 1rem;
             flex-wrap: wrap;
-            margin-bottom: 0.8rem;
-            padding: 0.5rem;
             background: white;
+            padding: 0.8rem;
             border-radius: 16px;
+            border: 1px solid var(--border-color);
         }
-        
-        .slot-label {
-            min-width: 100px;
+
+        .photo-number {
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--accent-primary);
-        }
-        
-        .assigned-photo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
             background: var(--accent-light);
-            padding: 0.3rem 0.8rem;
+            padding: 0.3rem 1rem;
             border-radius: 40px;
         }
-        
-        .photo-input-group {
+
+        .input-group {
             display: flex;
             gap: 0.5rem;
             align-items: center;
             flex-wrap: wrap;
         }
-        
-        .photo-input-group input {
-            width: 80px;
-            padding: 0.4rem;
+
+        .input-group input {
+            width: 100px;
+            padding: 0.6rem;
             border: 2px solid var(--border-color);
             border-radius: 12px;
             text-align: center;
+            font-size: 1rem;
         }
-        
+
         .btn-small {
             background: var(--accent-primary);
             color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-small-outline {
+            background: transparent;
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-small-outline:hover {
+            background: var(--accent-light);
+        }
+
+        .btn-remove {
+            background: #fee2e2;
+            color: #c44536;
             border: none;
             padding: 0.3rem 0.8rem;
             border-radius: 30px;
             cursor: pointer;
             font-size: 0.8rem;
         }
-        
-        .btn-small-outline {
-            background: transparent;
-            border: 1px solid var(--accent-primary);
-            color: var(--accent-primary);
-            padding: 0.3rem 0.8rem;
-            border-radius: 30px;
-            cursor: pointer;
-        }
-        
+
         .interior-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
+            gap: 0.6rem;
+            margin-top: 0.8rem;
         }
-        
+
         .photo-chip {
             background: var(--accent-light);
-            padding: 0.3rem 0.8rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.5rem;
         }
-        
+
         .photo-chip button {
             background: none;
             border: none;
             cursor: pointer;
             color: #c44536;
             font-weight: bold;
+            font-size: 1rem;
         }
-        
-        .modal-footer {
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
+
+        .remaining-warning {
+            margin-top: 0.8rem;
+            padding: 0.5rem;
+            background: #fff8e7;
+            border-radius: 12px;
+            color: var(--warning);
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        .complete-success {
+            margin-top: 0.8rem;
+            padding: 0.5rem;
+            background: #e3f7e3;
+            border-radius: 12px;
+            color: var(--success);
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        /* Action Buttons */
+        .product-actions {
             display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
             justify-content: flex-end;
+        }
+
+        .global-actions {
+            display: flex;
             gap: 1rem;
-            position: sticky;
-            bottom: 0;
-            background: white;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--border-color);
         }
-        
-        .btn-primary-modal {
-            background: var(--accent-primary);
-            color: white;
-            border: none;
+
+        .btn-large {
             padding: 0.8rem 2rem;
-            border-radius: 60px;
-            font-weight: 700;
-            cursor: pointer;
+            font-size: 1rem;
         }
-        
-        .order-info-banner {
-            background: var(--accent-light);
-            padding: 0.8rem 2rem;
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            border-bottom: 1px solid var(--accent-primary);
-        }
-        
-        .order-code-badge {
-            background: white;
-            padding: 0.4rem 1.2rem;
-            border-radius: 30px;
-            font-weight: 600;
-            color: var(--accent-primary);
-        }
-        
-        .select-photos-btn {
-            background: var(--accent-primary);
-            color: white;
-            border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: 60px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .select-photos-btn:hover {
-            background: var(--accent-hover);
-            transform: scale(1.02);
-        }
-        
+
         .toast {
             position: fixed;
             bottom: 30px;
@@ -502,40 +544,12 @@
             }
         }
 
-        @media (max-width: 768px) {
-            .top-bar {
-                padding: 0.8rem 1rem;
-            }
-
-            .right-actions {
-                flex-direction: column;
-            }
-
-            .lang-toggle {
-                width: 100%;
-            }
-
-            .login-screen {
-                padding: 2rem 1.5rem;
-                margin: 1rem;
-            }
-
-            .login-screen h1 {
-                font-size: 1.8rem;
-            }
-            
-            .order-info-banner {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-        
         .loading {
             text-align: center;
             padding: 3rem;
             color: var(--text-muted);
         }
-        
+
         .loading::after {
             content: '';
             display: inline-block;
@@ -547,9 +561,33 @@
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-        
+
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 0.8rem 1rem;
+            }
+            .right-actions {
+                flex-direction: column;
+            }
+            .lang-toggle {
+                width: 100%;
+            }
+            .main-content {
+                padding: 1rem;
+            }
+            .order-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .product-title-section {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -577,38 +615,14 @@
         </div>
     </header>
 
-    <!-- Order Info Banner (shown after entering valid order) -->
-    <div id="orderInfoBanner" class="order-info-banner">
-        <span>📦 Order: <strong id="activeOrderCode"></strong></span>
-        <span>🎯 Select photos for your products below</span>
-        <button id="openPhotoSelectionBtn" class="select-photos-btn">📸 Select Photos</button>
-    </div>
-
-    <main class="main-content">
+    <main class="main-content" id="mainContent">
         <div class="login-screen" id="loginScreen">
             <h1 id="title">Enter Order Number</h1>
             <p class="subtitle" id="subtitle">Please enter your order number to select photos</p>
-            
             <input type="text" id="orderNumberInput" class="order-input" placeholder="Enter order number (1111)">
             <button class="btn-primary" id="loginBtn">Continue</button>
         </div>
     </main>
-
-    <!-- Photo Selection Modal -->
-    <div id="photoModal" class="photo-modal">
-        <div class="photo-modal-content">
-            <div class="photo-modal-header">
-                <h2>📸 Select Photos for Order <span id="modalOrderNumber"></span></h2>
-                <button class="close-modal" id="closeModalBtn">✕</button>
-            </div>
-            <div id="modalProductsList">
-                <div class="loading">Loading products...</div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-primary-modal" id="confirmSelectionBtn">✅ Confirm Selection</button>
-            </div>
-        </div>
-    </div>
 
     <div id="toast" class="toast"></div>
 
@@ -623,7 +637,7 @@
         let currentOrder = null;
         let photoAssignments = {};
         
-        // Mock order items for demo code 1111
+        // Mock order items for demo code 1111 (will match with Supabase products)
         const mockOrderSkus = ['CAL-2025', 'PB-ALBUM', 'MAG-01'];
         
         // Translations
@@ -634,14 +648,26 @@
                 loginBtn: 'Continue',
                 toastError: 'Please enter order number',
                 placeholder: 'Enter order number (1111)',
-                toastOrderLoaded: 'Order loaded! Click "Select Photos" to assign your photos.',
-                toastInvalidCode: 'Demo: Only order code 1111 is available for testing',
-                toastPhotoUsed: 'Photo #${num} is already used in this order',
+                toastOrderLoaded: 'Order loaded! Select photos for each product below.',
+                toastInvalidCode: 'Demo: Only order code 1111 is available',
+                toastPhotoUsed: 'Photo #{num} is already used in this order',
                 toastAllFilled: 'All slots are filled',
                 toastConfirm: 'Photo selection saved!',
-                coverLabel: 'Cover Photo',
-                backLabel: 'Back Cover',
-                interiorLabel: 'Interior Photos'
+                cover: 'Cover Photo',
+                back: 'Back Cover',
+                interior: 'Interior Photos',
+                required: 'required',
+                optional: 'optional',
+                setPhoto: 'Set',
+                remove: 'Remove',
+                randomFill: '🎲 Random Fill',
+                resetProduct: 'Reset',
+                confirmAll: '✅ Confirm All Selections',
+                backToLogin: '← Back to Login',
+                totalPhotos: 'Total Photos',
+                filled: 'filled',
+                moreNeeded: 'more photo(s) needed',
+                complete: '✓ Complete!'
             },
             th: {
                 title: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
@@ -649,34 +675,51 @@
                 loginBtn: 'ดำเนินการต่อ',
                 toastError: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
                 placeholder: 'กรอกหมายเลขคำสั่งซื้อ (1111)',
-                toastOrderLoaded: 'โหลดออเดอร์เรียบร้อย! คลิก "เลือกรูป" เพื่อกำหนดรูป',
+                toastOrderLoaded: 'โหลดออเดอร์เรียบร้อย! เลือกรูปสำหรับสินค้าแต่ละรายการด้านล่าง',
                 toastInvalidCode: 'ทดสอบ: ใช้รหัส 1111 เท่านั้น',
-                toastPhotoUsed: 'รูป #${num} ถูกใช้ไปแล้ว',
+                toastPhotoUsed: 'รูป #{num} ถูกใช้ไปแล้ว',
                 toastAllFilled: 'ครบทุกตำแหน่งแล้ว',
                 toastConfirm: 'บันทึกการเลือกรูปแล้ว!',
-                coverLabel: 'รูปปก',
-                backLabel: 'รูปปกหลัง',
-                interiorLabel: 'รูปภายใน'
+                cover: 'รูปปก',
+                back: 'รูปปกหลัง',
+                interior: 'รูปภายใน',
+                required: 'จำเป็น',
+                optional: 'ไม่จำเป็น',
+                setPhoto: 'ตั้งค่า',
+                remove: 'ลบ',
+                randomFill: '🎲 สุ่มอัตโนมัติ',
+                resetProduct: 'รีเซ็ต',
+                confirmAll: '✅ ยืนยันการเลือกทั้งหมด',
+                backToLogin: '← กลับ',
+                totalPhotos: 'รูปทั้งหมด',
+                filled: 'เลือกแล้ว',
+                moreNeeded: 'ต้องเลือกเพิ่ม',
+                complete: '✓ ครบถ้วน!'
             }
         };
         
         let currentLang = 'en';
         
         function updateLanguage() {
-            document.getElementById('title').textContent = translations[currentLang].title;
-            document.getElementById('subtitle').textContent = translations[currentLang].subtitle;
-            document.getElementById('loginBtn').textContent = translations[currentLang].loginBtn;
-            document.getElementById('orderNumberInput').placeholder = translations[currentLang].placeholder;
+            if (document.getElementById('title')) {
+                document.getElementById('title').textContent = translations[currentLang].title;
+                document.getElementById('subtitle').textContent = translations[currentLang].subtitle;
+                document.getElementById('loginBtn').textContent = translations[currentLang].loginBtn;
+                document.getElementById('orderNumberInput').placeholder = translations[currentLang].placeholder;
+            }
             
             const icon = document.getElementById('lang-icon');
             const text = document.getElementById('lang-text');
-            
             if (currentLang === 'en') {
                 icon.textContent = '🇬🇧';
                 text.textContent = 'EN';
             } else {
                 icon.textContent = '🇹🇭';
                 text.textContent = 'TH';
+            }
+            
+            if (currentOrder) {
+                renderOrderInterface();
             }
         }
         
@@ -716,25 +759,23 @@
                 
                 if (packagesError) console.warn('Packages error:', packagesError);
                 
-                // Process all products with pose field
                 allProducts = [];
                 
+                // Process product cards
                 if (productCards) {
                     productCards.forEach(card => {
                         let poseCount = 0;
                         
                         // Try to get pose from variants
-                        let variants = [];
                         try {
                             if (card.variants) {
-                                variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
+                                const variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
                                 if (variants.length > 0 && variants[0].pose) {
                                     poseCount = parseInt(variants[0].pose);
                                 }
                             }
                         } catch(e) {}
                         
-                        // If no pose in variants, try card field
                         if (!poseCount && card.pose) poseCount = parseInt(card.pose);
                         if (!poseCount && card.total_photos) poseCount = parseInt(card.total_photos);
                         
@@ -744,8 +785,7 @@
                             name_en: card.name_en,
                             name_th: card.name_th,
                             pose: poseCount || 0,
-                            image_url: card.cover_image,
-                            price: card.price
+                            image_url: card.cover_image
                         });
                     });
                 }
@@ -768,14 +808,13 @@
                             name_th: pkg.name_th,
                             pose: totalPhotos || 0,
                             image_url: pkg.image_url,
-                            isPackage: true,
-                            price: pkg.price
+                            isPackage: true
                         });
                     });
                 }
                 
                 console.log(`Loaded ${allProducts.length} products from Supabase`);
-                console.log('Products with pose:', allProducts.filter(p => p.pose > 0).map(p => ({ sku: p.sku, pose: p.pose })));
+                console.log('Products with pose:', allProducts.filter(p => p.pose > 0).map(p => ({ sku: p.sku, pose: p.pose, name: p.name_en })));
                 
             } catch (error) {
                 console.error('Error loading products:', error);
@@ -785,8 +824,8 @@
         
         // Check order
         async function checkOrder() {
-            const orderCode = document.getElementById('orderNumberInput').value.trim() || 
-                              document.getElementById('orderNumber').value.trim();
+            const orderCode = document.getElementById('orderNumberInput')?.value.trim() || 
+                              document.getElementById('orderNumber')?.value.trim();
             
             if (!orderCode) {
                 showToast(translations[currentLang].toastError);
@@ -795,14 +834,7 @@
             
             if (orderCode === '1111') {
                 await loadOrderProducts(orderCode);
-                // Hide login screen and show order info
-                document.getElementById('loginScreen').style.display = 'none';
-                const banner = document.getElementById('orderInfoBanner');
-                const activeOrderSpan = document.getElementById('activeOrderCode');
-                if (banner && activeOrderSpan) {
-                    activeOrderSpan.textContent = orderCode;
-                    banner.style.display = 'flex';
-                }
+                renderOrderInterface();
                 showToast(translations[currentLang].toastOrderLoaded);
             } else {
                 showToast(translations[currentLang].toastInvalidCode);
@@ -810,7 +842,6 @@
         }
         
         async function loadOrderProducts(orderCode) {
-            // Find products from Supabase data that match the mock order
             const orderItems = [];
             
             for (const sku of mockOrderSkus) {
@@ -824,7 +855,7 @@
                         quantity: 1
                     });
                 } else {
-                    // Fallback if product not found in database
+                    // Fallback with default values
                     orderItems.push({
                         sku: sku,
                         productId: null,
@@ -836,212 +867,87 @@
             }
             
             currentOrder = { orderNumber: orderCode, items: orderItems };
-        }
-        
-        function openPhotoModal() {
-            if (!currentOrder) {
-                showToast('Please enter order code first');
-                return;
-            }
             
-            const modal = document.getElementById('photoModal');
-            const modalOrderSpan = document.getElementById('modalOrderNumber');
-            
-            modalOrderSpan.textContent = currentOrder.orderNumber;
-            
-            // Initialize assignments based on product pose
+            // Initialize assignments
             photoAssignments = {};
             currentOrder.items.forEach(item => {
-                const totalSlots = item.pose || 10;
                 photoAssignments[item.sku] = {
                     cover: null,
                     back: null,
                     interior: [],
-                    totalSlots: totalSlots,
-                    productName: item.productName,
-                    pose: totalSlots
+                    totalSlots: item.pose,
+                    productName: item.productName
                 };
             });
-            
-            renderModalProducts();
-            modal.classList.add('active');
         }
         
-        function renderModalProducts() {
-            const productsListDiv = document.getElementById('modalProductsList');
-            if (!productsListDiv) return;
-            
-            productsListDiv.innerHTML = '';
-            
-            currentOrder.items.forEach(item => {
-                const assignment = photoAssignments[item.sku];
-                const currentCount = (assignment.cover ? 1 : 0) + (assignment.back ? 1 : 0) + assignment.interior.length;
-                const remaining = assignment.totalSlots - currentCount;
-                const safeSku = item.sku.replace(/[-\s]/g, '_');
-                
-                const productDiv = document.createElement('div');
-                productDiv.className = 'order-product-item';
-                productDiv.innerHTML = `
-                    <div class="product-header">
-                        <div>
-                            <span class="product-name">${escapeHtml(item.productName)}</span>
-                            <span class="product-sku-badge" style="margin-left: 0.5rem;">${item.sku}</span>
-                        </div>
-                        <div>
-                            <span class="photo-count-badge">📷 Total: ${assignment.totalSlots} photos</span>
-                            <span class="photo-count-badge" style="background: #64748b; margin-left: 0.5rem;">✓ ${currentCount}/${assignment.totalSlots}</span>
-                        </div>
-                    </div>
-                    <div class="photo-assignment-area">
-                        <div class="slot-row">
-                            <span class="slot-label">📘 ${translations[currentLang].coverLabel}:</span>
-                            ${assignment.cover ? 
-                                `<div class="assigned-photo">Photo #${assignment.cover} <button onclick="removePhotoFromSlot('${item.sku}', 'cover')" style="background:none; border:none; cursor:pointer; font-size:1rem;">✕</button></div>` :
-                                `<div class="photo-input-group">
-                                    <input type="number" id="cover-input-${safeSku}" placeholder="Photo #" min="1" max="999">
-                                    <button class="btn-small" onclick="assignPhotoToSlot('${item.sku}', 'cover')">Set</button>
-                                </div>`
-                            }
-                        </div>
-                        <div class="slot-row">
-                            <span class="slot-label">📖 ${translations[currentLang].backLabel}:</span>
-                            ${assignment.back ? 
-                                `<div class="assigned-photo">Photo #${assignment.back} <button onclick="removePhotoFromSlot('${item.sku}', 'back')" style="background:none; border:none; cursor:pointer;">✕</button></div>` :
-                                `<div class="photo-input-group">
-                                    <input type="number" id="back-input-${safeSku}" placeholder="Photo #" min="1" max="999">
-                                    <button class="btn-small" onclick="assignPhotoToSlot('${item.sku}', 'back')">Set</button>
-                                </div>`
-                            }
-                        </div>
-                        <div class="slot-row">
-                            <span class="slot-label">🖼️ ${translations[currentLang].interiorLabel} (${assignment.interior.length}/${assignment.totalSlots - (assignment.cover ? 1 : 0) - (assignment.back ? 1 : 0)}):</span>
-                            <div style="flex:1">
-                                <div class="photo-input-group" style="margin-bottom: 0.5rem;">
-                                    <input type="number" id="interior-input-${safeSku}" placeholder="Photo #" min="1" max="999">
-                                    <button class="btn-small" onclick="addInteriorPhoto('${item.sku}')">Add</button>
-                                    <button class="btn-small-outline" onclick="randomFillRemaining('${item.sku}')">🎲 Random Fill</button>
-                                </div>
-                                <div class="interior-list" id="interior-list-${safeSku}">
-                                    ${assignment.interior.map((num, idx) => `
-                                        <div class="photo-chip">
-                                            #${num}
-                                            <button onclick="removeInteriorPhoto('${item.sku}', ${idx})">✕</button>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                ${remaining > 0 ? `<div style="margin-top: 0.5rem; font-size: 0.75rem; color: #f59e0b;">⚠️ ${remaining} more photo(s) needed</div>` : '<div style="margin-top: 0.5rem; color: #10b981;">✓ All slots filled!</div>'}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                productsListDiv.appendChild(productDiv);
-            });
-        }
-        
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str).replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
-        }
-        
-        // Global functions for modal
-        window.assignPhotoToSlot = function(sku, position) {
-            const safeSku = sku.replace(/[-\s]/g, '_');
-            const input = document.getElementById(`${position}-input-${safeSku}`);
-            if (!input) return;
-            
-            const photoNum = parseInt(input.value);
-            if (isNaN(photoNum) || photoNum < 1) {
-                showToast('Please enter a valid photo number');
-                return;
-            }
-            
-            const assignment = photoAssignments[sku];
-            if (!assignment) return;
-            
-            // Check if photo already used in this order
-            let isUsed = false;
+        function getUsedNumbers() {
+            const used = new Set();
             Object.values(photoAssignments).forEach(assign => {
-                if (assign.cover === photoNum) isUsed = true;
-                if (assign.back === photoNum) isUsed = true;
-                if (assign.interior.includes(photoNum)) isUsed = true;
+                if (assign.cover) used.add(assign.cover);
+                if (assign.back) used.add(assign.back);
+                assign.interior.forEach(n => used.add(n));
             });
-            
-            if (isUsed) {
-                showToast(translations[currentLang].toastPhotoUsed.replace('${num}', photoNum));
-                return;
-            }
-            
-            if (position === 'cover') {
-                assignment.cover = photoNum;
-            } else if (position === 'back') {
-                assignment.back = photoNum;
-            }
-            
-            input.value = '';
-            renderModalProducts();
-        };
+            return used;
+        }
         
-        window.addInteriorPhoto = function(sku) {
-            const safeSku = sku.replace(/[-\s]/g, '_');
-            const input = document.getElementById(`interior-input-${safeSku}`);
-            if (!input) return;
+        function assignPhoto(sku, position, photoNum) {
+            const assignment = photoAssignments[sku];
+            if (!assignment) return false;
             
-            const photoNum = parseInt(input.value);
-            if (isNaN(photoNum) || photoNum < 1) {
-                showToast('Please enter a valid photo number');
-                return;
+            const usedNumbers = getUsedNumbers();
+            if (usedNumbers.has(photoNum)) {
+                showToast(translations[currentLang].toastPhotoUsed.replace('{num}', photoNum));
+                return false;
             }
             
+            const currentCount = (assignment.cover ? 1 : 0) + (assignment.back ? 1 : 0) + assignment.interior.length;
+            if (currentCount >= assignment.totalSlots && position !== 'cover' && position !== 'back') {
+                showToast(translations[currentLang].toastAllFilled);
+                return false;
+            }
+            
+            if (position === 'cover') assignment.cover = photoNum;
+            else if (position === 'back') assignment.back = photoNum;
+            
+            renderOrderInterface();
+            return true;
+        }
+        
+        function addInteriorPhoto(sku, photoNum) {
             const assignment = photoAssignments[sku];
-            if (!assignment) return;
+            if (!assignment) return false;
             
-            // Check if photo already used
-            let isUsed = false;
-            Object.values(photoAssignments).forEach(assign => {
-                if (assign.cover === photoNum) isUsed = true;
-                if (assign.back === photoNum) isUsed = true;
-                if (assign.interior.includes(photoNum)) isUsed = true;
-            });
-            
-            if (isUsed) {
-                showToast(translations[currentLang].toastPhotoUsed.replace('${num}', photoNum));
-                return;
+            const usedNumbers = getUsedNumbers();
+            if (usedNumbers.has(photoNum)) {
+                showToast(translations[currentLang].toastPhotoUsed.replace('{num}', photoNum));
+                return false;
             }
             
             const currentCount = (assignment.cover ? 1 : 0) + (assignment.back ? 1 : 0) + assignment.interior.length;
             if (currentCount >= assignment.totalSlots) {
                 showToast(translations[currentLang].toastAllFilled);
-                return;
+                return false;
             }
             
             assignment.interior.push(photoNum);
-            input.value = '';
-            renderModalProducts();
-        };
+            renderOrderInterface();
+            return true;
+        }
         
-        window.removePhotoFromSlot = function(sku, position) {
+        function removePhoto(sku, position, index = null) {
             const assignment = photoAssignments[sku];
-            if (assignment) {
-                if (position === 'cover') assignment.cover = null;
-                if (position === 'back') assignment.back = null;
-            }
-            renderModalProducts();
-        };
-        
-        window.removeInteriorPhoto = function(sku, index) {
-            const assignment = photoAssignments[sku];
-            if (assignment && assignment.interior[index]) {
+            if (!assignment) return;
+            
+            if (position === 'cover') assignment.cover = null;
+            else if (position === 'back') assignment.back = null;
+            else if (position === 'interior' && index !== null) {
                 assignment.interior.splice(index, 1);
-                renderModalProducts();
             }
-        };
+            renderOrderInterface();
+        }
         
-        window.randomFillRemaining = function(sku) {
+        function randomFillRemaining(sku) {
             const assignment = photoAssignments[sku];
             if (!assignment) return;
             
@@ -1053,22 +959,13 @@
                 return;
             }
             
-            // Get all used numbers
-            const usedNumbers = new Set();
-            Object.values(photoAssignments).forEach(assign => {
-                if (assign.cover) usedNumbers.add(assign.cover);
-                if (assign.back) usedNumbers.add(assign.back);
-                assign.interior.forEach(n => usedNumbers.add(n));
-            });
-            
-            // Generate random numbers not used
+            const usedNumbers = getUsedNumbers();
             const available = [];
             for (let i = 1; i <= 999; i++) {
                 if (!usedNumbers.has(i)) available.push(i);
                 if (available.length >= needed) break;
             }
             
-            // Shuffle
             for (let i = available.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [available[i], available[j]] = [available[j], available[i]];
@@ -1076,12 +973,21 @@
             
             const toAdd = available.slice(0, needed);
             toAdd.forEach(num => assignment.interior.push(num));
-            
-            renderModalProducts();
+            renderOrderInterface();
             showToast(`Added ${toAdd.length} random photos`);
-        };
+        }
         
-        function confirmPhotoSelection() {
+        function resetProduct(sku) {
+            const assignment = photoAssignments[sku];
+            if (assignment) {
+                assignment.cover = null;
+                assignment.back = null;
+                assignment.interior = [];
+            }
+            renderOrderInterface();
+        }
+        
+        function confirmAllSelections() {
             let summary = '📸 PHOTO SELECTION CONFIRMED\n\n';
             for (const [sku, assign] of Object.entries(photoAssignments)) {
                 summary += `━━━ ${sku} (${assign.totalSlots} photos) ━━━\n`;
@@ -1095,31 +1001,200 @@
             }
             alert(summary);
             showToast(translations[currentLang].toastConfirm);
-            closePhotoModal();
         }
         
-        function closePhotoModal() {
-            document.getElementById('photoModal').classList.remove('active');
+        function backToLogin() {
+            currentOrder = null;
+            photoAssignments = {};
+            document.getElementById('mainContent').innerHTML = `
+                <div class="login-screen" id="loginScreen">
+                    <h1 id="title">${translations[currentLang].title}</h1>
+                    <p class="subtitle" id="subtitle">${translations[currentLang].subtitle}</p>
+                    <input type="text" id="orderNumberInput" class="order-input" placeholder="${translations[currentLang].placeholder}">
+                    <button class="btn-primary" id="loginBtn">${translations[currentLang].loginBtn}</button>
+                </div>
+            `;
+            document.getElementById('loginBtn').addEventListener('click', checkOrder);
+            document.getElementById('orderNumberInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkOrder();
+            });
         }
+        
+        function renderOrderInterface() {
+            const mainContent = document.getElementById('mainContent');
+            const t = translations[currentLang];
+            
+            let productsHtml = '';
+            let totalProducts = 0;
+            let totalFilled = 0;
+            
+            currentOrder.items.forEach(item => {
+                const assignment = photoAssignments[item.sku];
+                const currentCount = (assignment.cover ? 1 : 0) + (assignment.back ? 1 : 0) + assignment.interior.length;
+                const remaining = assignment.totalSlots - currentCount;
+                totalProducts += assignment.totalSlots;
+                totalFilled += currentCount;
+                
+                const safeSku = item.sku.replace(/[-\s]/g, '_');
+                
+                productsHtml += `
+                    <div class="product-card">
+                        <div class="product-title-section">
+                            <div>
+                                <span class="product-title">${escapeHtml(item.productName)}</span>
+                                <span class="product-sku" style="margin-left: 0.8rem;">${item.sku}</span>
+                            </div>
+                            <div class="photo-stats">
+                                <span class="total-photos-badge">📷 ${t.totalPhotos}: ${assignment.totalSlots}</span>
+                                <span class="progress-badge">✓ ${currentCount}/${assignment.totalSlots} ${t.filled}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="assignment-section">
+                            <!-- Cover -->
+                            <div class="slot-group">
+                                <div class="slot-header">
+                                    <span>📘</span> ${t.cover}
+                                    <span class="required-badge">${t.required}</span>
+                                </div>
+                                ${assignment.cover ? `
+                                    <div class="assigned-display">
+                                        <span class="photo-number">Photo #${assignment.cover}</span>
+                                        <button class="btn-remove" onclick="removePhoto('${item.sku}', 'cover')">✕ ${t.remove}</button>
+                                    </div>
+                                ` : `
+                                    <div class="input-group">
+                                        <input type="number" id="cover-input-${safeSku}" placeholder="Photo #" min="1" max="999">
+                                        <button class="btn-small" onclick="assignFromInput('${item.sku}', 'cover')">${t.setPhoto}</button>
+                                    </div>
+                                `}
+                            </div>
+                            
+                            <!-- Back Cover -->
+                            <div class="slot-group">
+                                <div class="slot-header">
+                                    <span>📖</span> ${t.back}
+                                    <span class="optional-badge">${t.optional}</span>
+                                </div>
+                                ${assignment.back ? `
+                                    <div class="assigned-display">
+                                        <span class="photo-number">Photo #${assignment.back}</span>
+                                        <button class="btn-remove" onclick="removePhoto('${item.sku}', 'back')">✕ ${t.remove}</button>
+                                    </div>
+                                ` : `
+                                    <div class="input-group">
+                                        <input type="number" id="back-input-${safeSku}" placeholder="Photo #" min="1" max="999">
+                                        <button class="btn-small" onclick="assignFromInput('${item.sku}', 'back')">${t.setPhoto}</button>
+                                    </div>
+                                `}
+                            </div>
+                            
+                            <!-- Interior -->
+                            <div class="slot-group">
+                                <div class="slot-header">
+                                    <span>🖼️</span> ${t.interior} (${assignment.interior.length}/${assignment.totalSlots - (assignment.cover ? 1 : 0) - (assignment.back ? 1 : 0)})
+                                </div>
+                                <div class="input-group" style="margin-bottom: 0.8rem;">
+                                    <input type="number" id="interior-input-${safeSku}" placeholder="Photo #" min="1" max="999">
+                                    <button class="btn-small" onclick="addInteriorFromInput('${item.sku}')">${t.setPhoto}</button>
+                                    <button class="btn-small-outline" onclick="randomFillRemaining('${item.sku}')">${t.randomFill}</button>
+                                </div>
+                                <div class="interior-list">
+                                    ${assignment.interior.map((num, idx) => `
+                                        <div class="photo-chip">
+                                            #${num}
+                                            <button onclick="removePhoto('${item.sku}', 'interior', ${idx})">✕</button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                ${remaining > 0 ? 
+                                    `<div class="remaining-warning">⚠️ ${remaining} ${t.moreNeeded}</div>` : 
+                                    `<div class="complete-success">${t.complete}</div>`
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="product-actions">
+                            <button class="btn-small-outline" onclick="resetProduct('${item.sku}')">🔄 ${t.resetProduct}</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            const overallPercent = totalProducts > 0 ? Math.round((totalFilled / totalProducts) * 100) : 0;
+            
+            mainContent.innerHTML = `
+                <div class="order-header">
+                    <div class="order-info">
+                        <span class="order-badge">📦 Order: <strong>${currentOrder.orderNumber}</strong></span>
+                        <span class="order-badge">📸 Total: ${totalFilled}/${totalProducts} photos selected (${overallPercent}%)</span>
+                    </div>
+                    <button class="back-btn" id="backToLoginBtn">${t.backToLogin}</button>
+                </div>
+                
+                ${productsHtml}
+                
+                <div class="global-actions">
+                    <button class="btn-primary btn-large" id="confirmAllBtn">${t.confirmAll}</button>
+                </div>
+            `;
+            
+            document.getElementById('backToLoginBtn').addEventListener('click', backToLogin);
+            document.getElementById('confirmAllBtn').addEventListener('click', confirmAllSelections);
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        window.assignFromInput = function(sku, position) {
+            const safeSku = sku.replace(/[-\s]/g, '_');
+            const input = document.getElementById(`${position}-input-${safeSku}`);
+            if (!input) return;
+            const photoNum = parseInt(input.value);
+            if (isNaN(photoNum) || photoNum < 1) {
+                showToast('Please enter a valid photo number');
+                return;
+            }
+            if (assignPhoto(sku, position, photoNum)) {
+                input.value = '';
+            }
+        };
+        
+        window.addInteriorFromInput = function(sku) {
+            const safeSku = sku.replace(/[-\s]/g, '_');
+            const input = document.getElementById(`interior-input-${safeSku}`);
+            if (!input) return;
+            const photoNum = parseInt(input.value);
+            if (isNaN(photoNum) || photoNum < 1) {
+                showToast('Please enter a valid photo number');
+                return;
+            }
+            if (addInteriorPhoto(sku, photoNum)) {
+                input.value = '';
+            }
+        };
+        
+        window.removePhoto = removePhoto;
+        window.randomFillRemaining = randomFillRemaining;
+        window.resetProduct = resetProduct;
         
         // Event listeners
         document.getElementById('langToggle').addEventListener('click', function() {
             currentLang = currentLang === 'en' ? 'th' : 'en';
             updateLanguage();
-            if (currentOrder) renderModalProducts();
         });
         
-        document.getElementById('loginBtn').addEventListener('click', checkOrder);
         document.getElementById('checkOrderBtn').addEventListener('click', checkOrder);
-        document.getElementById('orderNumberInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') checkOrder();
-        });
         document.getElementById('orderNumber').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') checkOrder();
         });
-        document.getElementById('openPhotoSelectionBtn').addEventListener('click', openPhotoModal);
-        document.getElementById('closeModalBtn').addEventListener('click', closePhotoModal);
-        document.getElementById('confirmSelectionBtn').addEventListener('click', confirmPhotoSelection);
         
         updateLanguage();
         initSupabase();
