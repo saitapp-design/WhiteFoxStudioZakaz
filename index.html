@@ -514,6 +514,12 @@
                 return { type: 'package', hasCover: false, hasBack: false, hasInterior: false, label: '📦 Package' };
             }
             
+            // Single photo items (pose = 1)
+            if (pose === 1 || name.includes('canvas') || name.includes('poster') || name.includes('mug') || 
+                name.includes('keyring') || name.includes('magnet') || name.includes('card holder')) {
+                return { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '📷 Single Photo' };
+            }
+            
             // Books, albums, notebooks, folders, calendars - have cover + back + interior
             if (name.includes('book') || name.includes('album') || name.includes('notebook') || 
                 name.includes('folder') || name.includes('calendar') || name.includes('ปฏิทิน') ||
@@ -521,20 +527,19 @@
                 return { type: 'book', hasCover: true, hasBack: true, hasInterior: true, label: '📚 Book / Calendar' };
             }
             
-            // Single photo items (pose = 1)
-            if (pose === 1) {
-                return { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '📷 Single Photo' };
+            // Default for multi-photo
+            if (pose > 2) {
+                return { type: 'book', hasCover: true, hasBack: true, hasInterior: true, label: '📸 Multi-photo' };
             }
             
-            // Default
-            return { type: 'book', hasCover: true, hasBack: true, hasInterior: true, label: '📸 Multi-photo' };
+            return { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '📷 Photo' };
         }
         
         const translations = {
             en: {
                 title: 'Enter Order Number', subtitle: 'Please enter your order number to select photos',
                 loginBtn: 'Continue', toastError: 'Please enter order number',
-                placeholder: 'Enter order number (1111)', toastOrderLoaded: '✅ Order loaded!',
+                placeholder: 'Enter order number (1111)', toastOrderLoaded: '✅ Order loaded with random products!',
                 toastInvalidCode: 'Demo: Use code 1111', toastDuplicate: '⚠️ Photo #{num} already used',
                 toastAllFilled: '✓ All slots filled!', toastConfirm: '✅ Selection saved!',
                 set: 'Set', randomFill: '🎲 Random', reset: 'Reset',
@@ -545,7 +550,7 @@
             th: {
                 title: 'กรุณากรอกหมายเลขคำสั่งซื้อ', subtitle: 'กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ',
                 loginBtn: 'ดำเนินการต่อ', toastError: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
-                placeholder: 'กรอกหมายเลขคำสั่งซื้อ (1111)', toastOrderLoaded: '✅ โหลดออเดอร์เรียบร้อย!',
+                placeholder: 'กรอกหมายเลขคำสั่งซื้อ (1111)', toastOrderLoaded: '✅ โหลดออเดอร์พร้อมสินค้าสุ่ม!',
                 toastInvalidCode: 'ทดสอบ: ใช้รหัส 1111', toastDuplicate: '⚠️ รูป #{num} ถูกใช้แล้ว',
                 toastAllFilled: '✓ ครบทุกตำแหน่งแล้ว!', toastConfirm: '✅ บันทึกการเลือกแล้ว!',
                 set: 'ตั้งค่า', randomFill: '🎲 สุ่ม', reset: 'รีเซ็ต',
@@ -598,13 +603,15 @@
                         if (!pose && card.pose) pose = parseInt(card.pose);
                         if (!pose && card.total_photos) pose = parseInt(card.total_photos);
                         
-                        allProducts.push({
-                            sku: card.sku,
-                            name_en: card.name_en,
-                            name_th: card.name_th,
-                            pose: pose || 0,
-                            isPackage: false
-                        });
+                        if (card.sku && card.sku !== 'undefined' && card.sku !== 'null') {
+                            allProducts.push({
+                                sku: card.sku,
+                                name_en: card.name_en,
+                                name_th: card.name_th,
+                                pose: pose || 0,
+                                isPackage: false
+                            });
+                        }
                     });
                 }
                 
@@ -623,18 +630,20 @@
                             totalPhotos = contents.reduce((s, i) => s + (i.qty || 1), 0);
                         }
                         
-                        allProducts.push({
-                            sku: pkg.sku,
-                            name_en: pkg.name_en,
-                            name_th: pkg.name_th,
-                            pose: totalPhotos || 0,
-                            isPackage: true,
-                            packageContents: contents
-                        });
+                        if (pkg.sku && pkg.sku !== 'undefined' && pkg.sku !== 'null') {
+                            allProducts.push({
+                                sku: pkg.sku,
+                                name_en: pkg.name_en,
+                                name_th: pkg.name_th,
+                                pose: totalPhotos || 0,
+                                isPackage: true,
+                                packageContents: contents
+                            });
+                        }
                     });
                 }
                 
-                console.log('✅ Products loaded from Supabase:', allProducts.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose, isPackage: p.isPackage })));
+                console.log('✅ Products loaded:', allProducts.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose, isPackage: p.isPackage })));
             } catch(e) { console.error('Error loading products:', e); }
         }
         
@@ -642,52 +651,36 @@
             const code = document.getElementById('orderNumberInput')?.value.trim() || document.getElementById('orderNumber')?.value.trim();
             if (!code) { showToast(translations[currentLang].toastError); return; }
             if (code === '1111') {
-                await loadDemoOrder();
+                await loadRandomOrder();
                 renderOrderInterface();
                 showToast(translations[currentLang].toastOrderLoaded);
             } else { showToast(translations[currentLang].toastInvalidCode); }
         }
         
-        async function loadDemoOrder() {
-            const items = [];
-            
-            // Find REAL products from Supabase with their actual SKUs
-            // Package with contents (Q11, Q12, Q13, etc.)
-            let packageProduct = allProducts.find(p => p.isPackage && p.packageContents?.length > 0 && p.sku);
-            if (!packageProduct) {
-                packageProduct = allProducts.find(p => p.isPackage && p.sku);
-            }
-            
-            // Book/Calendar product (with cover + back + interior)
-            let bookProduct = allProducts.find(p => !p.isPackage && p.pose >= 5 && p.sku && 
-                (p.name_en?.toLowerCase().includes('calendar') || p.name_en?.toLowerCase().includes('book') || 
-                 p.name_en?.toLowerCase().includes('notebook') || p.name_en?.toLowerCase().includes('folder')));
-            if (!bookProduct) {
-                bookProduct = allProducts.find(p => !p.isPackage && p.pose >= 5 && p.sku);
-            }
-            
-            // Single photo product (pose = 1)
-            let singleProduct = allProducts.find(p => !p.isPackage && p.pose === 1 && p.sku);
-            if (!singleProduct) {
-                singleProduct = allProducts.find(p => !p.isPackage && p.pose === 1);
-            }
-            
-            if (packageProduct) items.push(packageProduct);
-            if (bookProduct) items.push(bookProduct);
-            if (singleProduct) items.push(singleProduct);
-            
-            // If we couldn't find real products, show message
-            if (items.length === 0) {
-                showToast('No products found in database. Please check Supabase connection.');
+        async function loadRandomOrder() {
+            if (allProducts.length === 0) {
+                showToast('No products found in database');
                 return;
             }
             
-            console.log('Demo order items:', items.map(i => ({ sku: i.sku, name: i.name_en, pose: i.pose, isPackage: i.isPackage })));
+            // Select random number of products between 4 and 6
+            const numProducts = Math.floor(Math.random() * 3) + 4; // 4, 5, or 6
+            const shuffled = [...allProducts];
             
-            currentOrder = { number: '1111', items: items };
+            // Shuffle array
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            
+            const selectedItems = shuffled.slice(0, numProducts);
+            
+            console.log('🎲 Randomly selected products for order:', selectedItems.map(i => ({ sku: i.sku, name: i.name_en, pose: i.pose })));
+            
+            currentOrder = { number: '1111', items: selectedItems };
             photoAssignments = {};
             
-            items.forEach((item, idx) => {
+            selectedItems.forEach((item, idx) => {
                 const itemId = `item_${idx}_${(item.sku || Date.now()).replace(/[^a-zA-Z0-9]/g, '_')}`;
                 const productType = detectProductType(item);
                 
@@ -873,6 +866,7 @@
             for (const [id, a] of Object.entries(photoAssignments)) {
                 summary += `━━━ ${a.name} (SKU: ${a.sku}) ━━━\n`;
                 summary += `📦 Type: ${a.productType.label}\n`;
+                summary += `📷 Total photos: ${a.total}\n`;
                 
                 if (a.isPackage && a.contentSlots) {
                     for (const [key, slot] of Object.entries(a.contentSlots)) {
@@ -946,7 +940,7 @@
             }
             
             const percent = totalSlots > 0 ? Math.round((totalFilled / totalSlots) * 100) : 0;
-            document.getElementById('mainContent').innerHTML = `<div class="order-header"><div class="order-badge">📦 Order: <strong>${currentOrder.number}</strong></div><div class="order-badge">🎯 ${totalFilled}/${totalSlots} photos (${percent}%)</div><button class="back-btn" id="backBtn">${t.backToLogin}</button></div>${productsHtml}<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width: auto; padding: 0.8rem 2rem;">${t.confirmAll}</button></div>`;
+            document.getElementById('mainContent').innerHTML = `<div class="order-header"><div class="order-badge">📦 Order: <strong>${currentOrder.number}</strong></div><div class="order-badge">🎯 ${totalFilled}/${totalSlots} photos (${percent}%)</div><div class="order-badge">🔄 ${Object.keys(photoAssignments).length} products</div><button class="back-btn" id="backBtn">${t.backToLogin}</button></div>${productsHtml}<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width: auto; padding: 0.8rem 2rem;">${t.confirmAll}</button></div>`;
             document.getElementById('backBtn')?.addEventListener('click', backToLogin);
             document.getElementById('confirmBtn')?.addEventListener('click', confirmAll);
         }
