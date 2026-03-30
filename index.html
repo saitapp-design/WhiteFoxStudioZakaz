@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio · Photo Selection Catalog</title>
-    
-    <link rel="preconnect" href="https://afgzicjirrdzrotgooea.supabase.co">
-    <link rel="dns-prefetch" href="https://afgzicjirrdzrotgooea.supabase.co">
-    
+    <title>White Fox Studio · Photo Selection</title>
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         * {
             margin: 0;
@@ -16,31 +13,28 @@
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
 
+        body {
+            background: #f0f2f5;
+        }
+
         :root {
             --teal: #007883;
             --teal-dark: #0a6570;
             --teal-light: #d4e9ec;
-            --border: #e2e8f0;
+            --border: #d9e1e6;
             --red: #dc2626;
             --red-light: #fee2e2;
-            --bg-primary: #f5f7fa;
-            --text-primary: #1e293b;
-            --text-secondary: #334155;
+            --slot-bg: #ffffff;
+            --slot-border: #007883;
+            --slot-filled: #c8e6df;
         }
 
-        body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
-
-        /* Header */
         .header {
             position: sticky;
             top: 0;
             z-index: 100;
             background: white;
-            box-shadow: 0 2px 10px rgba(0,120,131,0.08);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             border-bottom: 2px solid var(--teal);
         }
 
@@ -73,6 +67,12 @@
             color: var(--teal);
         }
 
+        .right-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
         .search-box {
             display: flex;
             align-items: center;
@@ -86,7 +86,7 @@
         .search-box input {
             border: none;
             padding: 0 1rem;
-            width: 200px;
+            width: 170px;
             font-size: 0.9rem;
             outline: none;
         }
@@ -115,295 +115,219 @@
             cursor: pointer;
         }
 
-        /* Main content */
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
             padding: 1.5rem;
         }
 
-        /* Product grid */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
+        .login-card {
+            background: white;
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .order-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--border);
+            border-radius: 40px;
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--teal);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .order-header {
+            background: white;
+            border-radius: 1rem;
+            padding: 0.75rem 1.2rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--teal);
+        }
+
+        .order-badge {
+            background: var(--teal-light);
+            padding: 0.35rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--teal);
         }
 
         .product-card {
             background: white;
             border-radius: 1rem;
+            margin-bottom: 1rem;
             border: 1px solid var(--border);
             overflow: hidden;
-            transition: all 0.2s;
-        }
-
-        .product-card:hover {
-            box-shadow: 0 4px 12px rgba(0,120,131,0.1);
-            transform: translateY(-2px);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            cursor: pointer;
-            background: #f5f5f5;
-        }
-
-        .product-info {
-            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
         }
 
         .product-header {
+            padding: 0.8rem 1rem;
+            background: #fafcfd;
+            border-bottom: 1px solid var(--border);
             display: flex;
-            align-items: baseline;
-            gap: 0.5rem;
+            justify-content: space-between;
+            align-items: center;
             flex-wrap: wrap;
-            margin-bottom: 0.75rem;
-        }
-
-        .product-sku {
-            background: var(--teal-light);
-            padding: 0.2rem 0.7rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--teal);
-            font-family: monospace;
+            gap: 0.5rem;
         }
 
         .product-title {
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: var(--teal);
         }
 
-        /* Variant selector - compact */
-        .variant-selector {
-            width: 100%;
-            padding: 0.6rem;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 0.85rem;
-            margin: 0.5rem 0;
-            background: white;
-            cursor: pointer;
-        }
-
-        .variant-selector:focus {
-            outline: none;
-            border-color: var(--teal);
-        }
-
-        /* Photo slots - compact design */
-        .photo-slots-section {
-            margin: 0.75rem 0;
-            padding-top: 0.5rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .slot-group-title {
+        .product-sku {
+            background: var(--teal-light);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
             font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--teal);
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
+            font-weight: 600;
+            margin-left: 0.5rem;
         }
 
-        .slot-items {
+        .product-size {
+            font-size: 0.7rem;
+            color: #6c757d;
+            margin-left: 0.3rem;
+        }
+
+        .badge-auto {
+            background: #fee2e2;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            color: #dc2626;
+            font-weight: 500;
+        }
+
+        .slots-row {
+            padding: 1.2rem;
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 1.2rem;
+            align-items: center;
+            justify-content: flex-start;
         }
 
         .slot-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.2rem;
+            gap: 0.4rem;
         }
 
         .oval {
-            border-radius: 40px;
-            background: white;
+            border-radius: 60px;
+            background: #ffffff;
             border: 2px solid var(--teal);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            font-size: 0.75rem;
+            font-size: 1rem;
+            color: #1e2f3a;
             cursor: pointer;
-            height: 36px;
-            padding: 0 0.5rem;
-            min-width: 60px;
-            transition: all 0.1s;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .oval:hover {
+            border-color: var(--teal-dark);
+            background: #f0f9fa;
+            box-shadow: 0 2px 8px rgba(0,120,131,0.2);
         }
 
         .oval.filled {
-            background: var(--teal-light);
+            background: #c8e6df;
             border-color: var(--teal);
             color: var(--teal-dark);
         }
 
         .oval.disabled {
-            background: var(--red-light);
-            border-color: var(--red);
+            background: #fee2e2;
+            border-color: #dc2626;
             cursor: not-allowed;
-            opacity: 0.6;
+            opacity: 0.9;
+        }
+
+        .oval.disabled:hover {
+            background: #fee2e2;
+            box-shadow: none;
         }
 
         .oval-input {
-            border-radius: 40px;
+            border-radius: 60px;
             border: 2px solid var(--teal);
+            background: white;
             text-align: center;
             font-weight: 600;
-            font-size: 0.75rem;
+            font-size: 0.9rem;
             outline: none;
-            height: 36px;
-            padding: 0 0.5rem;
-            min-width: 60px;
+            font-family: monospace;
+            box-shadow: 0 0 0 2px rgba(0,120,131,0.1);
+        }
+
+        .oval-input:focus {
+            border-color: var(--teal-dark);
+            box-shadow: 0 0 0 3px rgba(0,120,131,0.2);
         }
 
         .slot-number {
-            font-size: 0.5rem;
+            font-size: 0.6rem;
             font-weight: 500;
             color: #8b9aab;
         }
 
         .auto-note {
-            font-size: 0.5rem;
-            color: var(--red);
-            background: var(--red-light);
-            padding: 0.1rem 0.3rem;
-            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 500;
+            color: #dc2626;
+            background: #fee2e2;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            margin-top: 0.2rem;
         }
 
-        .price-area {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 0.75rem;
-            padding-top: 0.5rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .price {
-            font-size: 1.2rem;
-            font-weight: 800;
+        .loading-spinner {
+            text-align: center;
+            padding: 2rem;
             color: var(--teal);
         }
 
-        .add-to-cart-btn {
-            background: var(--teal);
-            color: white;
-            border: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .add-to-cart-btn:hover {
-            background: var(--teal-dark);
-            transform: scale(1.05);
-        }
-
-        /* Cart panel */
-        .cart-panel {
-            position: fixed;
-            right: 20px;
-            top: 100px;
-            width: 320px;
-            background: white;
-            border-radius: 1rem;
-            border: 2px solid var(--teal);
-            padding: 1rem;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            max-height: calc(100vh - 120px);
-            overflow-y: auto;
-            z-index: 50;
-        }
-
-        .cart-header {
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: var(--teal);
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--teal);
+        .global-actions {
+            margin-top: 1.2rem;
             display: flex;
-            justify-content: space-between;
-        }
-
-        .cart-items {
-            max-height: 300px;
-            overflow-y: auto;
-            margin: 0.5rem 0;
-        }
-
-        .cart-item {
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.8rem;
-        }
-
-        .cart-item-sku {
-            font-weight: 600;
-            color: var(--teal);
-        }
-
-        .cart-item-controls {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.3rem;
-        }
-
-        .cart-item-controls button {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 1px solid var(--teal);
-            background: white;
-            cursor: pointer;
-        }
-
-        .cart-total {
-            font-weight: 800;
-            font-size: 1.1rem;
-            padding-top: 0.5rem;
-            border-top: 2px solid var(--teal);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .checkout-btn {
-            width: 100%;
-            background: var(--teal);
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 40px;
-            font-weight: 700;
-            margin-top: 0.75rem;
-            cursor: pointer;
-        }
-
-        .mobile-cart-button {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--teal);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 0.8rem 1.2rem;
-            font-weight: 700;
-            z-index: 100;
-            cursor: pointer;
+            justify-content: flex-end;
         }
 
         .toast {
@@ -416,50 +340,16 @@
             padding: 0.6rem 1.4rem;
             border-radius: 40px;
             font-size: 0.8rem;
+            font-weight: 500;
             z-index: 2000;
             display: none;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .image-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 3000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .image-modal img {
-            max-width: 90vw;
-            max-height: 90vh;
-            object-fit: contain;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: var(--teal);
-        }
-
-        @media (max-width: 900px) {
-            .cart-panel {
-                display: none;
-            }
-            .mobile-cart-button {
-                display: flex;
-            }
-            .main-content {
-                padding: 1rem;
-                margin-bottom: 80px;
-            }
-            .product-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 700px) {
+            .slots-row { gap: 0.8rem; justify-content: center; }
+            .toast { white-space: normal; max-width: 85%; text-align: center; }
         }
     </style>
 </head>
@@ -470,65 +360,50 @@
             <img class="logo-img" src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="White Fox">
             <span class="logo-text">WHITE FOX STUDIO</span>
         </div>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search by SKU or name">
-            <button id="searchBtn">🔍</button>
+        <div class="right-actions">
+            <div class="search-box">
+                <input type="text" id="orderInput" placeholder="Order number" value="1111">
+                <button id="checkBtn">OK</button>
+            </div>
+            <button class="lang-toggle" id="langBtn">
+                <span id="langIcon">🇬🇧</span>
+                <span id="langText">EN</span>
+            </button>
         </div>
-        <button class="lang-toggle" id="langBtn">🌐 EN/TH</button>
     </div>
 </header>
 <main class="main-content" id="app"></main>
 <div id="toast" class="toast"></div>
-<button class="mobile-cart-button" id="mobileCartBtn">🛒 <span id="mobileCartCount">0</span></button>
-<div id="cartPanel" class="cart-panel"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // Supabase config
-    const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
-
-    let supabase;
-    let products = [];
-    let cart = JSON.parse(localStorage.getItem('wf_cart')) || [];
-    let currentLang = 'en';
-    let editingSlot = null;
-
     const MIN_PHOTO = 1000;
     const MAX_PHOTO = 9999;
+    
+    // Supabase configuration
+    const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
+    
+    let supabaseClient = null;
+    let productsDB = [];
+    let currentLang = 'en';
+    let currentOrder = null;
+    let assignments = {};
+    let editingSlot = null;
+    let isLoading = true;
 
     const trans = {
-        en: {
-            loading: "Loading products...",
-            error: "Error loading data",
-            add: "Add",
-            inCart: "In cart",
-            total: "Total",
-            checkout: "Checkout",
-            empty: "Cart is empty",
-            photoNum: "Photo #",
-            selectable: "Selectable",
-            notSelectable: "Fixed",
-            dup: "Photo number already used",
-            range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`,
-            saved: "Photo saved",
-            viewPhoto: "View image"
+        en: { 
+            enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
+            ok: "✓ Loaded", dup: "Photo already used", range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            saved: "✓ Confirmed", back: "← Back", notSelectable: "Not selectable",
+            loading: "Loading products...", error: "Error loading data"
         },
-        th: {
-            loading: "กำลังโหลดสินค้า...",
-            error: "เกิดข้อผิดพลาด",
-            add: "เพิ่ม",
-            inCart: "ในตะกร้า",
-            total: "รวม",
-            checkout: "ยืนยัน",
-            empty: "ตะกร้าว่าง",
-            photoNum: "รูปที่ #",
-            selectable: "เลือกได้",
-            notSelectable: "กำหนดแล้ว",
-            dup: "หมายเลขรูปซ้ำ",
-            range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`,
-            saved: "บันทึกรูปแล้ว",
-            viewPhoto: "ดูรูป"
+        th: { 
+            enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
+            ok: "✓ โหลดแล้ว", dup: "หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "ไม่สามารถเลือกได้",
+            loading: "กำลังโหลดสินค้า...", error: "เกิดข้อผิดพลาด"
         }
     };
 
@@ -543,463 +418,349 @@
 
     function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO; }
 
-    // Load products from Supabase
-    async function loadProducts() {
-        const container = document.getElementById('app');
-        container.innerHTML = `<div class="loading">⏳ ${t('loading')}</div>`;
-        
-        try {
-            supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            
-            // Load product_cards with all fields
-            const { data: cards, error: cardsError } = await supabase
-                .from('product_cards')
-                .select('*')
-                .order('sort_product', { ascending: true, nullsFirst: false });
-            
-            if (cardsError) throw cardsError;
-            
-            console.log('Loaded products:', cards?.length);
-            
-            // Process each product with variants
-            products = [];
-            for (const card of cards || []) {
-                let variants = [];
-                try {
-                    if (card.variants) {
-                        variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
-                    }
-                } catch(e) { console.warn('Parse variants error:', e); }
-                
-                // Create photo slots for each product based on pose count
-                const poseCount = card.pose || 1;
-                const isSelectable = !(card.name_en?.toLowerCase().includes('group') || 
-                                        card.name_th?.toLowerCase().includes('กลุ่ม') ||
-                                        card.mess?.toLowerCase().includes('group'));
-                
-                // Generate slots array
-                const slots = [];
-                for (let i = 0; i < poseCount; i++) {
-                    slots.push({
-                        id: i,
-                        value: null,
-                        selectable: isSelectable
-                    });
-                }
-                
-                products.push({
-                    id: card.card_id || card.sku || `prod_${Date.now()}_${Math.random()}`,
-                    sku: card.sku || card.article,
-                    name_en: card.name_en || '',
-                    name_th: card.name_th || '',
-                    description_en: card.descriptions || '',
-                    description_th: card.descriptions_th || '',
-                    size: card.size || '',
-                    pose: poseCount,
-                    selectable: isSelectable,
-                    image_url: card.cover_image || null,
-                    variants: variants,
-                    base_price: variants.length > 0 ? Math.min(...variants.map(v => v.price || 0)) : (card.price || 0),
-                    slots: slots.map(s => ({ ...s })) // Copy slots
-                });
-            }
-            
-            // Load packages as well if needed
-            const { data: packages, error: pkgError } = await supabase
-                .from('packages_with_price')
-                .select('*');
-            
-            if (!pkgError && packages) {
-                for (const pkg of packages) {
-                    let contents = [];
-                    try {
-                        if (pkg.contents) {
-                            contents = typeof pkg.contents === 'string' ? JSON.parse(pkg.contents) : pkg.contents;
-                        }
-                    } catch(e) {}
-                    
-                    // Build slots from package contents
-                    const slots = [];
-                    for (const item of contents) {
-                        for (let i = 0; i < (item.qty || 1); i++) {
-                            slots.push({
-                                id: `${item.sku}_${i}`,
-                                name_en: item.name_en,
-                                name_th: item.name_th,
-                                size: item.size,
-                                value: null,
-                                selectable: item.selectable !== false
-                            });
-                        }
-                    }
-                    
-                    products.push({
-                        id: `pkg_${pkg.sku}`,
-                        sku: pkg.sku,
-                        name_en: pkg.name_en,
-                        name_th: pkg.name_th,
-                        description_en: pkg.description_en || '',
-                        description_th: pkg.description_th || '',
-                        size: '',
-                        pose: slots.length,
-                        selectable: false,
-                        image_url: pkg.image_url || null,
-                        variants: [{ price: pkg.price, sku: pkg.sku }],
-                        base_price: pkg.price || 0,
-                        isPackage: true,
-                        slots: slots
-                    });
-                }
-            }
-            
-            console.log('Total products loaded:', products.length);
-            renderProducts();
-            
-        } catch (error) {
-            console.error('Load error:', error);
-            container.innerHTML = `<div class="loading">❌ ${t('error')}: ${error.message}</div>`;
-        }
-    }
-
-    // Check if photo is used in same product
-    function isPhotoUsed(product, slotIdx, photoNum) {
-        if (!product.slots) return false;
-        for (let i = 0; i < product.slots.length; i++) {
-            if (i !== slotIdx && product.slots[i].value === photoNum) return true;
+    function isUsedInProduct(prodKey, num, excludeIdx) {
+        const a = assignments[prodKey];
+        if (!a) return false;
+        for (let i = 0; i < a.values.length; i++) {
+            if (i !== excludeIdx && a.values[i] === num) return true;
         }
         return false;
     }
 
-    function setPhotoValue(productId, slotIdx, value) {
-        const product = products.find(p => p.id === productId);
-        if (!product || !product.slots[slotIdx]?.selectable) return false;
-        if (!isValid(value)) { toast(t('range')); return false; }
-        if (isPhotoUsed(product, slotIdx, value)) { toast(t('dup')); return false; }
-        
-        product.slots[slotIdx].value = value;
-        renderProducts();
+    function setValue(prodKey, idx, val) {
+        const a = assignments[prodKey];
+        if (!a || !a.selectable) return false;
+        if (!isValid(val)) { toast(t('range')); return false; }
+        if (isUsedInProduct(prodKey, val, idx)) { toast(t('dup')); return false; }
+        a.values[idx] = val;
+        render();
         return true;
     }
 
-    function handleSlotClick(productId, slotIdx, currentVal) {
-        const product = products.find(p => p.id === productId);
-        if (!product?.slots[slotIdx]?.selectable) return;
+    function getOvalSize(poseCount) {
+        if (poseCount <= 2) return { width: 100, height: 70 };
+        if (poseCount <= 3) return { width: 92, height: 66 };
+        if (poseCount <= 4) return { width: 86, height: 62 };
+        if (poseCount <= 6) return { width: 80, height: 58 };
+        if (poseCount <= 10) return { width: 74, height: 54 };
+        if (poseCount <= 16) return { width: 68, height: 50 };
+        return { width: 62, height: 46 };
+    }
+
+    async function loadProductsFromSupabase() {
+        try {
+            isLoading = true;
+            render();
+            
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            // Load product cards
+            const { data: productCards, error: cardsError } = await supabaseClient
+                .from('product_cards')
+                .select('*');
+            
+            if (cardsError) throw cardsError;
+            
+            // Load packages
+            const { data: packages, error: packagesError } = await supabaseClient
+                .from('packages_with_price')
+                .select('*');
+            
+            if (packagesError) throw packagesError;
+            
+            productsDB = [];
+            
+            // Process product cards
+            if (productCards && productCards.length > 0) {
+                for (const card of productCards) {
+                    let pose = 0;
+                    let selectable = true;
+                    let mess = '';
+                    
+                    // Parse variants if exists
+                    if (card.variants) {
+                        try {
+                            const variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
+                            if (variants && variants.length > 0) {
+                                pose = variants[0].pose || 1;
+                                mess = variants[0].mess || '';
+                            }
+                        } catch(e) {}
+                    }
+                    
+                    if (!pose && card.pose) pose = card.pose;
+                    if (!pose && card.total_photos) pose = card.total_photos;
+                    if (pose === 0) pose = 1;
+                    pose = Math.min(pose, 31);
+                    
+                    // Check if product is not selectable (group photos, brand photos, etc.)
+                    const messLower = (mess || '').toLowerCase();
+                    const nameEnLower = (card.name_en || '').toLowerCase();
+                    if (messLower.includes('group') || messLower.includes('brand') || 
+                        nameEnLower.includes('group') || nameEnLower.includes('logo') ||
+                        (card.mess && card.mess.toLowerCase().includes('group'))) {
+                        selectable = false;
+                    }
+                    
+                    productsDB.push({
+                        article: card.sku || card.card_id || `PROD_${Date.now()}`,
+                        name_en: card.name_en || card.sku || 'Product',
+                        name_th: card.name_th || card.name_en || card.sku || 'สินค้า',
+                        size: card.size || '',
+                        pose: pose,
+                        selectable: selectable,
+                        mess: mess
+                    });
+                }
+            }
+            
+            // Process packages
+            if (packages && packages.length > 0) {
+                for (const pkg of packages) {
+                    let totalPhotos = pkg.total_photos || 1;
+                    if (totalPhotos === 0) totalPhotos = 1;
+                    totalPhotos = Math.min(totalPhotos, 31);
+                    
+                    productsDB.push({
+                        article: pkg.sku || pkg.slug || `PKG_${Date.now()}`,
+                        name_en: pkg.name_en || pkg.sku || 'Package',
+                        name_th: pkg.name_th || pkg.name_en || pkg.sku || 'แพ็คเกจ',
+                        size: '',
+                        pose: totalPhotos,
+                        selectable: false,
+                        mess: 'package'
+                    });
+                }
+            }
+            
+            // If still no data, use fallback
+            if (productsDB.length === 0) {
+                productsDB = [
+                    { article: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true },
+                    { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียน", size: "8x12", pose: 1, selectable: false, mess: "group" },
+                    { article: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true },
+                    { article: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false, mess: "group brand" },
+                    { article: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะ", size: "8x12", pose: 2, selectable: true },
+                    { article: "B11", name_en: "INSTABOOK", name_th: "อินสตาบุ๊ค", size: "5.5x5.5", pose: 16, selectable: true }
+                ];
+            }
+            
+            isLoading = false;
+            toast(`✅ Loaded ${productsDB.length} products`);
+            
+        } catch (error) {
+            console.error('Error loading products:', error);
+            toast(t('error'));
+            isLoading = false;
+            // Fallback data
+            productsDB = [
+                { article: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true },
+                { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียน", size: "8x12", pose: 1, selectable: false, mess: "group" },
+                { article: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true },
+                { article: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false, mess: "group brand" },
+                { article: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะ", size: "8x12", pose: 2, selectable: true }
+            ];
+        }
+    }
+
+    function loadRandomOrder() {
+        if (productsDB.length === 0) return;
         
-        const slotDiv = document.getElementById(`slot_${productId}_${slotIdx}`);
-        if (!slotDiv || editingSlot) return;
+        const shuffled = [...productsDB];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
         
+        const selected = shuffled.slice(0, Math.min(6, shuffled.length));
+        
+        currentOrder = { number: "1111", products: selected };
+        assignments = {};
+        
+        for (let prod of selected) {
+            const key = `p_${prod.article}_${Date.now()}_${Math.random()}`;
+            assignments[key] = {
+                key: key,
+                article: prod.article,
+                nameEn: prod.name_en,
+                nameTh: prod.name_th,
+                size: prod.size,
+                pose: prod.pose,
+                selectable: prod.selectable,
+                values: new Array(prod.pose).fill(null)
+            };
+        }
+        render();
+        toast(t('ok'));
+    }
+
+    function handleOvalClick(prodKey, idx, currentVal) {
+        const a = assignments[prodKey];
+        if (!a || !a.selectable) return;
+        
+        const ovalDiv = document.getElementById(`oval_${prodKey}_${idx}`);
+        if (!ovalDiv) return;
+        if (editingSlot === `${prodKey}_${idx}`) return;
+        
+        const width = ovalDiv.offsetWidth;
+        const height = ovalDiv.offsetHeight;
         const input = document.createElement('input');
         input.type = 'number';
-        input.value = currentVal || '';
+        input.value = currentVal !== null ? currentVal : '';
         input.className = 'oval-input';
         input.min = MIN_PHOTO;
         input.max = MAX_PHOTO;
-        input.style.width = `${slotDiv.offsetWidth}px`;
-        input.style.height = `${slotDiv.offsetHeight}px`;
+        input.style.width = `${width}px`;
+        input.style.height = `${height}px`;
+        input.style.fontSize = `${Math.max(14, height * 0.28)}px`;
         
-        slotDiv.replaceWith(input);
+        ovalDiv.replaceWith(input);
         input.focus();
         
         const save = () => {
             const newVal = parseInt(input.value);
-            input.replaceWith(slotDiv);
+            input.replaceWith(ovalDiv);
             editingSlot = null;
             if (!isNaN(newVal) && newVal !== currentVal) {
-                setPhotoValue(productId, slotIdx, newVal);
+                setValue(prodKey, idx, newVal);
+            } else if (isNaN(newVal) && currentVal !== null) {
+                setValue(prodKey, idx, null);
             }
         };
         
         input.addEventListener('blur', save);
-        input.addEventListener('keypress', (e) => { if (e.key === 'Enter') save(); });
-        editingSlot = `${productId}_${slotIdx}`;
-    }
-
-    // Add to cart
-    function addToCart(product, variantPrice, variantSku) {
-        const existing = cart.find(item => item.id === product.id && item.variantSku === variantSku);
-        if (existing) {
-            existing.quantity++;
-        } else {
-            cart.push({
-                id: product.id,
-                sku: product.sku,
-                variantSku: variantSku,
-                name: currentLang === 'th' ? (product.name_th || product.name_en) : (product.name_en || product.sku),
-                price: variantPrice,
-                quantity: 1,
-                image: product.image_url
-            });
-        }
-        localStorage.setItem('wf_cart', JSON.stringify(cart));
-        updateCartUI();
-        toast(`✓ ${product.sku} ${t('add')}`);
-    }
-
-    function updateQuantity(itemId, variantSku, delta) {
-        const index = cart.findIndex(i => i.id === itemId && i.variantSku === variantSku);
-        if (index === -1) return;
-        
-        const newQty = cart[index].quantity + delta;
-        if (newQty <= 0) {
-            cart.splice(index, 1);
-        } else {
-            cart[index].quantity = newQty;
-        }
-        localStorage.setItem('wf_cart', JSON.stringify(cart));
-        updateCartUI();
-    }
-
-    function updateCartUI() {
-        const totalItems = cart.reduce((sum, i) => sum + i.quantity, 0);
-        const totalPrice = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-        
-        document.getElementById('mobileCartCount').innerText = totalItems;
-        
-        const cartPanel = document.getElementById('cartPanel');
-        if (!cartPanel) return;
-        
-        if (cart.length === 0) {
-            cartPanel.innerHTML = `
-                <div class="cart-header"><span>🛒 ${t('total')}</span><span>0</span></div>
-                <div class="cart-items"><div style="text-align:center;padding:1rem;">${t('empty')}</div></div>
-                <div class="cart-total"><span>${t('total')}</span><span>0 THB</span></div>
-            `;
-            return;
-        }
-        
-        let itemsHtml = '<div class="cart-items">';
-        cart.forEach(item => {
-            itemsHtml += `
-                <div class="cart-item">
-                    <div><span class="cart-item-sku">${item.sku}</span> ${item.name}</div>
-                    <div>${item.price.toLocaleString()} THB × ${item.quantity}</div>
-                    <div class="cart-item-controls">
-                        <button onclick="updateQuantity('${item.id}', '${item.variantSku}', -1)">-</button>
-                        <span>${item.quantity}</span>
-                        <button onclick="updateQuantity('${item.id}', '${item.variantSku}', 1)">+</button>
-                    </div>
-                </div>
-            `;
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') save();
         });
-        itemsHtml += '</div>';
         
-        cartPanel.innerHTML = `
-            <div class="cart-header"><span>🛒 Cart</span><span>${totalItems} items</span></div>
-            ${itemsHtml}
-            <div class="cart-total"><span>${t('total')}</span><span>${totalPrice.toLocaleString()} THB</span></div>
-            <button class="checkout-btn" onclick="checkout()">${t('checkout')}</button>
-        `;
+        editingSlot = `${prodKey}_${idx}`;
     }
 
-    function checkout() {
-        const summary = cart.map(item => `${item.sku} x${item.quantity} = ${item.price * item.quantity} THB`).join('\n');
-        const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-        alert(`Order Summary:\n${summary}\n\nTotal: ${total} THB`);
-        toast('Order placed! (Demo)');
-    }
-
-    function showImageModal(url, name) {
-        if (!url) { toast('No image'); return; }
-        const modal = document.createElement('div');
-        modal.className = 'image-modal';
-        const img = document.createElement('img');
-        img.src = url;
-        img.alt = name;
-        img.onerror = () => { modal.innerHTML = '<div style="color:white;padding:2rem;">❌ Image not available</div>'; };
-        modal.appendChild(img);
-        modal.onclick = () => modal.remove();
-        document.body.appendChild(modal);
-    }
-
-    function renderProducts() {
+    function render() {
         const container = document.getElementById('app');
-        let filtered = [...products];
         
-        const searchTerm = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
-        if (searchTerm) {
-            filtered = filtered.filter(p => 
-                p.sku?.toLowerCase().includes(searchTerm) || 
-                p.name_en?.toLowerCase().includes(searchTerm) ||
-                p.name_th?.toLowerCase().includes(searchTerm)
-            );
-        }
-        
-        if (filtered.length === 0) {
-            container.innerHTML = '<div class="loading">No products found</div>';
+        if (isLoading) {
+            container.innerHTML = `<div class="login-card">
+                <div class="loading-spinner">⏳ ${t('loading')}</div>
+            </div>`;
             return;
         }
         
-        let html = '<div class="product-grid">';
+        if (!currentOrder) {
+            container.innerHTML = `<div class="login-card">
+                <h3>${t('enter')}</h3>
+                <input type="text" id="loginCode" class="order-input" placeholder="1111" value="1111">
+                <button class="btn-primary" id="loginExec">${t('btn')}</button>
+            </div>`;
+            document.getElementById('loginExec')?.addEventListener('click', () => {
+                const code = document.getElementById('loginCode').value.trim();
+                if (code === '1111') loadRandomOrder();
+                else toast(t('invalid'));
+            });
+            return;
+        }
         
-        filtered.forEach(product => {
-            const displayName = currentLang === 'th' ? (product.name_th || product.name_en) : (product.name_en || product.sku);
-            const displayDesc = currentLang === 'th' ? (product.description_th || product.description_en) : (product.description_en || '');
-            const imageUrl = product.image_url || 'https://via.placeholder.com/300x200?text=No+Image';
+        let totalSlots = 0, totalFilled = 0;
+        for (let a of Object.values(assignments)) {
+            totalSlots += a.values.length;
+            totalFilled += a.values.filter(v => v !== null).length;
+        }
+        
+        let html = `<div class="order-header">
+            <div class="order-badge">📦 ${currentOrder.number}</div>
+            <div class="order-badge">${totalFilled}/${totalSlots}</div>
+            <button class="order-badge" id="backBtn" style="background:white; cursor:pointer;">${t('back')}</button>
+        </div>`;
+        
+        for (let [key, asgn] of Object.entries(assignments)) {
+            const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
+            const poseCount = asgn.pose;
+            const { width, height } = getOvalSize(poseCount);
+            const fontSize = Math.max(14, height * 0.28);
             
-            // Get variant options
-            let variantSelectHtml = '';
-            let currentPrice = product.base_price;
-            let currentVariantSku = product.sku;
-            
-            if (product.variants && product.variants.length > 1) {
-                variantSelectHtml = `
-                    <select class="variant-selector" id="variant_${product.id}" onchange="updateVariantPrice('${product.id}')">
-                        ${product.variants.map((v, idx) => {
-                            let label = '';
-                            if (v.size_label) label += v.size_label;
-                            if (v.pose) label += (label ? ' / ' : '') + v.pose;
-                            if (v.color) label += (label ? ' / ' : '') + v.color;
-                            if (!label) label = v.sku;
-                            return `<option value="${v.price}|${v.sku}" ${idx === 0 ? 'selected' : ''}>${label} - ${v.price} THB</option>`;
-                        }).join('')}
-                    </select>
-                `;
-                const firstVariant = product.variants[0];
-                if (firstVariant) {
-                    currentPrice = firstVariant.price;
-                    currentVariantSku = firstVariant.sku;
-                }
-            } else if (product.variants && product.variants.length === 1) {
-                currentPrice = product.variants[0].price;
-                currentVariantSku = product.variants[0].sku;
-            }
-            
-            // Photo slots section
-            let slotsHtml = '';
-            if (product.slots && product.slots.length > 0) {
-                slotsHtml = `<div class="photo-slots-section">
-                    <div class="slot-group-title">
-                        <span>📸 ${t('photoNum')} (${product.pose || product.slots.length} ${t('photos')})</span>
-                        <span class="slot-group-badge">${product.selectable ? '✅ ' + t('selectable') : '🔒 ' + t('notSelectable')}</span>
-                    </div>
-                    <div class="slot-items">`;
-                
-                product.slots.forEach((slot, idx) => {
-                    const isSelectable = slot.selectable !== false;
-                    const isFilled = slot.value !== null;
-                    
-                    if (isSelectable) {
-                        slotsHtml += `<div class="slot-wrapper">
-                            <div id="slot_${product.id}_${idx}" class="oval ${isFilled ? 'filled' : ''}" 
-                                 onclick="handleSlotClick('${product.id}', ${idx}, ${slot.value !== null ? slot.value : 'null'})"
-                                 style="min-width:55px;">${slot.value !== null ? slot.value : '📷'}</div>
-                            <span class="slot-number">${idx+1}</span>
-                        </div>`;
-                    } else {
-                        slotsHtml += `<div class="slot-wrapper">
-                            <div class="oval disabled" style="min-width:55px;">🔒</div>
-                            <span class="slot-number">${idx+1}</span>
-                            <span class="auto-note">${t('notSelectable')}</span>
-                        </div>`;
-                    }
-                });
-                slotsHtml += `</div></div>`;
-            }
-            
-            html += `
-                <div class="product-card">
-                    <img class="product-image" src="${imageUrl}" onclick="showImageModal('${imageUrl}', '${displayName.replace(/'/g, "\\'")}')" loading="lazy" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
-                    <div class="product-info">
-                        <div class="product-header">
-                            <span class="product-sku">${product.sku || 'N/A'}</span>
-                            <span class="product-title">${displayName}</span>
-                        </div>
-                        ${product.size ? `<div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:0.3rem;">📏 ${product.size}</div>` : ''}
-                        ${displayDesc ? `<div style="font-size:0.7rem;color:var(--text-secondary);margin-bottom:0.5rem;">${displayDesc.substring(0,80)}</div>` : ''}
-                        ${variantSelectHtml}
-                        ${slotsHtml}
-                        <div class="price-area">
-                            <span class="price" id="price_${product.id}">${currentPrice.toLocaleString()} THB</span>
-                            <button class="add-to-cart-btn" onclick="addToCartWithVariant('${product.id}', '${currentVariantSku}')">+</button>
-                        </div>
+            html += `<div class="product-card">
+                <div class="product-header">
+                    <div>
+                        <span class="product-title">${name || asgn.article}</span>
+                        <span class="product-sku">${asgn.article}</span>
+                        <span class="product-size">${asgn.size}</span>
+                        ${!asgn.selectable ? `<span class="badge-auto">🔴 ${t('notSelectable')}</span>` : `<span class="badge-auto">📷 ${poseCount}</span>`}
                     </div>
                 </div>
-            `;
-        });
+                <div class="slots-row">`;
+            
+            for (let i = 0; i < poseCount; i++) {
+                const val = asgn.values[i];
+                const isFilled = val !== null;
+                const ovalClass = `oval ${isFilled ? 'filled' : ''} ${asgn.selectable ? 'editable' : 'disabled'}`;
+                const displayText = isFilled ? val : '';
+                
+                if (asgn.selectable) {
+                    html += `<div class="slot-wrapper">
+                        <div id="oval_${key}_${i}" class="${ovalClass}" 
+                             style="width:${width}px; height:${height}px; font-size:${fontSize}px;"
+                             onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${displayText}</div>
+                        <span class="slot-number">${i+1}</span>
+                    </div>`;
+                } else {
+                    html += `<div class="slot-wrapper">
+                        <div class="oval disabled" style="width:${width}px; height:${height}px;"></div>
+                        <span class="slot-number">${i+1}</span>
+                        <span class="auto-note">🚫 ${t('notSelectable')}</span>
+                    </div>`;
+                }
+            }
+            html += `</div></div>`;
+        }
         
-        html += '</div>';
+        html += `<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.5rem 1.8rem;">✓ ${t('saved')}</button></div>`;
         container.innerHTML = html;
+        
+        document.getElementById('backBtn')?.addEventListener('click', () => { currentOrder = null; render(); });
+        document.getElementById('confirmBtn')?.addEventListener('click', () => {
+            let summary = "WHITE FOX STUDIO\n━━━━━━━━━━━━\n";
+            for (let [key, a] of Object.entries(assignments)) {
+                const name = currentLang === 'en' ? a.nameEn : a.nameTh;
+                summary += `\n${a.article} — ${name}\n`;
+                for (let i = 0; i < a.values.length; i++) {
+                    summary += `  ${i+1}: ${a.values[i] || '—'}\n`;
+                }
+            }
+            alert(summary);
+            toast(t('saved'));
+        });
     }
 
-    window.updateVariantPrice = function(productId) {
-        const select = document.getElementById(`variant_${productId}`);
-        if (!select) return;
-        const [price, sku] = select.value.split('|');
-        const priceEl = document.getElementById(`price_${productId}`);
-        if (priceEl) priceEl.textContent = `${parseInt(price).toLocaleString()} THB`;
-        
-        // Store current variant SKU for add to cart
-        const product = products.find(p => p.id === productId);
-        if (product) {
-            product._currentVariantSku = sku;
-            product._currentPrice = parseInt(price);
-        }
-    };
-
-    window.addToCartWithVariant = function(productId, defaultSku) {
-        const product = products.find(p => p.id === productId);
-        if (!product) return;
-        
-        let price = product.base_price;
-        let variantSku = product.sku;
-        
-        const select = document.getElementById(`variant_${product.id}`);
-        if (select) {
-            const [selPrice, selSku] = select.value.split('|');
-            price = parseInt(selPrice);
-            variantSku = selSku;
-        } else if (product.variants && product.variants.length === 1) {
-            price = product.variants[0].price;
-            variantSku = product.variants[0].sku;
-        }
-        
-        addToCart(product, price, variantSku);
-    };
-
-    function searchProducts() {
-        renderProducts();
-    }
+    window.handleOvalClick = handleOvalClick;
 
     function updateLang() {
+        const iconSpan = document.getElementById('langIcon');
+        const textSpan = document.getElementById('langText');
+        if (iconSpan) iconSpan.innerText = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
+        if (textSpan) textSpan.innerText = currentLang === 'en' ? 'EN' : 'TH';
+        if (currentOrder) render();
+        else render();
+    }
+
+    document.getElementById('langBtn')?.addEventListener('click', () => {
         currentLang = currentLang === 'en' ? 'th' : 'en';
-        document.getElementById('langBtn').innerHTML = currentLang === 'en' ? '🇬🇧 EN' : '🇹🇭 TH';
-        renderProducts();
-        updateCartUI();
-    }
-
-    // Mobile cart
-    function openMobileCart() {
-        const cartPanel = document.getElementById('cartPanel');
-        if (cartPanel) cartPanel.style.display = 'block';
-    }
-
-    // Expose globals
-    window.handleSlotClick = handleSlotClick;
-    window.showImageModal = showImageModal;
-    window.addToCartWithVariant = addToCartWithVariant;
-    window.updateQuantity = updateQuantity;
-    window.checkout = checkout;
-    window.searchProducts = searchProducts;
-    window.updateVariantPrice = updateVariantPrice;
-
-    // Event listeners
-    document.getElementById('langBtn')?.addEventListener('click', updateLang);
-    document.getElementById('searchBtn')?.addEventListener('click', searchProducts);
-    document.getElementById('searchInput')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') searchProducts(); });
-    document.getElementById('mobileCartBtn')?.addEventListener('click', openMobileCart);
-    
-    // Close cart on click outside (mobile)
-    document.addEventListener('click', (e) => {
-        const cartPanel = document.getElementById('cartPanel');
-        const mobileBtn = document.getElementById('mobileCartBtn');
-        if (window.innerWidth <= 900 && cartPanel && !cartPanel.contains(e.target) && e.target !== mobileBtn) {
-            cartPanel.style.display = 'none';
-        }
+        updateLang();
+    });
+    document.getElementById('checkBtn')?.addEventListener('click', () => {
+        const code = document.getElementById('orderInput').value.trim();
+        if (code === '1111') loadRandomOrder();
+        else toast(t('invalid'));
+    });
+    document.getElementById('orderInput')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') document.getElementById('checkBtn')?.click();
     });
 
     // Initialize
-    loadProducts();
-    updateCartUI();
+    (async () => {
+        await loadProductsFromSupabase();
+        render();
+        updateLang();
+    })();
 </script>
 </body>
 </html>
