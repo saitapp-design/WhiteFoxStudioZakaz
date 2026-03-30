@@ -446,12 +446,15 @@
 <main class="main-content" id="app"></main>
 <div id="toast" class="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     const MIN_PHOTO = 1000;
     const MAX_PHOTO = 9999;
     
-    // ======================== ПАКЕТЫ (точная структура по ТЗ) ========================
-    // Для каждого элемента указан selectable: true/false, изображение, размер, количество
+    const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
+    
+    // Пакеты по ТЗ (полное соответствие)
     const PACKAGES_DATA = {
         "Q1": {
             sku: "Q1",
@@ -491,121 +494,41 @@
         }
     };
     
-    // Конвертер ссылок Яндекс.Диск для прямого отображения (превью)
-    function getYandexDirectUrl(diskUrl) {
-        if (!diskUrl) return null;
-        // Если ссылка уже прямая или содержит /i/ — используем как есть (но для диска нужен особый формат)
-        // Яндекс.Диск ссылки вида https://disk.yandex.ru/i/XXX — нельзя просто вставить в img.
-        // Чтобы отобразить изображение, используем публичную ссылку через api или прямой превью.
-        // Решение: используем стандартный превью-прокси: https://getfile.dokpub.com/yandex/get/ + код
-        // Альтернативно: парсим ID и вставляем в ссылку просмотра. Для демо: покажем иконку, но откроется модалка с оригинальным URL.
-        // Поскольку прямые ссылки не работают без авторизации, мы откроем модальное окно с ссылкой на страницу диска.
-        // Но в ТЗ нужно "чтобы в начале была картинка из яндекс диска и чтобы всё нормально отображалось".
-        // Сделаем: для превью используем placeholder, но по клику открывается страница диска в новой вкладке? Лучше открыть полноценный просмотр.
-        // Для корректного отображения картинки используем сервис превью (публичный метод). Создадим функцию формирования миниатюры.
-        // Яндекс позволяет вставить превью через https://yastatic.net/disk/pic-preview?url=...
-        if (diskUrl.includes('disk.yandex.ru/i/')) {
-            const fileId = diskUrl.split('/i/')[1];
-            if (fileId) return `https://yastatic.net/disk/pic-preview?url=${encodeURIComponent(diskUrl)}&size=s`;
-        }
-        if (diskUrl.includes('disk.yandex.ru/d/')) {
-            const fileId = diskUrl.split('/d/')[1];
-            if (fileId) return `https://yastatic.net/disk/pic-preview?url=${encodeURIComponent(diskUrl)}&size=s`;
-        }
-        return diskUrl;
-    }
-    
-    // Для модального окна: открываем прямую ссылку на Яндекс.Диск в новом окне или показываем предупреждение, 
-    // потому что прямые изображения недоступны. По ТЗ сделаем: при клике на картинку откроется модальное окно с iframe или ссылка.
-    // Реализуем: показываем изображение через встроенную Яндекс.Картинку? Лучше: открываем ссылку диска в новой вкладке.
-    function showImageModal(diskUrl, productName) {
-        if (!diskUrl) { toast("Image not available"); return; }
-        // Создаём модальное окно с iframe (просмотр Яндекс.Диска)
-        const modal = document.createElement('div');
-        modal.className = 'image-modal';
-        const content = document.createElement('div');
-        content.style.background = '#fff';
-        content.style.borderRadius = '16px';
-        content.style.padding = '1rem';
-        content.style.maxWidth = '90vw';
-        content.style.maxHeight = '90vh';
-        content.style.overflow = 'auto';
-        content.style.position = 'relative';
-        
-        const title = document.createElement('div');
-        title.style.fontWeight = 'bold';
-        title.style.marginBottom = '10px';
-        title.style.color = '#007883';
-        title.innerText = productName;
-        
-        const img = document.createElement('img');
-        // Попытка получить превью-ссылку для отображения внутри модалки
-        const previewUrl = getYandexDirectUrl(diskUrl);
-        if (previewUrl && previewUrl.includes('yastatic')) {
-            img.src = previewUrl;
-        } else {
-            // Если не удалось, ставим заглушку и ссылку
-            img.src = "https://placehold.co/400x300?text=Preview+not+available";
-        }
-        img.style.maxWidth = '100%';
-        img.style.borderRadius = '8px';
-        img.style.marginBottom = '12px';
-        img.alt = productName;
-        
-        const linkBtn = document.createElement('a');
-        linkBtn.href = diskUrl;
-        linkBtn.target = '_blank';
-        linkBtn.innerText = '📂 Open on Yandex Disk';
-        linkBtn.style.display = 'inline-block';
-        linkBtn.style.marginTop = '8px';
-        linkBtn.style.padding = '6px 12px';
-        linkBtn.style.backgroundColor = '#007883';
-        linkBtn.style.color = 'white';
-        linkBtn.style.borderRadius = '30px';
-        linkBtn.style.textDecoration = 'none';
-        linkBtn.style.fontSize = '0.8rem';
-        
-        content.appendChild(title);
-        content.appendChild(img);
-        content.appendChild(linkBtn);
-        modal.appendChild(content);
-        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-        document.body.appendChild(modal);
-    }
-    
+    let supabaseClient = null;
+    let productsDB = [];
     let currentLang = 'en';
     let currentOrder = null;
-    let assignments = {};   // { prodKey: { slots: {...}, isPackage, sku, nameEn, nameTh, image } }
+    let assignments = {};
     let editingSlot = null;
-    
+    let isLoading = false;
+
     const trans = {
         en: { 
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
-            ok: "✓ Order loaded", dup: "⚠️ Photo already used in this slot group", 
+            ok: "✓ Order loaded", dup: "⚠️ Photo already used in this group", 
             range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Changes saved", back: "← Back", 
-            notSelectable: "Fixed image", loading: "Loading packages...", error: "Error",
-            viewPhoto: "View image", size: "Size", photos: "photos"
+            notSelectable: "Fixed image", loading: "Loading...", error: "Error",
+            viewPhoto: "View photo", size: "Size", photos: "photos"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
-            ok: "✓ โหลดสำเร็จ", dup: "⚠️ หมายเลขรูปซ้ำในชุดเดียวกัน", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "รูปประจำแพ็ค", loading: "กำลังโหลดแพ็คเกจ...",
+            ok: "✓ โหลดสำเร็จ", dup: "⚠️ หมายเลขรูปซ้ำในกลุ่ม", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "รูปประจำกลุ่ม", loading: "กำลังโหลด...",
             error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูปสินค้า", size: "ขนาด", photos: "รูป"
         }
     };
-    
+
     function t(key) { return trans[currentLang][key] || trans.en[key]; }
-    
+
     function toast(msg) {
         const el = document.getElementById('toast');
         el.textContent = msg;
         el.style.display = 'block';
         setTimeout(() => el.style.display = 'none', 2800);
     }
-    
+
     function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO; }
     
-    // Проверка дубликата в пределах одного слота (группы)
     function isUsedInSlotGroup(prodKey, slotKey, idx, num) {
         const a = assignments[prodKey];
         if (!a || !a.slots) return false;
@@ -629,6 +552,19 @@
         return true;
     }
     
+    function getYandexPreviewUrl(diskUrl) {
+        if (!diskUrl) return null;
+        // Для отображения превью используем заглушку, т.к. прямые ссылки Яндекс.Диска требуют авторизации
+        // При клике открываем оригинальную ссылку в новой вкладке
+        return "https://placehold.co/55x55/e2e8f0/007883?text=📷";
+    }
+    
+    function showImageModal(diskUrl, productName) {
+        if (!diskUrl) { toast("Image not available"); return; }
+        // Открываем ссылку Яндекс.Диска в новой вкладке для просмотра
+        window.open(diskUrl, '_blank');
+    }
+    
     function getOvalWidth(poseCount) {
         if (poseCount <= 2) return 85;
         if (poseCount <= 4) return 80;
@@ -636,16 +572,99 @@
         return 70;
     }
     
+    async function loadProductsFromSupabase() {
+        try {
+            isLoading = true;
+            render();
+            
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            const { data: productCards, error: cardsError } = await supabaseClient
+                .from('product_cards')
+                .select('*');
+            
+            productsDB = [];
+            
+            if (productCards && productCards.length > 0 && !cardsError) {
+                for (const card of productCards) {
+                    let pose = card.pose || 1;
+                    let selectable = true;
+                    const nameLower = (card.name_en || '').toLowerCase();
+                    
+                    if (nameLower.includes('group') || nameLower.includes('logo') || 
+                        (card.mess && card.mess.includes('group'))) {
+                        selectable = false;
+                    }
+                    
+                    productsDB.push({
+                        type: 'simple',
+                        article: card.article || card.sku,
+                        sku: card.sku,
+                        name_en: card.name_en,
+                        name_th: card.name_th,
+                        size: card.size,
+                        pose: Math.min(pose, 31),
+                        selectable: selectable,
+                        image: null
+                    });
+                }
+            }
+            
+            // Добавляем пакеты из PACKAGES_DATA
+            for (const [sku, pkg] of Object.entries(PACKAGES_DATA)) {
+                productsDB.push({
+                    type: 'package',
+                    sku: sku,
+                    name_en: pkg.name_en,
+                    name_th: pkg.name_th,
+                    packageItems: pkg.items,
+                    selectable: false,
+                    image: pkg.image
+                });
+            }
+            
+            isLoading = false;
+            if (productsDB.length > 0) toast(`✅ Loaded ${productsDB.length} products`);
+            
+        } catch (error) {
+            console.error('Error loading from Supabase:', error);
+            // Fallback: добавляем только пакеты
+            for (const [sku, pkg] of Object.entries(PACKAGES_DATA)) {
+                productsDB.push({
+                    type: 'package',
+                    sku: sku,
+                    name_en: pkg.name_en,
+                    name_th: pkg.name_th,
+                    packageItems: pkg.items,
+                    selectable: false,
+                    image: pkg.image
+                });
+            }
+            isLoading = false;
+            toast(t('error') + ' - using packages');
+        }
+    }
+    
     function loadPackagesOrder() {
-        if (!PACKAGES_DATA) return;
-        const packagesList = Object.keys(PACKAGES_DATA).map(sku => PACKAGES_DATA[sku]);
-        currentOrder = { number: "1111", products: packagesList };
+        if (productsDB.length === 0) {
+            toast("Loading products...");
+            return;
+        }
+        
+        const packages = productsDB.filter(p => p.type === 'package');
+        if (packages.length === 0) {
+            toast("No packages found");
+            return;
+        }
+        
+        currentOrder = { number: "1111", products: packages };
         assignments = {};
         
-        for (let pkg of packagesList) {
+        for (let pkg of packages) {
             const prodKey = `pkg_${pkg.sku}_${Date.now()}_${Math.random()}`;
             const slots = {};
-            for (let item of pkg.items) {
+            
+            for (let item of pkg.packageItems) {
                 const slotKey = `slot_${item.name_en.replace(/\s/g, '_')}_${item.size.replace(/\s/g, '')}`;
                 slots[slotKey] = {
                     name_en: item.name_en,
@@ -657,6 +676,7 @@
                     values: new Array(item.qty).fill(null)
                 };
             }
+            
             assignments[prodKey] = {
                 key: prodKey,
                 sku: pkg.sku,
@@ -711,6 +731,12 @@
     
     function render() {
         const container = document.getElementById('app');
+        
+        if (isLoading) {
+            container.innerHTML = `<div class="login-card"><div style="text-align:center; padding:1rem;">⏳ ${t('loading')}</div></div>`;
+            return;
+        }
+        
         if (!currentOrder) {
             container.innerHTML = `<div class="login-card">
                 <h3>${t('enter')}</h3>
@@ -743,7 +769,7 @@
         
         for (let [key, asgn] of Object.entries(assignments)) {
             const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
-            const pkgImageUrl = asgn.image ? asgn.image : null;
+            const pkgImageUrl = asgn.image;
             
             html += `<div class="product-card">
                 <div class="product-header">
@@ -752,7 +778,7 @@
                         <span class="product-title">${name}</span>
                         <span class="badge-auto">📦 Package</span>
                     </div>
-                    ${pkgImageUrl ? `<img class="product-image" src="https://placehold.co/55x55/teal/white?text=WF" data-pkg-img="${asgn.sku}" data-original="${pkgImageUrl}" onerror="this.src='https://placehold.co/55x55?text=Preview'" title="${t('viewPhoto')}">` : ''}
+                    ${pkgImageUrl ? `<img class="product-image" src="https://placehold.co/55x55/e2e8f0/007883?text=📷" data-original="${pkgImageUrl}" title="${t('viewPhoto')}" style="cursor:pointer;">` : ''}
                 </div>
                 <div class="slots-row">`;
             
@@ -762,9 +788,6 @@
                 const isSelectable = slot.selectable;
                 const ovalWidth = getOvalWidth(slot.qty);
                 const ovalHeight = 42;
-                
-                // Иконка для слота (если есть изображение)
-                const slotImg = slot.image ? slot.image : null;
                 
                 html += `<div class="slot-group">
                     <div class="slot-group-title">
@@ -785,7 +808,6 @@
                             <span class="slot-number">${i+1}</span>
                         </div>`;
                     } else {
-                        // Невыбираемые слоты - показываем иконку "фиксированное фото" + надпись
                         html += `<div class="slot-wrapper">
                             <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;">📷</div>
                             <span class="slot-number">${i+1}</span>
@@ -793,12 +815,7 @@
                         </div>`;
                     }
                 }
-                html += `</div>`;
-                // Добавляем мини-превью изображения слота если есть и не selectable? Для информации покажем маленькую иконку
-                if (slotImg && !isSelectable) {
-                    html += `<div style="margin-top:6px;"><img src="https://placehold.co/30x30?text=pic" data-slot-img="${slot.name_en}" data-original="${slotImg}" style="width:28px; height:28px; object-fit:cover; border-radius:6px; opacity:0.7;" title="Sample image"></div>`;
-                }
-                html += `</div>`;
+                html += `</div></div>`;
             }
             html += `</div></div>`;
         }
@@ -806,26 +823,14 @@
         html += `<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.5rem 1.5rem;">✓ ${t('saved')}</button></div>`;
         container.innerHTML = html;
         
-        // Подгружаем реальные превью картинок через data-атрибуты (добавляем обработку кликов)
+        // Добавляем обработчики для изображений
         document.querySelectorAll('.product-image').forEach(img => {
             const originalUrl = img.getAttribute('data-original');
             if (originalUrl) {
-                // Устанавливаем обработчик клика для увеличения
                 img.onclick = (e) => {
                     e.stopPropagation();
                     showImageModal(originalUrl, img.closest('.product-card')?.querySelector('.product-title')?.innerText || 'Package');
                 };
-                // Устанавливаем превью заглушку, но при клике открываем модалку
-                img.src = "https://placehold.co/55x55/e2e8f0/007883?text=View";
-            }
-        });
-        
-        // Для изображений слотов (невыбираемые) добавим клик
-        document.querySelectorAll('[data-slot-img]').forEach(el => {
-            const orig = el.getAttribute('data-original');
-            if (orig) {
-                el.style.cursor = 'pointer';
-                el.onclick = () => showImageModal(orig, el.getAttribute('data-slot-img') || 'Sample');
             }
         });
         
@@ -873,8 +878,8 @@
         if (e.key === 'Enter') document.getElementById('checkBtn')?.click();
     });
     
-    // Инициализация
-    (() => {
+    (async () => {
+        await loadProductsFromSupabase();
         render();
         updateLang();
     })();
