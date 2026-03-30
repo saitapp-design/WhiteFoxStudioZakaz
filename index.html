@@ -22,10 +22,11 @@
             --teal-dark: #0a6570;
             --teal-light: #d4e9ec;
             --border: #d9e1e6;
+            --red: #dc2626;
+            --red-light: #fee2e2;
             --slot-bg: #ffffff;
             --slot-border: #007883;
             --slot-filled: #c8e6df;
-            --slot-filled-border: #007883;
         }
 
         .header {
@@ -154,6 +155,11 @@
             font-size: 0.95rem;
         }
 
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
         .order-header {
             background: white;
             border-radius: 1rem;
@@ -216,11 +222,12 @@
         }
 
         .badge-auto {
-            background: #e9ecef;
+            background: #fee2e2;
             padding: 0.2rem 0.6rem;
             border-radius: 20px;
             font-size: 0.65rem;
-            color: #6c757d;
+            color: #dc2626;
+            font-weight: 500;
         }
 
         /* slots row */
@@ -240,7 +247,7 @@
             gap: 0.4rem;
         }
 
-        /* oval shape - width > height */
+        /* oval shape */
         .oval {
             border-radius: 60px;
             background: #ffffff;
@@ -269,14 +276,14 @@
         }
 
         .oval.disabled {
-            background: #f1f3f5;
-            border-color: #cbd5e1;
-            cursor: default;
-            opacity: 0.7;
+            background: #fee2e2;
+            border-color: #dc2626;
+            cursor: not-allowed;
+            opacity: 0.9;
         }
 
         .oval.disabled:hover {
-            background: #f1f3f5;
+            background: #fee2e2;
             box-shadow: none;
         }
 
@@ -304,9 +311,19 @@
         }
 
         .auto-note {
-            font-size: 0.55rem;
-            color: #9aaeb9;
+            font-size: 0.6rem;
+            font-weight: 500;
+            color: #dc2626;
+            background: #fee2e2;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
             margin-top: 0.2rem;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 2rem;
+            color: var(--teal);
         }
 
         .global-actions {
@@ -360,37 +377,36 @@
 <main class="main-content" id="app"></main>
 <div id="toast" class="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     const MIN_PHOTO = 1000;
     const MAX_PHOTO = 9999;
-
-    const productsDB = [
-        { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", size: "8x12", pose: 1, selectable: false },
-        { article: "A12", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "12x12", pose: 1, selectable: true },
-        { article: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "10x10", pose: 1, selectable: true },
-        { article: "W12", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "12x12", pose: 1, selectable: true },
-        { article: "W13", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "16x16", pose: 1, selectable: true },
-        { article: "W14", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "8x12", pose: 1, selectable: true },
-        { article: "W15", name_en: "FLOAT FRAME individual logo", name_th: "ลอยกรอบโลโก้ส่วนบุคคล", size: "10x15", pose: 1, selectable: true },
-        { article: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true },
-        { article: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false },
-        { article: "C11", name_en: "CANVAS", name_th: "ผ้าใบ", size: "12x18", pose: 1, selectable: true },
-        { article: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true },
-        { article: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะ", size: "8x12", pose: 2, selectable: true },
-        { article: "B11", name_en: "INSTABOOK", name_th: "อินสตาบุ๊ค", size: "5.5x5.5", pose: 16, selectable: true },
-        { article: "K11", name_en: "WALL CALENDAR", name_th: "ปฏิทินติดผนัง", size: "30x42cm", pose: 20, selectable: true },
-        { article: "D12", name_en: "MUG INDIVIDUAL", name_th: "แก้วบุคคล", size: "350ml", pose: 4, selectable: true },
-        { article: "Q1", name_en: "Package S", name_th: "แพ็คเกจ S", size: "6x9/4x6", pose: 6, selectable: false }
-    ];
-
+    
+    // Supabase configuration
+    const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
+    
+    let supabase = null;
+    let productsDB = [];
     let currentLang = 'en';
     let currentOrder = null;
     let assignments = {};
     let editingSlot = null;
+    let isLoading = true;
 
     const trans = {
-        en: { enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", ok: "✓ Loaded", dup: "Photo already used", range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Confirmed", back: "← Back" },
-        th: { enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", ok: "✓ โหลดแล้ว", dup: "หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ บันทึกแล้ว", back: "← กลับ" }
+        en: { 
+            enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
+            ok: "✓ Loaded", dup: "Photo already used", range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            saved: "✓ Confirmed", back: "← Back", notSelectable: "Not selectable",
+            loading: "Loading products...", error: "Error loading data"
+        },
+        th: { 
+            enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
+            ok: "✓ โหลดแล้ว", dup: "หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "ไม่สามารถเลือกได้",
+            loading: "กำลังโหลดสินค้า...", error: "เกิดข้อผิดพลาด"
+        }
     };
 
     function t(key) { return trans[currentLang][key] || trans.en[key]; }
@@ -423,7 +439,6 @@
         return true;
     }
 
-    // размер овала зависит от количества pose: width > height
     function getOvalSize(poseCount) {
         if (poseCount <= 2) return { width: 100, height: 70 };
         if (poseCount <= 3) return { width: 92, height: 66 };
@@ -434,25 +449,125 @@
         return { width: 62, height: 46 };
     }
 
-    function loadOrder() {
-        const w16 = productsDB.find(p => p.article === "W16");
-        const c15 = productsDB.find(p => p.article === "C15");
-        const f12 = productsDB.find(p => p.article === "F12");
-        const b11 = productsDB.find(p => p.article === "B11");
-        const nonSel = productsDB.find(p => p.article === "A11");
-        
-        let selected = [w16, c15, f12, b11].filter(Boolean);
-        if (nonSel && !selected.includes(nonSel)) selected.push(nonSel);
-        
-        const selectableOnly = productsDB.filter(p => p.selectable === true && !selected.includes(p));
-        for (let i = selectableOnly.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [selectableOnly[i], selectableOnly[j]] = [selectableOnly[j], selectableOnly[i]];
+    async function loadProductsFromSupabase() {
+        try {
+            isLoading = true;
+            render(); // show loading
+            
+            supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            // Load product cards
+            const { data: productCards, error: cardsError } = await supabase
+                .from('product_cards')
+                .select('*');
+            
+            if (cardsError) throw cardsError;
+            
+            // Load packages
+            const { data: packages, error: packagesError } = await supabase
+                .from('packages_with_price')
+                .select('*');
+            
+            if (packagesError) throw packagesError;
+            
+            productsDB = [];
+            
+            // Process product cards
+            if (productCards) {
+                for (const card of productCards) {
+                    let pose = 0;
+                    let selectable = true;
+                    let mess = '';
+                    
+                    // Parse variants if exists
+                    if (card.variants) {
+                        try {
+                            const variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
+                            if (variants.length > 0) {
+                                pose = variants[0].pose || 1;
+                                mess = variants[0].mess || '';
+                            }
+                        } catch(e) {}
+                    }
+                    
+                    if (!pose && card.pose) pose = card.pose;
+                    if (!pose && card.total_photos) pose = card.total_photos;
+                    if (pose === 0) pose = 1;
+                    
+                    // Check if product is not selectable (group photos, brand photos, etc.)
+                    const messLower = (mess || '').toLowerCase();
+                    if (messLower.includes('group') || messLower.includes('brand') || 
+                        (card.name_en && (card.name_en.toLowerCase().includes('group') || card.name_en.toLowerCase().includes('logo')))) {
+                        selectable = false;
+                    }
+                    
+                    productsDB.push({
+                        article: card.sku || card.card_id,
+                        name_en: card.name_en || card.sku,
+                        name_th: card.name_th || card.name_en || card.sku,
+                        size: card.size || '',
+                        pose: Math.min(pose, 31),
+                        selectable: selectable,
+                        mess: mess
+                    });
+                }
+            }
+            
+            // Process packages
+            if (packages) {
+                for (const pkg of packages) {
+                    let totalPhotos = pkg.total_photos || 1;
+                    if (totalPhotos === 0) totalPhotos = 1;
+                    
+                    productsDB.push({
+                        article: pkg.sku || pkg.slug,
+                        name_en: pkg.name_en || pkg.sku,
+                        name_th: pkg.name_th || pkg.name_en || pkg.sku,
+                        size: '',
+                        pose: Math.min(totalPhotos, 31),
+                        selectable: false,
+                        mess: 'package'
+                    });
+                }
+            }
+            
+            // Fallback if no data
+            if (productsDB.length === 0) {
+                throw new Error('No data loaded');
+            }
+            
+            isLoading = false;
+            toast(`✅ Loaded ${productsDB.length} products`);
+            
+        } catch (error) {
+            console.error('Error loading products:', error);
+            toast(t('error'));
+            isLoading = false;
+            // Fallback to demo data
+            productsDB = [
+                { article: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true },
+                { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียน", size: "8x12", pose: 1, selectable: false, mess: "group" },
+                { article: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true },
+                { article: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false, mess: "group brand" }
+            ];
         }
-        selected = [...selected, ...selectableOnly.slice(0, 2)];
+    }
+
+    function loadRandomOrder() {
+        if (productsDB.length === 0) return;
+        
+        // Select random products
+        const shuffled = [...productsDB];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        
+        const selected = shuffled.slice(0, Math.min(6, shuffled.length));
         
         currentOrder = { number: "1111", products: selected };
         assignments = {};
+        
         for (let prod of selected) {
             const key = `p_${prod.article}_${Date.now()}_${Math.random()}`;
             assignments[key] = {
@@ -476,7 +591,6 @@
         
         const ovalDiv = document.getElementById(`oval_${prodKey}_${idx}`);
         if (!ovalDiv) return;
-        
         if (editingSlot === `${prodKey}_${idx}`) return;
         
         const width = ovalDiv.offsetWidth;
@@ -515,6 +629,14 @@
 
     function render() {
         const container = document.getElementById('app');
+        
+        if (isLoading) {
+            container.innerHTML = `<div class="login-card">
+                <div class="loading-spinner">⏳ ${t('loading')}</div>
+            </div>`;
+            return;
+        }
+        
         if (!currentOrder) {
             container.innerHTML = `<div class="login-card">
                 <h3>${t('enter')}</h3>
@@ -523,7 +645,7 @@
             </div>`;
             document.getElementById('loginExec')?.addEventListener('click', () => {
                 const code = document.getElementById('loginCode').value.trim();
-                if (code === '1111') loadOrder();
+                if (code === '1111') loadRandomOrder();
                 else toast(t('invalid'));
             });
             return;
@@ -553,7 +675,7 @@
                         <span class="product-title">${name || asgn.article}</span>
                         <span class="product-sku">${asgn.article}</span>
                         <span class="product-size">${asgn.size}</span>
-                        ${!asgn.selectable ? `<span class="badge-auto">🔒 auto</span>` : `<span class="badge-auto">📷 ${poseCount}</span>`}
+                        ${!asgn.selectable ? `<span class="badge-auto">🔴 ${t('notSelectable')}</span>` : `<span class="badge-auto">📷 ${poseCount}</span>`}
                     </div>
                 </div>
                 <div class="slots-row">`;
@@ -575,7 +697,7 @@
                     html += `<div class="slot-wrapper">
                         <div class="oval disabled" style="width:${width}px; height:${height}px;"></div>
                         <span class="slot-number">${i+1}</span>
-                        <span class="auto-note">auto</span>
+                        <span class="auto-note">🚫 ${t('notSelectable')}</span>
                     </div>`;
                 }
             }
@@ -615,15 +737,19 @@
     });
     document.getElementById('checkBtn')?.addEventListener('click', () => {
         const code = document.getElementById('orderInput').value.trim();
-        if (code === '1111') loadOrder();
+        if (code === '1111') loadRandomOrder();
         else toast(t('invalid'));
     });
     document.getElementById('orderInput')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') document.getElementById('checkBtn')?.click();
     });
 
-    render();
-    updateLang();
+    // Initialize
+    (async () => {
+        await loadProductsFromSupabase();
+        render();
+        updateLang();
+    })();
 </script>
 </body>
 </html>
