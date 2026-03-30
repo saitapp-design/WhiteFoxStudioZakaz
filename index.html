@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>White Fox Studio · Photo Selection</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
@@ -33,35 +33,35 @@
             top: 0;
             z-index: 100;
             background: white;
-            box-shadow: 0 2px 8px rgba(0,120,131,0.08);
+            box-shadow: 0 2px 10px rgba(0,120,131,0.08);
             border-bottom: 2px solid var(--teal);
         }
 
         .top-bar {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.8rem;
         }
 
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .logo-img {
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             object-fit: contain;
         }
 
         .logo-text {
-            font-size: 1rem;
+            font-size: 1.25rem;
             font-weight: 800;
             color: var(--teal);
         }
@@ -69,7 +69,7 @@
         .right-actions {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
         }
 
         .search-box {
@@ -78,15 +78,15 @@
             background: white;
             border-radius: 40px;
             border: 2px solid var(--teal);
-            height: 36px;
+            height: 42px;
             overflow: hidden;
         }
 
         .search-box input {
             border: none;
-            padding: 0 0.8rem;
-            width: 120px;
-            font-size: 0.8rem;
+            padding: 0 1rem;
+            width: 170px;
+            font-size: 0.9rem;
             outline: none;
         }
 
@@ -94,52 +94,50 @@
             background: var(--teal);
             border: none;
             color: white;
-            padding: 0 0.8rem;
+            padding: 0 1.2rem;
             height: 100%;
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.75rem;
         }
 
         .lang-toggle {
             background: white;
             border: 2px solid var(--teal);
             border-radius: 40px;
-            padding: 0 0.8rem;
-            height: 36px;
+            padding: 0 1rem;
+            height: 42px;
             font-weight: 600;
             color: var(--teal);
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             cursor: pointer;
-            font-size: 0.75rem;
         }
 
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 1.5rem;
         }
 
         .login-card {
             background: white;
-            max-width: 340px;
+            max-width: 400px;
             margin: 2rem auto;
-            padding: 1.5rem;
-            border-radius: 1.2rem;
+            padding: 2rem;
+            border-radius: 1.5rem;
             text-align: center;
             border: 1px solid var(--border);
         }
 
         .order-input {
             width: 100%;
-            padding: 0.7rem;
+            padding: 0.8rem;
             border: 2px solid var(--border);
             border-radius: 40px;
-            margin: 0.8rem 0;
+            margin: 1rem 0;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 1rem;
             outline: none;
         }
 
@@ -147,68 +145,65 @@
             background: var(--teal);
             color: white;
             border: none;
-            padding: 0.65rem;
+            padding: 0.75rem;
             border-radius: 40px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            font-size: 0.9rem;
         }
 
         .order-header {
             background: white;
-            border-radius: 0.8rem;
-            padding: 0.5rem 1rem;
-            margin-bottom: 1rem;
+            border-radius: 1rem;
+            padding: 0.75rem 1.2rem;
+            margin-bottom: 1.2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border: 1px solid var(--teal);
-            flex-wrap: wrap;
-            gap: 0.5rem;
         }
 
         .order-badge {
             background: var(--teal-light);
-            padding: 0.25rem 0.8rem;
+            padding: 0.35rem 1rem;
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--teal);
         }
 
         .product-card {
             background: white;
-            border-radius: 0.8rem;
-            margin-bottom: 0.8rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
             border: 1px solid var(--border);
             overflow: hidden;
         }
 
         .product-header {
-            padding: 0.6rem 0.8rem;
+            padding: 0.8rem 1rem;
             background: #fafcfd;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.8rem;
         }
 
         .product-info {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.4rem;
+            gap: 0.5rem;
             flex: 1;
         }
 
         .product-sku {
             background: var(--teal-light);
-            padding: 0.15rem 0.5rem;
-            border-radius: 16px;
-            font-size: 0.65rem;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
             font-weight: 700;
             color: var(--teal);
             font-family: monospace;
@@ -216,52 +211,52 @@
 
         .product-title {
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: var(--teal);
         }
 
         .badge-auto {
             background: var(--red-light);
-            padding: 0.15rem 0.5rem;
-            border-radius: 16px;
-            font-size: 0.6rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
             color: var(--red);
             font-weight: 500;
         }
 
         .product-image {
-            width: 40px;
-            height: 40px;
+            width: 55px;
+            height: 55px;
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 12px;
             border: 1px solid var(--border);
             cursor: pointer;
             background: #f5f5f5;
         }
 
         .slots-row {
-            padding: 0.8rem;
+            padding: 1rem 1.2rem;
             display: flex;
             flex-wrap: wrap;
-            gap: 0.8rem;
+            gap: 1rem;
             align-items: flex-start;
         }
 
         .slot-group {
             background: #fafcff;
-            border-radius: 0.8rem;
-            padding: 0.6rem;
+            border-radius: 1rem;
+            padding: 0.8rem;
             border: 1px solid var(--border);
+            min-width: 180px;
             flex: 1;
-            min-width: 140px;
         }
 
         .slot-group-title {
             font-weight: 700;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: var(--teal);
-            margin-bottom: 0.5rem;
-            padding-bottom: 0.2rem;
+            margin-bottom: 0.6rem;
+            padding-bottom: 0.3rem;
             border-bottom: 1px solid var(--teal-light);
             display: flex;
             justify-content: space-between;
@@ -270,16 +265,16 @@
         }
 
         .slot-group-badge {
-            font-size: 0.55rem;
+            font-size: 0.6rem;
             background: var(--teal-light);
             padding: 0.1rem 0.4rem;
-            border-radius: 16px;
+            border-radius: 20px;
         }
 
         .slot-items {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.6rem;
+            gap: 0.8rem;
             align-items: center;
         }
 
@@ -287,24 +282,24 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.2rem;
+            gap: 0.3rem;
         }
 
         .oval {
-            border-radius: 30px;
+            border-radius: 40px;
             background: white;
             border: 2px solid var(--teal);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             color: #1e2f3a;
             cursor: pointer;
             transition: all 0.15s;
-            height: 34px;
-            padding: 0 0.4rem;
-            min-width: 55px;
+            height: 42px;
+            padding: 0 0.5rem;
+            min-width: 70px;
         }
 
         .oval:hover {
@@ -325,53 +320,52 @@
         }
 
         .oval-input {
-            border-radius: 30px;
+            border-radius: 40px;
             border: 2px solid var(--teal);
             background: white;
             text-align: center;
             font-weight: 600;
-            font-size: 0.7rem;
+            font-size: 0.85rem;
             outline: none;
             font-family: monospace;
-            height: 34px;
-            padding: 0 0.3rem;
-            min-width: 55px;
+            height: 42px;
+            padding: 0 0.5rem;
+            min-width: 70px;
         }
 
         .slot-number {
-            font-size: 0.5rem;
+            font-size: 0.55rem;
             font-weight: 500;
             color: #8b9aab;
         }
 
         .auto-note {
-            font-size: 0.5rem;
+            font-size: 0.55rem;
             font-weight: 500;
             color: var(--red);
             background: var(--red-light);
-            padding: 0.1rem 0.3rem;
-            border-radius: 16px;
+            padding: 0.15rem 0.4rem;
+            border-radius: 20px;
         }
 
         .global-actions {
-            margin-top: 1rem;
+            margin-top: 1.2rem;
             display: flex;
             justify-content: flex-end;
         }
 
         .toast {
             position: fixed;
-            bottom: 20px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--teal);
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
             z-index: 2000;
             display: none;
-            white-space: nowrap;
         }
 
         .image-modal {
@@ -395,13 +389,11 @@
             border-radius: 12px;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 700px) {
+            .slots-row { gap: 0.8rem; }
+            .oval { height: 38px; font-size: 0.75rem; min-width: 60px; }
+            .product-image { width: 45px; height: 45px; }
             .slot-group { min-width: 100%; }
-            .oval { height: 32px; min-width: 50px; font-size: 0.7rem; }
-            .product-title { font-size: 0.75rem; }
-            .product-sku { font-size: 0.6rem; }
-            .toast { white-space: normal; max-width: 85%; text-align: center; }
-            .order-header { flex-direction: column; align-items: stretch; text-align: center; }
         }
     </style>
 </head>
@@ -414,7 +406,7 @@
         </div>
         <div class="right-actions">
             <div class="search-box">
-                <input type="text" id="orderInput" placeholder="Order" value="1111">
+                <input type="text" id="orderInput" placeholder="Order number" value="1111">
                 <button id="checkBtn">OK</button>
             </div>
             <button class="lang-toggle" id="langBtn">
@@ -435,31 +427,36 @@
     const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
     
-    // Яндекс.Диск картинки (прямые ссылки через прокси)
-    const productImages = {
-        "Q1": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
-        "Q2": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
-        "Q3": "https://disk.yandex.ru/i/dVjjX6wW7PC-9A",
-        "individual_logo_4x6": "https://disk.yandex.ru/i/3D5xeSTEbfPNnQ",
-        "individual_4x6": "https://disk.yandex.ru/i/VgSC9iejFJjQ0g",
-        "individual_6x9": "https://disk.yandex.ru/i/hJ6wp8pmLdMrGw",
-        "individual_logo_6x9": "https://disk.yandex.ru/i/R5-f_PglDSVPXQ",
-        "class_sabai_6x9": "https://disk.yandex.ru/i/pR07jYALAaReFg",
-        "class_serious_6x9": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
-        "class_serious_8x12": "https://disk.yandex.ru/i/dVjjX6wW7PC-9A"
+    // Полные данные пакетов из таблицы
+    const packageData = {
+        "Q1": {
+            sku: "Q1", name_en: "Package S", name_th: "แพ็คเกจ S",
+            items: [
+                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false, image: "https://disk.yandex.ru/i/l7Pizr2T-VrhvA" },
+                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "4x6 inch", qty: 1, selectable: true, image: "https://disk.yandex.ru/i/3D5xeSTEbfPNnQ" },
+                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 4, selectable: true, image: "https://disk.yandex.ru/i/VgSC9iejFJjQ0g" }
+            ]
+        },
+        "Q2": {
+            sku: "Q2", name_en: "Package M", name_th: "แพ็คเกจ M",
+            items: [
+                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false, image: "https://disk.yandex.ru/i/l7Pizr2T-VrhvA" },
+                { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false, image: "https://disk.yandex.ru/i/pR07jYALAaReFg" },
+                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true, image: "https://disk.yandex.ru/i/R5-f_PglDSVPXQ" },
+                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 8, selectable: true, image: "https://disk.yandex.ru/i/VgSC9iejFJjQ0g" }
+            ]
+        },
+        "Q3": {
+            sku: "Q3", name_en: "Package L", name_th: "แพ็คเกจ L",
+            items: [
+                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "8x12 inch", qty: 1, selectable: false, image: "https://disk.yandex.ru/i/dVjjX6wW7PC-9A" },
+                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true, image: "https://disk.yandex.ru/i/R5-f_PglDSVPXQ" },
+                { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false, image: "https://disk.yandex.ru/i/pR07jYALAaReFg" },
+                { name_en: "Individual", name_th: "รายบุคคล", size: "6x9 inch", qty: 1, selectable: true, image: "https://disk.yandex.ru/i/hJ6wp8pmLdMrGw" },
+                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 10, selectable: true, image: "https://disk.yandex.ru/i/VgSC9iejFJjQ0g" }
+            ]
+        }
     };
-    
-    // Конвертация Яндекс.Диск ссылки в прямой URL
-    function getDirectImageUrl(url) {
-        if (!url) return null;
-        if (url.includes('disk.yandex.ru/i/')) {
-            return url;
-        }
-        if (url.includes('disk.yandex.ru/d/')) {
-            return url.replace('/d/', '/i/');
-        }
-        return url;
-    }
     
     let supabaseClient = null;
     let productsDB = [];
@@ -471,16 +468,17 @@
 
     const trans = {
         en: { 
-            enter: "Order Number", btn: "Continue", invalid: "Use 1111", 
-            ok: "✓ Loaded", dup: "⚠️ Photo used", range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ Confirmed", back: "← Back", notSelectable: "Not selectable",
-            loading: "Loading...", error: "Error", viewPhoto: "View", photos: "pcs"
+            enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
+            ok: "✓ Order loaded", dup: "⚠️ Photo already used", 
+            range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Confirmed", back: "← Back", 
+            notSelectable: "Not selectable", loading: "Loading products...", error: "Using local data",
+            viewPhoto: "View photo", photos: "photos"
         },
         th: { 
-            enter: "หมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้ 1111", 
+            enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
             ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "เลือกไม่ได้",
-            loading: "กำลังโหลด...", error: "ผิดพลาด", viewPhoto: "ดูรูป", photos: "รูป"
+            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "ไม่สามารถเลือกได้",
+            loading: "กำลังโหลดสินค้า...", error: "ใช้ข้อมูลภายใน", viewPhoto: "ดูรูป", photos: "รูป"
         }
     };
 
@@ -490,7 +488,7 @@
         const el = document.getElementById('toast');
         el.textContent = msg;
         el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 2000);
+        setTimeout(() => el.style.display = 'none', 2500);
     }
 
     function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO; }
@@ -519,56 +517,32 @@
     }
 
     function getOvalWidth(qty) {
-        if (qty <= 2) return 65;
-        if (qty <= 3) return 60;
-        if (qty <= 4) return 55;
-        return 50;
+        if (qty <= 2) return 85;
+        if (qty <= 3) return 80;
+        if (qty <= 4) return 75;
+        return 70;
+    }
+
+    function getDirectImageUrl(url) {
+        if (!url) return null;
+        if (url.includes('disk.yandex.ru/i/')) return url;
+        if (url.includes('disk.yandex.ru/d/')) return url.replace('/d/', '/i/');
+        return url;
     }
 
     function showImageModal(imgUrl, productName) {
         const directUrl = getDirectImageUrl(imgUrl);
-        if (!directUrl) { toast('No image'); return; }
+        if (!directUrl) { toast('Image not available'); return; }
         const modal = document.createElement('div');
         modal.className = 'image-modal';
         const img = document.createElement('img');
         img.src = directUrl;
         img.alt = productName;
-        img.onerror = () => { modal.innerHTML = '<div style="color:white; padding:1rem;">❌</div>'; };
+        img.onerror = () => { modal.innerHTML = '<div style="color:white; padding:2rem;">❌ Image not available</div>'; };
         modal.appendChild(img);
         modal.onclick = () => modal.remove();
         document.body.appendChild(modal);
     }
-
-    // Пакеты
-    const packageData = {
-        "Q1": {
-            sku: "Q1", name_en: "Package S", name_th: "แพ็คเกจ S",
-            items: [
-                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9", qty: 1, selectable: false, imageKey: "class_serious_6x9" },
-                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "4x6", qty: 1, selectable: true, imageKey: "individual_logo_4x6" },
-                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6", qty: 4, selectable: true, imageKey: "individual_4x6" }
-            ]
-        },
-        "Q2": {
-            sku: "Q2", name_en: "Package M", name_th: "แพ็คเกจ M",
-            items: [
-                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9", qty: 1, selectable: false, imageKey: "class_serious_6x9" },
-                { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9", qty: 1, selectable: false, imageKey: "class_sabai_6x9" },
-                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9", qty: 1, selectable: true, imageKey: "individual_logo_6x9" },
-                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6", qty: 8, selectable: true, imageKey: "individual_4x6" }
-            ]
-        },
-        "Q3": {
-            sku: "Q3", name_en: "Package L", name_th: "แพ็คเกจ L",
-            items: [
-                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "8x12", qty: 1, selectable: false, imageKey: "class_serious_8x12" },
-                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9", qty: 1, selectable: true, imageKey: "individual_logo_6x9" },
-                { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9", qty: 1, selectable: false, imageKey: "class_sabai_6x9" },
-                { name_en: "Individual", name_th: "รายบุคคล", size: "6x9", qty: 1, selectable: true, imageKey: "individual_6x9" },
-                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6", qty: 10, selectable: true, imageKey: "individual_4x6" }
-            ]
-        }
-    };
 
     async function loadProductsFromSupabase() {
         try {
@@ -577,33 +551,43 @@
             
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             
-            const { data: productCards, error: cardsError } = await supabaseClient
+            // Пробуем загрузить из Supabase
+            const { data: productCards, error } = await supabaseClient
                 .from('product_cards')
-                .select('*');
+                .select('*')
+                .limit(10);
             
-            productsDB = [];
+            if (error) {
+                console.warn('Supabase error:', error);
+                throw new Error(error.message);
+            }
             
-            if (productCards && productCards.length > 0 && !cardsError) {
+            // Если есть данные из Supabase, используем их
+            if (productCards && productCards.length > 0) {
+                productsDB = [];
                 for (const card of productCards) {
                     let pose = card.pose || 1;
                     let selectable = true;
                     const nameLower = (card.name_en || '').toLowerCase();
-                    if (nameLower.includes('group') || nameLower.includes('logo')) selectable = false;
+                    
+                    if (nameLower.includes('group') || nameLower.includes('logo')) {
+                        selectable = false;
+                    }
                     
                     productsDB.push({
                         type: 'simple',
-                        sku: card.sku,
+                        sku: card.sku || card.card_id,
                         name_en: card.name_en,
                         name_th: card.name_th,
                         size: card.size,
                         pose: Math.min(pose, 31),
                         selectable: selectable,
-                        image: productImages[card.sku] || null
+                        image: null
                     });
                 }
             }
             
-            // Добавляем пакеты
+            // Всегда добавляем пакеты (основные данные)
             for (const [sku, pkg] of Object.entries(packageData)) {
                 productsDB.push({
                     type: 'package',
@@ -611,28 +595,25 @@
                     name_en: pkg.name_en,
                     name_th: pkg.name_th,
                     packageItems: pkg.items,
-                    image: productImages[sku] || null
+                    image: pkg.items[0]?.image || null
                 });
             }
             
-            if (productsDB.length === 0) {
-                for (const [sku, pkg] of Object.entries(packageData)) {
-                    productsDB.push({
-                        type: 'package', sku: sku, name_en: pkg.name_en, name_th: pkg.name_th,
-                        packageItems: pkg.items, image: productImages[sku]
-                    });
-                }
-            }
-            
             isLoading = false;
-            toast(`✅ ${productsDB.length} products`);
+            toast(`✅ Loaded ${productsDB.length} products`);
             
         } catch (error) {
-            console.error(error);
+            console.error('Supabase error, using fallback:', error);
+            // Используем только пакеты как fallback
+            productsDB = [];
             for (const [sku, pkg] of Object.entries(packageData)) {
                 productsDB.push({
-                    type: 'package', sku: sku, name_en: pkg.name_en, name_th: pkg.name_th,
-                    packageItems: pkg.items, image: productImages[sku]
+                    type: 'package',
+                    sku: sku,
+                    name_en: pkg.name_en,
+                    name_th: pkg.name_th,
+                    packageItems: pkg.items,
+                    image: pkg.items[0]?.image || null
                 });
             }
             isLoading = false;
@@ -661,7 +642,7 @@
                     size: item.size,
                     qty: item.qty,
                     selectable: item.selectable,
-                    imageKey: item.imageKey,
+                    image: item.image,
                     values: new Array(item.qty).fill(null)
                 };
             }
@@ -722,7 +703,7 @@
         const container = document.getElementById('app');
         
         if (isLoading) {
-            container.innerHTML = `<div class="login-card"><div style="text-align:center;">⏳ ${t('loading')}</div></div>`;
+            container.innerHTML = `<div class="login-card"><div style="text-align:center; padding:1rem;">⏳ ${t('loading')}</div></div>`;
             return;
         }
         
@@ -767,7 +748,7 @@
                         <span class="product-title">${name}</span>
                         <span class="badge-auto">📦 Package</span>
                     </div>
-                    ${imageUrl ? `<img class="product-image" src="${imageUrl}" onerror="this.style.display='none'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:40px;"></div>'}
+                    ${imageUrl ? `<img class="product-image" src="${imageUrl}" onerror="this.style.display='none'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:55px;"></div>'}
                 </div>
                 <div class="slots-row">`;
             
@@ -775,12 +756,14 @@
                 const slotName = currentLang === 'en' ? slot.name_en : slot.name_th;
                 const isSelectable = slot.selectable;
                 const ovalWidth = getOvalWidth(slot.qty);
-                const ovalHeight = 34;
+                const ovalHeight = 42;
+                const slotImage = slot.image ? getDirectImageUrl(slot.image) : null;
                 
                 html += `<div class="slot-group">
                     <div class="slot-group-title">
                         <span>📷 ${slotName}</span>
                         <span class="slot-group-badge">${slot.size} • ${slot.qty} ${t('photos')}</span>
+                        ${slotImage ? `<img src="${slotImage}" style="width:24px; height:24px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="showImageModal('${slotImage}', '${slotName.replace(/'/g, "\\'")}')">` : ''}
                     </div>
                     <div class="slot-items">`;
                 
@@ -799,7 +782,7 @@
                         html += `<div class="slot-wrapper">
                             <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;"></div>
                             <span class="slot-number">${i+1}</span>
-                            <span class="auto-note">🚫</span>
+                            <span class="auto-note">🚫 ${t('notSelectable')}</span>
                         </div>`;
                     }
                 }
@@ -808,12 +791,12 @@
             html += `</div></div>`;
         }
         
-        html += `<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.4rem 1.2rem;">✓ ${t('saved')}</button></div>`;
+        html += `<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.5rem 1.5rem;">✓ ${t('saved')}</button></div>`;
         container.innerHTML = html;
         
         document.getElementById('backBtn')?.addEventListener('click', () => { currentOrder = null; render(); });
         document.getElementById('confirmBtn')?.addEventListener('click', () => {
-            let summary = "═══════════════════════\n   WHITE FOX STUDIO\n═══════════════════════\n";
+            let summary = "═══════════════════════\n   WHITE FOX STUDIO\n   PHOTO SELECTION\n═══════════════════════\n";
             for (let [key, a] of Object.entries(assignments)) {
                 const name = currentLang === 'en' ? a.nameEn : a.nameTh;
                 summary += `\n📦 ${a.sku} — ${name}\n`;
