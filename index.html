@@ -28,6 +28,7 @@
             --wf-text-light: #4b5e6c;
             --wf-success: #2b8c5e;
             --wf-warning: #e6a017;
+            --wf-disabled: #b9c7ce;
         }
 
         .header {
@@ -84,7 +85,6 @@
             border: 2px solid var(--wf-teal);
             height: 48px;
             overflow: hidden;
-            backdrop-filter: blur(2px);
         }
 
         .search-box input {
@@ -122,13 +122,12 @@
         }
 
         .main-content {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 2rem 1.5rem;
             min-height: 75vh;
         }
 
-        /* login card */
         .login-card {
             background: white;
             max-width: 480px;
@@ -163,7 +162,6 @@
             width: 100%;
         }
 
-        /* order header */
         .order-header {
             background: white;
             border-radius: 2rem;
@@ -175,7 +173,6 @@
             flex-wrap: wrap;
             gap: 1rem;
             border: 1px solid var(--wf-teal);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
         }
 
         .order-badge {
@@ -192,7 +189,6 @@
             margin-bottom: 2rem;
             border: 1px solid var(--wf-border);
             overflow: hidden;
-            transition: all 0.2s;
         }
 
         .product-header {
@@ -222,114 +218,117 @@
             color: var(--wf-teal);
         }
 
-        .product-stats {
-            text-align: right;
+        .badge-disabled {
+            background: #e9ecef;
+            color: #6c757d;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
         }
 
-        .photos-counter {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--wf-teal);
-        }
-
-        .assignment-grid {
+        .photo-slots-grid {
             padding: 1.5rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 1.2rem;
         }
 
-        .slot-card {
+        .slot-item {
+            flex: 1;
+            min-width: 200px;
             background: #fefefe;
             border-radius: 1.2rem;
             padding: 1rem;
             border: 1px solid var(--wf-border);
-            transition: 0.1s;
         }
 
-        .slot-title {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            margin-bottom: 1rem;
+        .slot-label {
             font-weight: 700;
-            border-bottom: 1px dashed var(--wf-border);
+            margin-bottom: 0.8rem;
             padding-bottom: 0.5rem;
-        }
-
-        .photo-input-wrapper {
+            border-bottom: 2px solid var(--wf-teal-light);
             display: flex;
-            gap: 0.6rem;
-            flex-wrap: wrap;
-            margin: 0.8rem 0;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .photo-input {
-            width: 85px;
-            padding: 0.5rem;
+        .slot-number {
+            font-size: 0.75rem;
+            background: var(--wf-teal-light);
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+        }
+
+        .photo-value {
+            background: var(--wf-teal-light);
+            padding: 0.6rem 1rem;
+            border-radius: 1rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            font-family: monospace;
+            margin: 0.5rem 0;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .slot-input {
+            flex: 1;
+            padding: 0.6rem 0.8rem;
             border: 2px solid var(--wf-border);
             border-radius: 40px;
             text-align: center;
             font-weight: 600;
+            font-size: 0.9rem;
         }
 
-        .action-btn {
+        .slot-input:focus {
+            border-color: var(--wf-teal);
+            outline: none;
+        }
+
+        .btn-set {
             background: var(--wf-teal);
             color: white;
             border: none;
-            padding: 0.4rem 1rem;
+            padding: 0 1rem;
             border-radius: 40px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.75rem;
         }
 
-        .action-btn-outline {
+        .btn-clear {
             background: transparent;
-            border: 1.5px solid var(--wf-teal);
-            color: var(--wf-teal);
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.75rem;
-        }
-
-        .photo-tag {
-            background: var(--wf-teal-light);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            border: 1px solid #dc2626;
+            color: #dc2626;
             padding: 0.3rem 0.8rem;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-
-        .photo-tag button {
-            background: none;
-            border: none;
-            font-weight: bold;
-            color: #c2410c;
+            border-radius: 30px;
+            font-size: 0.7rem;
             cursor: pointer;
-            font-size: 1rem;
         }
 
-        .status-warning {
-            background: #fff3e0;
-            color: var(--wf-warning);
-            padding: 0.2rem 0.7rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            display: inline-block;
+        .disabled-slot {
+            background: #f8f9fa;
+            opacity: 0.7;
         }
 
-        .status-success {
-            background: #e0f2e9;
-            color: var(--wf-success);
-            padding: 0.2rem 0.7rem;
-            border-radius: 30px;
+        .disabled-slot .slot-input {
+            background: #e9ecef;
+            border-color: #dee2e6;
+        }
+
+        .info-note {
             font-size: 0.7rem;
+            color: var(--wf-text-light);
+            margin-top: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
         }
 
         .product-footer {
@@ -345,6 +344,16 @@
             justify-content: flex-end;
             gap: 1.2rem;
             margin-top: 2rem;
+        }
+
+        .action-outline {
+            background: transparent;
+            border: 1.5px solid var(--wf-teal);
+            color: var(--wf-teal);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
         }
 
         .toast-msg {
@@ -364,7 +373,8 @@
 
         @media (max-width: 700px) {
             .top-bar { flex-direction: column; align-items: stretch; }
-            .assignment-grid { grid-template-columns: 1fr; }
+            .photo-slots-grid { flex-direction: column; }
+            .toast-msg { white-space: normal; max-width: 90%; text-align: center; }
         }
     </style>
 </head>
@@ -377,386 +387,338 @@
         </div>
         <div class="right-actions">
             <div class="search-box">
-                <input type="text" id="orderNumberInputMain" placeholder="Order number (1111)" value="1111">
-                <button id="checkOrderBtnMain">OK</button>
+                <input type="text" id="orderNumberMain" placeholder="Order number (1111)" value="1111">
+                <button id="checkOrderBtn">OK</button>
             </div>
-            <button class="lang-toggle" id="langToggleMain">
-                <span id="langIconMain">🇬🇧</span>
-                <span id="langTextMain">EN</span>
+            <button class="lang-toggle" id="langToggleBtn">
+                <span id="langIcon">🇬🇧</span>
+                <span id="langText">EN</span>
             </button>
         </div>
     </div>
 </header>
-<main class="main-content" id="mainAppContainer"></main>
-<div id="globalToast" class="toast-msg"></div>
+<main class="main-content" id="appContainer"></main>
+<div id="toastMsg" class="toast-msg"></div>
 
 <script>
-    // ---------- CONSTANTS & GLOBALS ----------
-    const MAX_PHOTOS = 31;
-    let currentLang = 'en';
-    let currentOrderData = null;        // { orderNumber, products[] }
-    let assignments = {};               // key: productKey -> { cover, back, interior[], packageSlots: {} }
+    // ======================== DATA FROM SUPABASE STRUCTURE ========================
+    // Based on provided table: article, size, pose, mess (group/brand/portr/design/horiz etc)
+    // Important: some products are "group" or "group brand" -> user cannot select (auto-filled or disabled)
+    // Also "pose" defines number of photo slots (columns)
+    // Photo numbers allowed: 1000 to 9999 inclusive
     
-    // product list (simulated from the architecture of original table)
-    // based on the provided image/description: we recreate similar structure but keep clean & flexible
-    // We'll create a rich catalog that mirrors "A11, W16, Q1, etc" + packages
+    const MIN_PHOTO = 1000;
+    const MAX_PHOTO = 9999;
+    
+    // Full product catalog from the table data
     const productCatalog = [
-        { id: "A11", sku: "A11", name_en: "Acrylic Photo class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", pose: 1, type: "single", size: "8x12" },
-        { id: "A12", sku: "A12", name_en: "Acrylic Photo", name_th: "ภาพถ่ายอะคริลิค", pose: 1, type: "single", size: "12x12" },
-        { id: "A14", sku: "A14", name_en: "Acrylic Photo class + individual logo", name_th: "คลาสเรียนถ่ายภาพอะคริลิค + โลโก้ส่วนตัว", pose: 2, type: "double", size: "12x12" },
-        { id: "W16", sku: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", pose: 3, type: "multi", size: "12x18" },
-        { id: "W11", sku: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", pose: 1, type: "single", size: "10x10" },
-        { id: "C15", sku: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", pose: 9, type: "multi", size: "20x20" },
-        { id: "B13", sku: "B13", name_en: "ELITE SCHOOL BOOK 20 pages", name_th: "หนังสือเรียนชั้นสูง 20 หน้า", pose: 20, type: "book", size: "8x12" },
-        { id: "K11", sku: "K11", name_en: "WALL CALENDAR 13 pages", name_th: "ปฏิทินติดผนัง 13 หน้า", pose: 13, type: "calendar", size: "30x42cm" },
-        { id: "Q1", sku: "Q1", name_en: "Package S (Class Serious + Logo + Individual)", name_th: "แพ็คเกจ S คลาสซีเรียส + โลโก้ + รายบุคคล", pose: 6, type: "package", isPackage: true, packageContents: [
-            { label_en: "Class Serious + Logo", label_th: "คลาสซีเรียส + โลโก้", qty: 1, size: "6x9" },
-            { label_en: "Individual + Logo", label_th: "รายบุคคล + โลโก้", qty: 1, size: "4x6" },
-            { label_en: "Individual", label_th: "รายบุคคล", qty: 4, size: "4x6" }
-        ]},
-        { id: "PKG_M", sku: "Q2", name_en: "Package M (Class + Sabai + Individual)", name_th: "แพ็คเกจ M คลาส + สบาย + รายบุคคล", pose: 11, type: "package", isPackage: true, packageContents: [
-            { label_en: "Class Serious + Logo", label_th: "คลาสซีเรียส + โลโก้", qty: 1 },
-            { label_en: "Class Sabai", label_th: "คลาสสบาย", qty: 1 },
-            { label_en: "Individual + Logo", label_th: "รายบุคคล + โลโก้", qty: 1 },
-            { label_en: "Individual", label_th: "รายบุคคล", qty: 8 }
-        ]},
-        { id: "PKG_L", sku: "Q3", name_en: "Package L (Class + Individual + Sabai)", name_th: "แพ็คเกจ L", pose: 13, type: "package", isPackage: true, packageContents: [
-            { label_en: "Class Serious + Logo", label_th: "คลาสซีเรียส + โลโก้", qty: 1 },
-            { label_en: "Individual + Logo", label_th: "รายบุคคล + โลโก้", qty: 1 },
-            { label_en: "Class Sabai", label_th: "คลาสสบาย", qty: 1 },
-            { label_en: "Individual (6x9)", label_th: "รายบุคคล 6x9", qty: 1 },
-            { label_en: "Individual (4x6)", label_th: "รายบุคคล 4x6", qty: 10 }
-        ]},
-        { id: "S11", sku: "S11", name_en: "SHAKING HEAD ACRYLIC STAND", name_th: "ขาตั้งอะคริลิคหัวสั่น", pose: 1, type: "single", size: "10x10cm" },
-        { id: "E12", sku: "E12", name_en: "NOTEBOOK Hardcover", name_th: "สมุดโน๊ตปกแข็ง", pose: 6, type: "multi", size: "6x8" },
-        { id: "F12", sku: "F12", name_en: "PHOTO COLLAGE IN ALUMINUM FRAME", name_th: "ภาพตัดปะกรอบอลูมิเนียม", pose: 2, type: "double", size: "8x12" }
+        { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", size: "8x12", pose: 1, mess: "group brand", userSelectable: false },
+        { article: "A12", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "12x12", pose: 1, mess: "portr", userSelectable: true },
+        { article: "A13", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "5x5", pose: 1, mess: "portr", userSelectable: true },
+        { article: "A14", name_en: "ACRYLIC PHOTO class + individual logo", name_th: "คลาสเรียนถ่ายภาพอะคริลิค + โลโก้ส่วนตัว", size: "12x12", pose: 2, mess: "group+portr brand", userSelectable: false },
+        { article: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "10x10", pose: 1, mess: "portr", userSelectable: true },
+        { article: "W12", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "12x12", pose: 1, mess: "portr", userSelectable: true },
+        { article: "W13", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "16x16", pose: 1, mess: "portr", userSelectable: true },
+        { article: "W14", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "8x12", pose: 1, mess: "portr", userSelectable: true },
+        { article: "W15", name_en: "FLOAT FRAME individual logo", name_th: "ลอยกรอบโลโก้ส่วนบุคคล", size: "10x15", pose: 1, mess: "portr brand", userSelectable: true },
+        { article: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, mess: "design horiz", userSelectable: true },
+        { article: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, mess: "group brand", userSelectable: false },
+        { article: "C11", name_en: "CANVAS", name_th: "ผ้าใบ", size: "12x18", pose: 1, mess: "portr", userSelectable: true },
+        { article: "C12", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x24", pose: 1, mess: "portr", userSelectable: true },
+        { article: "C13", name_en: "CANVAS", name_th: "ผ้าใบ", size: "20x30", pose: 1, mess: "portr", userSelectable: true },
+        { article: "C14", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x16", pose: 1, mess: "portr", userSelectable: true },
+        { article: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, mess: "design", userSelectable: true },
+        { article: "F11", name_en: "PHOTO BOX", name_th: "กล่องภาพถ่าย", size: "12x16", pose: 1, mess: "portr", userSelectable: true },
+        { article: "F12", name_en: "PHOTO COLLAGE IN ALUMINUM FRAME", name_th: "ภาพตัดปะในกรอบอลูมิเนียม", size: "8x12", pose: 2, mess: "portr", userSelectable: true },
+        { article: "F13", name_en: "GOLD FRAMES", name_th: "กรอบทอง", size: "6x9", pose: 1, mess: "portr", userSelectable: true },
+        { article: "F14", name_en: "GOLD FRAMES", name_th: "กรอบทอง", size: "4x6", pose: 1, mess: "portr", userSelectable: true },
+        { article: "F15", name_en: "MAGNET INSTAX 2 psc", name_th: "แม่เหล็กอินสแตกซ์ 2 ชิ้น", size: "3x3.5", pose: 2, mess: "", userSelectable: true },
+        { article: "B11", name_en: "INSTABOOK 16 pages", name_th: "อินสตาบุ๊ค 16 หน้า", size: "5.5x5.5", pose: 16, mess: "", userSelectable: true },
+        { article: "B12", name_en: "MINI BOOK 10 pages", name_th: "หนังสือขนาดเล็ก 10 หน้า", size: "6x8", pose: 14, mess: "", userSelectable: true },
+        { article: "B13", name_en: "ELITE SCHOOL BOOK 20 pages", name_th: "หนังสือเรียนชั้นสูง 20 หน้า", size: "8x12", pose: 31, mess: "", userSelectable: true },
+        { article: "B14", name_en: "POP ART BOOK 20 pages", name_th: "หนังสือป๊อปอาร์ต 20 หน้า", size: "12x12", pose: 31, mess: "", userSelectable: true },
+        { article: "K11", name_en: "WALL CALENDAR 13 pages", name_th: "ปฏิทินติดผนัง 13 หน้า", size: "30x42cm", pose: 20, mess: "", userSelectable: true },
+        { article: "K12", name_en: "WALL CALENDAR 1 sheet (poster)", name_th: "ปฏิทินติดผนัง 1 แผ่น", size: "24x36", pose: 1, mess: "", userSelectable: true },
+        { article: "K13", name_en: "DESK CALENDAR FLIP WOODEN", name_th: "ปฏิทินตั้งโต๊ะแบบพลิกไม้", size: "6x9", pose: 12, mess: "", userSelectable: true },
+        { article: "K14", name_en: "DESK CALENDAR FLIP", name_th: "ปฏิทินตั้งโต๊ะแบบพลิก", size: "6x8", pose: 25, mess: "", userSelectable: true },
+        { article: "K15", name_en: "CALENDAR GROUP CLASS M", name_th: "กลุ่มปฏิทิน ชั้นเรียน M", size: "16x24", pose: 0, mess: "group", userSelectable: false },
+        { article: "K16", name_en: "CALENDAR GROUP CLASS XL", name_th: "ปฏิทินกลุ่ม คลาส XL", size: "24x36", pose: 0, mess: "group", userSelectable: false },
+        { article: "D11", name_en: "MUG LOGO", name_th: "โลโก้แก้ว", size: "350 ml", pose: 2, mess: "logo school", userSelectable: false },
+        { article: "D12", name_en: "MUG INDIVIDUAL", name_th: "แก้วมัคสำหรับบุคคล", size: "350 ml", pose: 4, mess: "", userSelectable: true },
+        { article: "D13", name_en: "BOTTLE FOR WATER", name_th: "ขวดน้ำ", size: "600 ml", pose: 8, mess: "", userSelectable: true },
+        { article: "D14", name_en: "BOTTLE FOR WATER LOGO", name_th: "โลโก้ขวดน้ำ", size: "500 ml", pose: 2, mess: "logo", userSelectable: false },
+        { article: "S11", name_en: "SHAKING HEAD ACRYLIC STAND boy", name_th: "ขาตั้งอะคริลิคหัวสั่น บอย", size: "10x10 cm", pose: 1, mess: "portrait", userSelectable: true },
+        { article: "S12", name_en: "SHAKING HEAD ACRYLIC STAND girl", name_th: "ขาตั้งอะคริลิคสาว", size: "10x10 cm", pose: 1, mess: "portrait", userSelectable: true },
+        { article: "S13", name_en: "SHAKING HEAD ACRYLIC STAND teacher+student", name_th: "ขาตั้งครู+นักเรียน", size: "10x10 cm", pose: 2, mess: "portrait", userSelectable: true },
+        { article: "S14", name_en: "PHOTO STICKERS GAMES 40 stickers", name_th: "เกมสติ๊กเกอร์ภาพ", size: "11.3x19cm", pose: 10, mess: "", userSelectable: true },
+        { article: "S15", name_en: "PHOTO STICKERS CUTE 40 stickers", name_th: "สติ๊กเกอร์รูปน่ารัก", size: "11.3x19cm", pose: 10, mess: "", userSelectable: true },
+        { article: "S16", name_en: "PHOTO MAGNETS 6psc", name_th: "แม่เหล็กติดรูปถ่าย 6 ชิ้น", size: "6.5x6.5", pose: 6, mess: "", userSelectable: true },
+        { article: "S17", name_en: "MUSIC BOX", name_th: "กล่องดนตรี", size: "6x14x9 cm", pose: 2, mess: "", userSelectable: true },
+        { article: "E11", name_en: "FOLDER A4", name_th: "แฟ้ม A4", size: "A4", pose: 9, mess: "", userSelectable: true },
+        { article: "E12", name_en: "NOTEBOOK HARCOVER", name_th: "สมุดโน๊ตปกแข็ง", size: "6x8", pose: 6, mess: "", userSelectable: true },
+        { article: "E13", name_en: "NOTEBOOK RING BINDED", name_th: "สมุดโน๊ตห่วง", size: "15.5x20cm", pose: 10, mess: "", userSelectable: true },
+        { article: "E14", name_en: "KEYRING ALUM", name_th: "พวงกุญแจอลูมิเนียม", size: "5 cm", pose: 2, mess: "portrait", userSelectable: true },
+        { article: "E15", name_en: "HAND MIRROR", name_th: "กระจกมือ", size: "7.5cm", pose: 1, mess: "portrait", userSelectable: true },
+        { article: "E16", name_en: "MINI PILLOW 2 psc", name_th: "หมอนมินิ", size: "7.5x7.5 cm", pose: 4, mess: "portrait", userSelectable: true },
+        { article: "X11", name_en: "POSTER DESIGN 1", name_th: "โปสเตอร์ดีไซน์ 1", size: "13x20", pose: 1, mess: "", userSelectable: true },
+        { article: "X12", name_en: "POSTER DESIGN 2", name_th: "โปสเตอร์ดีไซน์ 2", size: "20x30", pose: 1, mess: "", userSelectable: true },
+        { article: "Q1", name_en: "Package S (Class Serious + Logo + Individual)", name_th: "แพ็คเกจ S", size: "6x9/4x6", pose: 6, mess: "package group", userSelectable: false },
+        { article: "Q2", name_en: "Package M", name_th: "แพ็คเกจ M", size: "mix", pose: 11, mess: "package group", userSelectable: false },
+        { article: "Q3", name_en: "Package L", name_th: "แพ็คเกจ L", size: "mix", pose: 13, mess: "package group", userSelectable: false }
     ];
     
-    // helper translations
-    const trans = {
+    let currentLang = 'en';
+    let currentOrder = null;
+    let productAssignments = {}; // key = productId, value = { slotValues: [photoNum or null], userSelectable, productRef }
+    
+    const translations = {
         en: {
             enterTitle: "Enter Order Number", enterSub: "Please enter your order number to select photos",
             loginBtn: "Continue", invalidCode: "Demo: use code 1111", loadOk: "✅ Order loaded!",
-            duplicate: "⚠️ Photo #{num} already used in this product",
-            allFilled: "✓ All slots filled!", saved: "✅ Selection confirmed!",
-            invalidNum: `Photo number must be 1–${MAX_PHOTOS}`,
-            set: "Set", randomFill: "🎲 Random", reset: "Reset", confirmAll: "✅ Confirm All",
-            back: "← Back", totalPhotos: "total", moreNeeded: "more needed", filled: "Complete!",
-            cover: "Front Cover", backCover: "Back Cover", interior: "Interior Pages",
-            mainPhoto: "Main Photo", size: "Size", optional: "Optional"
+            duplicateWarning: "⚠️ Photo number already used in this product",
+            invalidRange: `Photo number must be between ${MIN_PHOTO} and ${MAX_PHOTO}`,
+            saved: "✅ Selection confirmed!",
+            set: "Set", clear: "Clear", confirmAll: "✅ Confirm All Selections",
+            back: "← Back", totalFilled: "photos filled", groupAuto: "📸 Group photo (auto)", notSelectable: "Auto-assigned",
+            slotLabel: "Photo", photoNumber: "Photo #", size: "Size"
         },
         th: {
             enterTitle: "กรุณากรอกหมายเลขคำสั่งซื้อ", enterSub: "กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ",
             loginBtn: "ดำเนินการต่อ", invalidCode: "ทดสอบ: ใช้รหัส 1111", loadOk: "✅ โหลดออเดอร์เรียบร้อย!",
-            duplicate: "⚠️ รูป #{num} ถูกใช้ในสินค้านี้แล้ว",
-            allFilled: "✓ ครบทุกตำแหน่ง!", saved: "✅ บันทึกการเลือกแล้ว!",
-            invalidNum: `หมายเลขรูปต้องอยู่ระหว่าง 1-${MAX_PHOTOS}`,
-            set: "ตั้งค่า", randomFill: "🎲 สุ่ม", reset: "รีเซ็ต", confirmAll: "✅ ยืนยันทั้งหมด",
-            back: "← กลับ", totalPhotos: "รูปทั้งหมด", moreNeeded: "ต้องเลือกเพิ่ม", filled: "ครบถ้วน!",
-            cover: "ปกหน้า", backCover: "ปกหลัง", interior: "หน้าภายใน",
-            mainPhoto: "รูปหลัก", size: "ขนาด", optional: "ไม่บังคับ"
+            duplicateWarning: "⚠️ หมายเลขรูปนี้ถูกใช้ในสินค้านี้แล้ว",
+            invalidRange: `หมายเลขรูปต้องอยู่ระหว่าง ${MIN_PHOTO} ถึง ${MAX_PHOTO}`,
+            saved: "✅ บันทึกการเลือกเรียบร้อย!",
+            set: "ตั้งค่า", clear: "ล้าง", confirmAll: "✅ ยืนยันการเลือกทั้งหมด",
+            back: "← กลับ", totalFilled: "รูปที่เลือก", groupAuto: "📸 รูปกลุ่ม (อัตโนมัติ)", notSelectable: "ไม่ต้องเลือก",
+            slotLabel: "รูปที่", photoNumber: "รูปหมายเลข", size: "ขนาด"
         }
     };
     
-    function t(key) { return trans[currentLang][key] || trans.en[key]; }
+    function t(key) { return translations[currentLang][key] || translations.en[key]; }
     
     function showToast(msg) {
-        const toast = document.getElementById('globalToast');
+        const toast = document.getElementById('toastMsg');
         toast.textContent = msg;
         toast.style.display = 'block';
         setTimeout(() => { toast.style.display = 'none'; }, 2600);
     }
     
-    function validatePhoto(num) {
-        if (isNaN(num) || num < 1 || num > MAX_PHOTOS) {
-            showToast(t('invalidNum'));
+    function isValidPhoto(num) {
+        return !isNaN(num) && num >= MIN_PHOTO && num <= MAX_PHOTO;
+    }
+    
+    function isPhotoUsedInProduct(productKey, photoNum) {
+        const assign = productAssignments[productKey];
+        if (!assign) return false;
+        return assign.slotValues.includes(photoNum);
+    }
+    
+    function setPhotoSlot(productKey, slotIndex, photoNum) {
+        const assign = productAssignments[productKey];
+        if (!assign || !assign.userSelectable) return false;
+        if (!isValidPhoto(photoNum)) {
+            showToast(t('invalidRange'));
             return false;
         }
-        return true;
-    }
-    
-    // check if photo used inside same product
-    function isPhotoUsedInProduct(productKey, photoNum) {
-        const a = assignments[productKey];
-        if (!a) return false;
-        if (a.cover === photoNum) return true;
-        if (a.back === photoNum) return true;
-        if (a.interior && a.interior.includes(photoNum)) return true;
-        if (a.packageSlots) {
-            for (let slot of Object.values(a.packageSlots)) {
-                if (slot.assigned && slot.assigned.includes(photoNum)) return true;
-            }
+        // check duplicate within same product
+        if (isPhotoUsedInProduct(productKey, photoNum) && assign.slotValues[slotIndex] !== photoNum) {
+            showToast(t('duplicateWarning'));
+            return false;
         }
-        return false;
-    }
-    
-    // ----- product assignment logic (single, double, multi, package) -----
-    function setCover(productKey, num) {
-        const a = assignments[productKey];
-        if (!a) return false;
-        if (!validatePhoto(num)) return false;
-        if (isPhotoUsedInProduct(productKey, num)) { showToast(t('duplicate').replace('{num}', num)); return false; }
-        a.cover = num;
-        renderOrderUI();
+        assign.slotValues[slotIndex] = photoNum;
+        renderOrderInterface();
         return true;
     }
     
-    function setBack(productKey, num) {
-        const a = assignments[productKey];
-        if (!a) return false;
-        if (a.totalPhotos === 1) { showToast("No back cover for this item"); return false; }
-        if (!validatePhoto(num)) return false;
-        if (isPhotoUsedInProduct(productKey, num)) { showToast(t('duplicate').replace('{num}', num)); return false; }
-        a.back = num;
-        renderOrderUI();
-        return true;
+    function clearSlot(productKey, slotIndex) {
+        const assign = productAssignments[productKey];
+        if (assign && assign.userSelectable) {
+            assign.slotValues[slotIndex] = null;
+            renderOrderInterface();
+        }
     }
     
-    function addInterior(productKey, num) {
-        const a = assignments[productKey];
-        if (!a) return false;
-        if (a.totalPhotos < 3) { showToast("No interior pages needed"); return false; }
-        if (!validatePhoto(num)) return false;
-        if (isPhotoUsedInProduct(productKey, num)) { showToast(t('duplicate').replace('{num}', num)); return false; }
-        const interiorCapacity = a.totalPhotos - (a.totalPhotos === 2 ? 0 : 2);
-        if (a.interior.length >= interiorCapacity) { showToast(t('allFilled')); return false; }
-        a.interior.push(num);
-        renderOrderUI();
-        return true;
+    function loadDemoOrder() {
+        // pick 4-7 random products that exist, but ensure we show W16 etc.
+        let filtered = productCatalog.filter(p => p.userSelectable !== undefined);
+        // shuffle and pick
+        const shuffled = [...filtered];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const selectedCount = Math.min(5 + Math.floor(Math.random() * 4), shuffled.length);
+        const selectedProducts = shuffled.slice(0, selectedCount);
+        // ensure W16 is included for demo (float frame design with 3 poses)
+        if (!selectedProducts.some(p => p.article === "W16")) {
+            const w16 = productCatalog.find(p => p.article === "W16");
+            if (w16 && selectedProducts.length > 0) selectedProducts[0] = w16;
+            else selectedProducts.push(w16);
+        }
+        currentOrder = { orderNumber: "1111", products: selectedProducts };
+        productAssignments = {};
+        for (let prod of selectedProducts) {
+            const key = `prod_${prod.article}_${Date.now()}_${Math.random()}`;
+            const slotCount = prod.pose > 0 ? prod.pose : 1;
+            productAssignments[key] = {
+                id: key,
+                article: prod.article,
+                nameEn: prod.name_en,
+                nameTh: prod.name_th,
+                size: prod.size,
+                pose: prod.pose,
+                userSelectable: prod.userSelectable,
+                slotValues: new Array(slotCount).fill(null),
+                productRef: prod
+            };
+        }
+        renderOrderInterface();
+        showToast(t('loadOk'));
     }
     
-    function addPackageSlotPhoto(productKey, slotKey, num) {
-        const a = assignments[productKey];
-        if (!a || !a.packageSlots) return false;
-        const slot = a.packageSlots[slotKey];
-        if (!slot) return false;
-        if (!validatePhoto(num)) return false;
-        if (isPhotoUsedInProduct(productKey, num)) { showToast(t('duplicate').replace('{num}', num)); return false; }
-        if (slot.assigned.length >= slot.required) { showToast(`Slot ${slot.label} full`); return false; }
-        slot.assigned.push(num);
-        renderOrderUI();
-        return true;
-    }
-    
-    function removeItem(productKey, type, idx = null) {
-        const a = assignments[productKey];
-        if (type === 'cover') a.cover = null;
-        if (type === 'back') a.back = null;
-        if (type === 'interior' && idx !== null) a.interior.splice(idx, 1);
-        if (type === 'package' && idx !== null && a.packageSlots) {
-            for (let sk of Object.keys(a.packageSlots)) {
-                if (a.packageSlots[sk].assigned && a.packageSlots[sk].assigned[idx] !== undefined) {
-                    a.packageSlots[sk].assigned.splice(idx, 1);
-                    break;
+    function renderOrderInterface() {
+        const container = document.getElementById('appContainer');
+        if (!currentOrder) return;
+        let totalSlots = 0, totalFilled = 0;
+        for (let a of Object.values(productAssignments)) {
+            totalSlots += a.slotValues.length;
+            totalFilled += a.slotValues.filter(v => v !== null).length;
+        }
+        let html = `<div class="order-header">
+            <div class="order-badge">📦 Order: ${currentOrder.orderNumber}</div>
+            <div class="order-badge">🎯 ${totalFilled}/${totalSlots} ${t('totalFilled')}</div>
+            <button class="action-outline" id="backToLoginBtn">${t('back')}</button>
+        </div>`;
+        
+        for (let [key, assign] of Object.entries(productAssignments)) {
+            const prodName = currentLang === 'en' ? assign.nameEn : assign.nameTh;
+            const selectable = assign.userSelectable;
+            const slotCount = assign.slotValues.length;
+            
+            html += `<div class="product-card">
+                <div class="product-header">
+                    <div>
+                        <span class="product-sku">${assign.article}</span>
+                        <span class="product-name">${prodName || assign.article}</span>
+                        <span class="badge-disabled" style="margin-left: 8px;">📐 ${assign.size}</span>
+                        ${!selectable ? `<span class="badge-disabled" style="background:#f1f3f4;">🔒 ${t('notSelectable')}</span>` : `<span class="badge-disabled" style="background:var(--wf-teal-light);">📷 ${slotCount} ${slotCount > 1 ? 'poses' : 'pose'}</span>`}
+                    </div>
+                    <div class="order-badge">${assign.slotValues.filter(v=>v!==null).length}/${slotCount}</div>
+                </div>
+                <div class="photo-slots-grid">`;
+            
+            // generate slot columns
+            for (let i = 0; i < slotCount; i++) {
+                const currentVal = assign.slotValues[i];
+                const slotDisplay = currentVal ? currentVal : '—';
+                const isDisabled = !selectable;
+                html += `<div class="slot-item ${isDisabled ? 'disabled-slot' : ''}">
+                    <div class="slot-label">
+                        <span>${t('slotLabel')} ${i+1}</span>
+                        <span class="slot-number">${assign.pose > 0 ? `${i+1}/${slotCount}` : ''}</span>
+                    </div>`;
+                if (!selectable) {
+                    html += `<div class="photo-value">📸 ${t('groupAuto')}</div>
+                            <div class="info-note">✨ ${currentLang === 'en' ? 'Pre-selected by studio' : 'เลือกโดยสตูดิโอ'}</div>`;
+                } else {
+                    if (currentVal) {
+                        html += `<div class="photo-value">#${currentVal}</div>
+                                <button class="btn-clear" onclick="window.clearSlotHandler('${key}', ${i})">${t('clear')}</button>`;
+                    } else {
+                        html += `<div class="input-group">
+                                    <input type="number" id="input_${key}_${i}" class="slot-input" placeholder="${MIN_PHOTO}-${MAX_PHOTO}" min="${MIN_PHOTO}" max="${MAX_PHOTO}">
+                                    <button class="btn-set" onclick="window.setSlotHandler('${key}', ${i})">${t('set')}</button>
+                                </div>`;
+                    }
+                    html += `<div class="info-note">💡 ${currentLang === 'en' ? `Enter photo number (${MIN_PHOTO}–${MAX_PHOTO})` : `กรอกหมายเลขรูป (${MIN_PHOTO}–${MAX_PHOTO})`}</div>`;
                 }
+                html += `</div>`;
             }
+            html += `</div><div class="product-footer"></div></div>`;
         }
-        renderOrderUI();
-    }
-    
-    function randomFillInterior(productKey) {
-        const a = assignments[productKey];
-        if (!a || a.totalPhotos < 3) return;
-        const used = new Set();
-        if (a.cover) used.add(a.cover);
-        if (a.back) used.add(a.back);
-        a.interior.forEach(n => used.add(n));
-        const capacity = a.totalPhotos - 2;
-        const need = capacity - a.interior.length;
-        if (need <= 0) { showToast(t('allFilled')); return; }
-        let available = [];
-        for (let i = 1; i <= MAX_PHOTOS; i++) if (!used.has(i)) available.push(i);
-        for (let i = available.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [available[i], available[j]] = [available[j], available[i]]; }
-        const added = available.slice(0, need);
-        added.forEach(n => a.interior.push(n));
-        renderOrderUI();
-        showToast(`✨ +${added.length} random photos`);
-    }
-    
-    function randomFillPackage(productKey) {
-        const a = assignments[productKey];
-        if (!a || !a.packageSlots) return;
-        const used = new Set();
-        for (let slot of Object.values(a.packageSlots)) slot.assigned.forEach(n => used.add(n));
-        let available = [];
-        for (let i=1;i<=MAX_PHOTOS;i++) if (!used.has(i)) available.push(i);
-        for (let i = available.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [available[i], available[j]] = [available[j], available[i]]; }
-        let idxAvail = 0;
-        for (let slot of Object.values(a.packageSlots)) {
-            let need = slot.required - slot.assigned.length;
-            if (need > 0 && idxAvail+need <= available.length) {
-                let toAdd = available.slice(idxAvail, idxAvail+need);
-                toAdd.forEach(n => slot.assigned.push(n));
-                idxAvail += need;
-            }
-        }
-        renderOrderUI();
-        showToast('🎲 Random photos assigned to package');
-    }
-    
-    function resetProduct(productKey) {
-        const a = assignments[productKey];
-        if (a) {
-            a.cover = null;
-            a.back = null;
-            a.interior = [];
-            if (a.packageSlots) {
-                for (let slot of Object.values(a.packageSlots)) slot.assigned = [];
-            }
-            renderOrderUI();
-        }
+        html += `<div class="global-actions"><button class="btn-primary" id="globalConfirmBtn" style="width:auto; padding:0.8rem 2rem;">${t('confirmAll')}</button></div>`;
+        container.innerHTML = html;
+        document.getElementById('backToLoginBtn')?.addEventListener('click', () => { currentOrder = null; showLoginScreen(); });
+        document.getElementById('globalConfirmBtn')?.addEventListener('click', () => confirmAllSelections());
     }
     
     function confirmAllSelections() {
-        let summary = "📸 WHITE FOX SELECTION CONFIRMED\n\n";
-        for (let [key, a] of Object.entries(assignments)) {
-            summary += `📦 ${a.productName} (${a.sku})\n📏 ${a.size ? a.size : '—'}\n📷 Slots: ${a.totalPhotos} total\n`;
-            if (a.packageSlots && Object.keys(a.packageSlots).length) {
-                for (let slot of Object.values(a.packageSlots)) {
-                    summary += `   ▸ ${slot.label}: ${slot.assigned.length}/${slot.required} → [${slot.assigned.join(',') || '—'}]\n`;
-                }
-            } else if (a.totalPhotos === 1) {
-                summary += `   ▸ ${t('mainPhoto')}: ${a.cover || '❌'}\n`;
-            } else if (a.totalPhotos === 2) {
-                summary += `   ▸ ${t('cover')}: ${a.cover || '❌'}   ${t('backCover')}: ${a.back || '❌'}\n`;
-            } else {
-                let interiorCap = a.totalPhotos - 2;
-                summary += `   ▸ ${t('cover')}: ${a.cover || '❌'} | ${t('backCover')}: ${a.back || '❌'}\n   ▸ ${t('interior')} (${a.interior.length}/${interiorCap}): [${a.interior.join(',') || '—'}]\n`;
+        let summary = "📸 WHITE FOX SELECTION\n━━━━━━━━━━━━━━━━━━━━\n";
+        for (let [key, assign] of Object.entries(productAssignments)) {
+            const name = currentLang === 'en' ? assign.nameEn : assign.nameTh;
+            summary += `\n📌 ${assign.article} — ${name}\n   📐 ${assign.size}\n   🖼️ Slots: ${assign.slotValues.length}\n`;
+            for (let i = 0; i < assign.slotValues.length; i++) {
+                const val = assign.slotValues[i];
+                summary += `      Photo ${i+1}: ${val ? val : '❌ NOT SET'}\n`;
             }
         }
         alert(summary);
         showToast(t('saved'));
     }
     
-    // load random order from catalog
-    function loadDemoOrder() {
-        const shuffled = [...productCatalog];
-        for (let i=shuffled.length-1;i>0;i--) { const j = Math.floor(Math.random()*(i+1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
-        const selected = shuffled.slice(0, Math.min(5 + Math.floor(Math.random()*3), productCatalog.length));
-        currentOrderData = { orderNumber: "1111", products: selected };
-        assignments = {};
-        for (let prod of selected) {
-            const key = `prod_${prod.id}_${Date.now()}_${Math.random()}`;
-            let total = Math.min(prod.pose, MAX_PHOTOS);
-            let packageSlots = null;
-            if (prod.isPackage && prod.packageContents) {
-                packageSlots = {};
-                for (let cont of prod.packageContents) {
-                    let slotId = `slot_${cont.label_en || cont.label_th}`.replace(/[^a-z0-9]/gi,'_');
-                    let label = currentLang === 'en' ? cont.label_en : cont.label_th;
-                    packageSlots[slotId] = { label: label, required: cont.qty, assigned: [] };
-                }
-            }
-            assignments[key] = {
-                productKey: key, sku: prod.sku, productName: (currentLang === 'en' ? prod.name_en : prod.name_th) || prod.name_en,
-                totalPhotos: total, size: prod.size || '—', isPackage: prod.isPackage || false,
-                cover: null, back: null, interior: [], packageSlots: packageSlots,
-                originalProd: prod
-            };
-        }
-        renderOrderUI();
-    }
-    
-    // render main interface after login
-    function renderOrderUI() {
-        const container = document.getElementById('mainAppContainer');
-        if (!currentOrderData || !assignments) return;
-        let totalFilled = 0, totalSlots = 0;
-        for (let a of Object.values(assignments)) {
-            let filled = 0;
-            if (a.cover) filled++;
-            if (a.back) filled++;
-            if (a.interior) filled += a.interior.length;
-            if (a.packageSlots) for (let s of Object.values(a.packageSlots)) filled += s.assigned.length;
-            totalFilled += filled;
-            totalSlots += a.totalPhotos;
-        }
-        const percent = totalSlots ? Math.round((totalFilled/totalSlots)*100) : 0;
-        let productsHtml = `<div class="order-header"><div class="order-badge">📦 Order: ${currentOrderData.orderNumber}</div><div class="order-badge">🎯 ${totalFilled}/${totalSlots} photos (${percent}%)</div><button class="action-btn-outline" id="backToLoginBtn">${t('back')}</button></div>`;
-        for (let [key, a] of Object.entries(assignments)) {
-            const safeId = key.replace(/[^a-z0-9]/gi,'_');
-            let slotsHtml = '';
-            if (a.isPackage && a.packageSlots) {
-                slotsHtml = `<div class="assignment-grid">`;
-                for (let [slotId, slot] of Object.entries(a.packageSlots)) {
-                    slotsHtml += `<div class="slot-card"><div class="slot-title">📦 ${slot.label} <span style="margin-left:8px;">(${slot.required} photo)</span></div>
-                        <div class="photo-input-wrapper"><input type="number" id="pkg_${safeId}_${slotId}" class="photo-input" min="1" max="${MAX_PHOTOS}" placeholder="#"><button class="action-btn" onclick="window.addPackagePhotoFromUI('${key}','${slotId}')">${t('set')}</button></div>
-                        <div>${slot.assigned.map((num,idx)=>`<div class="photo-tag">#${num}<button onclick="window.removePackageItemUI('${key}','${slotId}',${idx})">✕</button></div>`).join('')}</div>
-                        ${slot.assigned.length < slot.required ? `<div class="status-warning">⚠️ ${slot.required - slot.assigned.length} ${t('moreNeeded')}</div>` : `<div class="status-success">✓ ${t('filled')}</div>`}
-                    </div>`;
-                }
-                slotsHtml += `<div style="padding:0 1rem 1rem 1rem;"><button class="action-btn-outline" onclick="window.randomFillPackageUI('${key}')">${t('randomFill')}</button></div></div>`;
-            } 
-            else if (a.totalPhotos === 1) {
-                slotsHtml = `<div class="assignment-grid"><div class="slot-card"><div class="slot-title">📷 ${t('mainPhoto')}</div>${a.cover ? `<div class="photo-tag">#${a.cover}<button onclick="window.removeCoverUI('${key}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover_${safeId}" class="photo-input" placeholder="#"><button class="action-btn" onclick="window.setCoverFromUI('${key}')">${t('set')}</button></div>`}</div></div>`;
-            } 
-            else if (a.totalPhotos === 2) {
-                slotsHtml = `<div class="assignment-grid"><div class="slot-card"><div class="slot-title">📘 ${t('cover')}</div>${a.cover ? `<div class="photo-tag">#${a.cover}<button onclick="window.removeCoverUI('${key}')">✕</button></div>` : `<div><input type="number" id="cover_${safeId}" class="photo-input"><button class="action-btn" onclick="window.setCoverFromUI('${key}')">${t('set')}</button></div>`}</div><div class="slot-card"><div class="slot-title">📖 ${t('backCover')}</div>${a.back ? `<div class="photo-tag">#${a.back}<button onclick="window.removeBackUI('${key}')">✕</button></div>` : `<div><input type="number" id="back_${safeId}" class="photo-input"><button class="action-btn" onclick="window.setBackFromUI('${key}')">${t('set')}</button></div>`}</div></div>`;
-            } 
-            else {
-                const interiorCap = a.totalPhotos - 2;
-                slotsHtml = `<div class="assignment-grid">
-                    <div class="slot-card"><div class="slot-title">📘 ${t('cover')}</div>${a.cover ? `<div class="photo-tag">#${a.cover}<button onclick="window.removeCoverUI('${key}')">✕</button></div>` : `<div><input type="number" id="cover_${safeId}" class="photo-input"><button class="action-btn" onclick="window.setCoverFromUI('${key}')">${t('set')}</button></div>`}</div>
-                    <div class="slot-card"><div class="slot-title">📖 ${t('backCover')}</div>${a.back ? `<div class="photo-tag">#${a.back}<button onclick="window.removeBackUI('${key}')">✕</button></div>` : `<div><input type="number" id="back_${safeId}" class="photo-input"><button class="action-btn" onclick="window.setBackFromUI('${key}')">${t('set')}</button></div>`}</div>
-                    <div class="slot-card"><div class="slot-title">🖼️ ${t('interior')} (${a.interior.length}/${interiorCap})</div>
-                        <div class="photo-input-wrapper"><input type="number" id="int_${safeId}" class="photo-input"><button class="action-btn" onclick="window.addInteriorFromUI('${key}')">${t('set')}</button><button class="action-btn-outline" onclick="window.randomFillInteriorUI('${key}')">${t('randomFill')}</button></div>
-                        <div>${a.interior.map((num,idx)=>`<div class="photo-tag">#${num}<button onclick="window.removeInteriorUI('${key}',${idx})">✕</button></div>`).join('')}</div>
-                        ${a.interior.length < interiorCap ? `<div class="status-warning">⚠️ ${interiorCap - a.interior.length} ${t('moreNeeded')}</div>` : `<div class="status-success">✓ ${t('filled')}</div>`}
-                    </div>
-                </div>`;
-            }
-            productsHtml += `<div class="product-card"><div class="product-header"><div><span class="product-sku">${a.sku}</span> <span class="product-name">${a.productName}</span> <span class="product-sku" style="background:#e9ecef;">📐 ${a.size}</span></div><div class="photos-counter">${totalFilledPerProduct(a)}/${a.totalPhotos}</div></div>${slotsHtml}<div class="product-footer"><button class="action-btn-outline" onclick="window.resetProductUI('${key}')">🔄 ${t('reset')}</button></div></div>`;
-        }
-        productsHtml += `<div class="global-actions"><button class="btn-primary" id="globalConfirmBtn" style="width:auto; padding:0.8rem 2rem;">${t('confirmAll')}</button></div>`;
-        container.innerHTML = productsHtml;
-        document.getElementById('backToLoginBtn')?.addEventListener('click', () => { currentOrderData = null; showLoginScreen(); });
-        document.getElementById('globalConfirmBtn')?.addEventListener('click', confirmAllSelections);
-    }
-    
-    function totalFilledPerProduct(a) {
-        let c=0;
-        if(a.cover) c++;
-        if(a.back) c++;
-        if(a.interior) c+=a.interior.length;
-        if(a.packageSlots) for(let s of Object.values(a.packageSlots)) c+=s.assigned.length;
-        return c;
-    }
-    
-    // UI bridge functions
-    window.setCoverFromUI = (key) => { let inp = document.querySelector(`input[id^="cover_${key.replace(/[^a-z0-9]/gi,'_')}"]`); if(inp) setCover(key, parseInt(inp.value)); };
-    window.setBackFromUI = (key) => { let inp = document.querySelector(`input[id^="back_${key.replace(/[^a-z0-9]/gi,'_')}"]`); if(inp) setBack(key, parseInt(inp.value)); };
-    window.addInteriorFromUI = (key) => { let inp = document.querySelector(`input[id^="int_${key.replace(/[^a-z0-9]/gi,'_')}"]`); if(inp) addInterior(key, parseInt(inp.value)); };
-    window.addPackagePhotoFromUI = (key, slotId) => { let inp = document.querySelector(`input[id^="pkg_${key.replace(/[^a-z0-9]/gi,'_')}_${slotId}"]`); if(inp) addPackageSlotPhoto(key, slotId, parseInt(inp.value)); };
-    window.removeCoverUI = (key) => { removeItem(key, 'cover'); };
-    window.removeBackUI = (key) => { removeItem(key, 'back'); };
-    window.removeInteriorUI = (key, idx) => { removeItem(key, 'interior', idx); };
-    window.removePackageItemUI = (key, slotId, idx) => { const a = assignments[key]; if(a?.packageSlots?.[slotId]) a.packageSlots[slotId].assigned.splice(idx,1); renderOrderUI(); };
-    window.randomFillInteriorUI = (key) => { randomFillInterior(key); };
-    window.randomFillPackageUI = (key) => { randomFillPackage(key); };
-    window.resetProductUI = (key) => { resetProduct(key); };
-    
     function showLoginScreen() {
-        const container = document.getElementById('mainAppContainer');
-        container.innerHTML = `<div class="login-card"><h2>${t('enterTitle')}</h2><p>${t('enterSub')}</p><input type="text" id="orderLoginInput" class="order-input" placeholder="1111" value="1111"><button class="btn-primary" id="loginExecuteBtn">${t('loginBtn')}</button></div>`;
-        document.getElementById('loginExecuteBtn')?.addEventListener('click', () => { let code = document.getElementById('orderLoginInput').value.trim(); if(code === '1111') { loadDemoOrder(); } else { showToast(t('invalidCode')); } });
-        document.getElementById('orderLoginInput')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') document.getElementById('loginExecuteBtn')?.click(); });
+        const container = document.getElementById('appContainer');
+        container.innerHTML = `<div class="login-card">
+            <h2>${t('enterTitle')}</h2>
+            <p>${t('enterSub')}</p>
+            <input type="text" id="orderCodeInput" class="order-input" placeholder="1111" value="1111">
+            <button class="btn-primary" id="loginExecuteBtn">${t('loginBtn')}</button>
+        </div>`;
+        document.getElementById('loginExecuteBtn')?.addEventListener('click', () => {
+            const code = document.getElementById('orderCodeInput').value.trim();
+            if (code === '1111') {
+                loadDemoOrder();
+            } else {
+                showToast(t('invalidCode'));
+            }
+        });
+        document.getElementById('orderCodeInput')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('loginExecuteBtn')?.click(); });
     }
     
-    function updateGlobalLanguage() {
-        const iconSpan = document.getElementById('langIconMain');
-        const textSpan = document.getElementById('langTextMain');
+    window.setSlotHandler = (productKey, slotIdx) => {
+        const input = document.getElementById(`input_${productKey}_${slotIdx}`);
+        if (input) {
+            const rawValue = parseInt(input.value);
+            if (!isNaN(rawValue)) {
+                setPhotoSlot(productKey, slotIdx, rawValue);
+                input.value = '';
+            } else {
+                showToast(t('invalidRange'));
+            }
+        }
+    };
+    
+    window.clearSlotHandler = (productKey, slotIdx) => {
+        clearSlot(productKey, slotIdx);
+    };
+    
+    function updateLanguageUI() {
+        const iconSpan = document.getElementById('langIcon');
+        const textSpan = document.getElementById('langText');
         if (iconSpan) iconSpan.textContent = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
         if (textSpan) textSpan.textContent = currentLang === 'en' ? 'EN' : 'TH';
-        if (currentOrderData) renderOrderUI();
+        if (currentOrder) renderOrderInterface();
         else showLoginScreen();
     }
     
-    document.getElementById('langToggleMain')?.addEventListener('click', () => { currentLang = currentLang === 'en' ? 'th' : 'en'; updateGlobalLanguage(); });
-    document.getElementById('checkOrderBtnMain')?.addEventListener('click', () => { let code = document.getElementById('orderNumberInputMain').value.trim(); if(code === '1111') { loadDemoOrder(); } else showToast(t('invalidCode')); });
-    document.getElementById('orderNumberInputMain')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') document.getElementById('checkOrderBtnMain')?.click(); });
+    document.getElementById('langToggleBtn')?.addEventListener('click', () => {
+        currentLang = currentLang === 'en' ? 'th' : 'en';
+        updateLanguageUI();
+    });
+    document.getElementById('checkOrderBtn')?.addEventListener('click', () => {
+        const code = document.getElementById('orderNumberMain').value.trim();
+        if (code === '1111') {
+            loadDemoOrder();
+        } else {
+            showToast(t('invalidCode'));
+        }
+    });
+    document.getElementById('orderNumberMain')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') document.getElementById('checkOrderBtn')?.click();
+    });
     
     showLoginScreen();
-    updateGlobalLanguage();
+    updateLanguageUI();
 </script>
 </body>
 </html>
