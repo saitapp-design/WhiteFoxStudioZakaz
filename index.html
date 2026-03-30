@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
         }
 
         body {
@@ -19,16 +19,14 @@
         }
 
         :root {
-            --wf-teal: #007883;
-            --wf-teal-dark: #0a6570;
-            --wf-teal-light: #e0f2f4;
-            --wf-border: #e2edf2;
-            --wf-text: #1e2f3a;
-            --wf-text-light: #5a6e7c;
-            --wf-success: #2b8c5e;
-            --wf-disabled-bg: #f1f3f5;
-            --wf-slot-empty: #f8f9fc;
-            --wf-slot-filled: #d4f0e8;
+            --teal: #007883;
+            --teal-dark: #0a6570;
+            --teal-light: #e0f2f4;
+            --border: #e2edf2;
+            --gray-bg: #f8fafc;
+            --slot-empty: #ffffff;
+            --slot-filled: #d4f0e8;
+            --disabled-bg: #f1f3f5;
         }
 
         .header {
@@ -36,315 +34,294 @@
             top: 0;
             z-index: 100;
             background: white;
-            box-shadow: 0 4px 16px rgba(0,120,131,0.08);
-            border-bottom: 2px solid var(--wf-teal);
+            box-shadow: 0 2px 12px rgba(0,120,131,0.08);
+            border-bottom: 2px solid var(--teal);
         }
 
         .top-bar {
-            max-width: 1300px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0.7rem 2rem;
+            padding: 0.6rem 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.8rem;
         }
 
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .logo-img {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             object-fit: contain;
         }
 
         .logo-text {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 800;
-            color: var(--wf-teal);
+            color: var(--teal);
         }
 
         .right-actions {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
+            gap: 0.8rem;
         }
 
         .search-box {
             display: flex;
             align-items: center;
             background: white;
-            border-radius: 60px;
-            border: 2px solid var(--wf-teal);
-            height: 46px;
+            border-radius: 40px;
+            border: 2px solid var(--teal);
+            height: 42px;
             overflow: hidden;
         }
 
         .search-box input {
             border: none;
             padding: 0 1rem;
-            width: 210px;
-            font-size: 0.95rem;
+            width: 180px;
+            font-size: 0.9rem;
             outline: none;
             background: transparent;
         }
 
         .search-box button {
-            background: var(--wf-teal);
+            background: var(--teal);
             border: none;
             color: white;
-            padding: 0 1.3rem;
+            padding: 0 1.2rem;
             height: 100%;
             font-weight: 600;
             cursor: pointer;
+            font-size: 0.85rem;
         }
 
         .lang-toggle {
             background: white;
-            border: 2px solid var(--wf-teal);
-            border-radius: 60px;
-            padding: 0 1.2rem;
-            height: 46px;
+            border: 2px solid var(--teal);
+            border-radius: 40px;
+            padding: 0 1rem;
+            height: 42px;
             font-weight: 600;
-            color: var(--wf-teal);
+            color: var(--teal);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             cursor: pointer;
+            font-size: 0.85rem;
         }
 
         .main-content {
-            max-width: 1300px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 1.8rem 1.5rem;
+            padding: 1.5rem;
             min-height: 75vh;
         }
 
-        /* login screen */
         .login-card {
             background: white;
-            max-width: 460px;
+            max-width: 440px;
             margin: 2rem auto;
-            padding: 2.5rem 2rem;
-            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            border-radius: 1.5rem;
             text-align: center;
-            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.08);
-            border: 1px solid var(--wf-border);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
         }
 
         .order-input {
             width: 100%;
-            padding: 0.9rem 1.2rem;
-            font-size: 1.1rem;
-            border: 2px solid var(--wf-border);
-            border-radius: 60px;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 50px;
             margin: 1rem 0;
             text-align: center;
             outline: none;
         }
 
         .btn-primary {
-            background: var(--wf-teal);
+            background: var(--teal);
             color: white;
             border: none;
-            padding: 0.85rem 1.5rem;
-            border-radius: 60px;
+            padding: 0.75rem 1.2rem;
+            border-radius: 50px;
             font-weight: 700;
-            font-size: 1rem;
             cursor: pointer;
             width: 100%;
+            font-size: 0.95rem;
         }
 
-        /* order header */
         .order-header {
             background: white;
-            border-radius: 1.5rem;
-            padding: 0.8rem 1.8rem;
-            margin-bottom: 1.8rem;
+            border-radius: 1rem;
+            padding: 0.6rem 1.2rem;
+            margin-bottom: 1.2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.8rem;
-            border: 1px solid var(--wf-teal);
+            gap: 0.5rem;
+            border: 1px solid var(--teal);
         }
 
         .order-badge {
-            background: var(--wf-teal-light);
-            padding: 0.4rem 1.2rem;
-            border-radius: 40px;
+            background: var(--teal-light);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
             font-weight: 600;
-            color: var(--wf-teal);
-            font-size: 0.9rem;
+            color: var(--teal);
+            font-size: 0.8rem;
         }
 
-        /* product card */
+        /* product card - minimal */
         .product-card {
             background: white;
-            border-radius: 1.5rem;
-            margin-bottom: 1.6rem;
-            border: 1px solid var(--wf-border);
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
             overflow: hidden;
-            transition: box-shadow 0.2s;
         }
 
         .product-header {
+            padding: 0.8rem 1.2rem;
             background: white;
-            padding: 1rem 1.5rem;
-            border-bottom: 2px solid var(--wf-teal-light);
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.6rem;
         }
 
-        .product-info {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
+        .product-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--teal);
         }
 
         .product-sku {
             font-family: monospace;
-            background: var(--wf-teal-light);
-            padding: 0.2rem 0.7rem;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.75rem;
-            color: var(--wf-teal);
-        }
-
-        .product-name {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--wf-teal);
+            background: var(--teal-light);
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            margin-left: 0.5rem;
         }
 
         .product-size {
+            font-size: 0.7rem;
+            color: #6c757d;
+            margin-left: 0.5rem;
+        }
+
+        .badge-auto {
             background: #e9ecef;
             padding: 0.2rem 0.6rem;
             border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: #495057;
-        }
-
-        .badge-locked {
-            background: #f1f3f4;
+            font-size: 0.65rem;
             color: #6c757d;
-            padding: 0.2rem 0.7rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 500;
         }
 
-        /* круглые колонки - slots grid как на картинке */
-        .slots-circle-grid {
-            padding: 1.5rem 1.5rem 1rem 1.5rem;
+        /* adaptive columns layout - like image */
+        .slots-row {
+            padding: 1rem 1.2rem;
             display: flex;
             flex-wrap: wrap;
-            gap: 1.2rem;
-            justify-content: flex-start;
+            gap: 1rem;
             align-items: center;
+            justify-content: flex-start;
         }
 
-        .slot-circle {
+        /* circle slot - width adapts based on total count */
+        .slot-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
-            min-width: 85px;
+            gap: 0.4rem;
+            flex-shrink: 0;
         }
 
+        /* dynamic size: if few slots -> larger circles, many slots -> smaller */
         .circle {
-            width: 75px;
-            height: 75px;
             border-radius: 50%;
-            background: var(--wf-slot-empty);
-            border: 2px solid var(--wf-border);
+            background: var(--slot-empty);
+            border: 2px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--wf-text);
-            transition: all 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            font-weight: 600;
+            transition: all 0.15s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .circle.filled {
-            background: var(--wf-slot-filled);
-            border-color: var(--wf-teal);
-            color: var(--wf-teal);
+            background: var(--slot-filled);
+            border-color: var(--teal);
+            color: var(--teal);
         }
 
-        .circle.disabled-circle {
-            background: var(--wf-disabled-bg);
+        .circle.disabled {
+            background: var(--disabled-bg);
             border-color: #dee2e6;
             color: #adb5bd;
-            cursor: default;
         }
 
-        .slot-number {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--wf-text-light);
+        .slot-label {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: #8b9aab;
         }
 
-        .slot-input-small {
-            width: 80px;
-            padding: 0.4rem 0.3rem;
+        .input-group-mini {
+            display: flex;
+            gap: 0.4rem;
+            margin-top: 0.2rem;
+        }
+
+        .slot-input {
+            width: 70px;
+            padding: 0.3rem 0.2rem;
             text-align: center;
-            border: 1.5px solid var(--wf-border);
-            border-radius: 40px;
-            font-size: 0.75rem;
+            border: 1.5px solid var(--border);
+            border-radius: 30px;
+            font-size: 0.7rem;
             font-weight: 500;
             outline: none;
         }
 
-        .slot-input-small:focus {
-            border-color: var(--wf-teal);
+        .slot-input:focus {
+            border-color: var(--teal);
         }
 
-        .btn-set-small {
-            background: var(--wf-teal);
+        .btn-set {
+            background: var(--teal);
             border: none;
             color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 40px;
-            font-size: 0.7rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
             font-weight: 600;
             cursor: pointer;
-            white-space: nowrap;
         }
 
-        .btn-clear-small {
+        .btn-clear {
             background: transparent;
             border: 1px solid #dc3545;
             color: #dc3545;
-            padding: 0.25rem 0.7rem;
-            border-radius: 40px;
-            font-size: 0.65rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.6rem;
             cursor: pointer;
         }
 
-        .action-group {
-            display: flex;
-            gap: 0.4rem;
-            margin-top: 0.3rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .info-note {
+        .auto-note {
             font-size: 0.6rem;
             color: #8b9aab;
             text-align: center;
@@ -352,52 +329,38 @@
         }
 
         .product-footer {
-            padding: 0.5rem 1.5rem 1.2rem 1.5rem;
+            padding: 0.5rem 1.2rem 0.8rem;
             display: flex;
             justify-content: flex-end;
-            border-top: 1px solid var(--wf-border);
-            margin-top: 0.2rem;
+            border-top: 1px solid var(--border);
         }
 
         .global-actions {
             display: flex;
             justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .action-outline {
-            background: transparent;
-            border: 1.5px solid var(--wf-teal);
-            color: var(--wf-teal);
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
+            margin-top: 1rem;
         }
 
         .toast-msg {
             position: fixed;
-            bottom: 25px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--wf-teal);
+            background: var(--teal);
             color: white;
-            padding: 0.6rem 1.5rem;
-            border-radius: 50px;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
             font-weight: 600;
             z-index: 2000;
             display: none;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             white-space: nowrap;
         }
 
-        @media (max-width: 680px) {
-            .slots-circle-grid { gap: 0.8rem; justify-content: center; }
-            .circle { width: 65px; height: 65px; font-size: 0.85rem; }
-            .slot-input-small { width: 70px; }
+        @media (max-width: 700px) {
+            .slots-row { gap: 0.8rem; justify-content: center; }
+            .slot-input { width: 60px; }
             .toast-msg { white-space: normal; max-width: 90%; text-align: center; }
-            .top-bar { padding: 0.7rem 1rem; }
         }
     </style>
 </head>
@@ -410,326 +373,275 @@
         </div>
         <div class="right-actions">
             <div class="search-box">
-                <input type="text" id="orderMainInput" placeholder="Order number (1111)" value="1111">
-                <button id="checkOrderMainBtn">OK</button>
+                <input type="text" id="orderInput" placeholder="Order number" value="1111">
+                <button id="checkBtn">OK</button>
             </div>
-            <button class="lang-toggle" id="langToggleBtn">
+            <button class="lang-toggle" id="langBtn">
                 <span id="langIcon">🇬🇧</span>
                 <span id="langText">EN</span>
             </button>
         </div>
     </div>
 </header>
-<main class="main-content" id="appContainer"></main>
-<div id="toastMsg" class="toast-msg"></div>
+<main class="main-content" id="app"></main>
+<div id="toast" class="toast-msg"></div>
 
 <script>
-    // ======================== PRODUCT DATA (from table with pose & userSelectable flag) ========================
-    // Based on provided image: W16 has 3 pose, group photos not selectable, etc.
+    // ======================== DATA ========================
     const MIN_PHOTO = 1000;
     const MAX_PHOTO = 9999;
     
-    const productCatalog = [
-        { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", size: "8x12", pose: 1, mess: "group brand", userSelectable: false },
-        { article: "A12", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "12x12", pose: 1, mess: "portr", userSelectable: true },
-        { article: "A13", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "5x5", pose: 1, mess: "portr", userSelectable: true },
-        { article: "A14", name_en: "ACRYLIC PHOTO class + individual logo", name_th: "คลาสเรียนถ่ายภาพอะคริลิค + โลโก้ส่วนตัว", size: "12x12", pose: 2, mess: "group+portr brand", userSelectable: false },
-        { article: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "10x10", pose: 1, mess: "portr", userSelectable: true },
-        { article: "W12", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "12x12", pose: 1, mess: "portr", userSelectable: true },
-        { article: "W13", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "16x16", pose: 1, mess: "portr", userSelectable: true },
-        { article: "W14", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "8x12", pose: 1, mess: "portr", userSelectable: true },
-        { article: "W15", name_en: "FLOAT FRAME individual logo", name_th: "ลอยกรอบโลโก้ส่วนบุคคล", size: "10x15", pose: 1, mess: "portr brand", userSelectable: true },
-        { article: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, mess: "design horiz", userSelectable: true },  // 3 круглые колонки
-        { article: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, mess: "group brand", userSelectable: false },
-        { article: "C11", name_en: "CANVAS", name_th: "ผ้าใบ", size: "12x18", pose: 1, mess: "portr", userSelectable: true },
-        { article: "C12", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x24", pose: 1, mess: "portr", userSelectable: true },
-        { article: "C13", name_en: "CANVAS", name_th: "ผ้าใบ", size: "20x30", pose: 1, mess: "portr", userSelectable: true },
-        { article: "C14", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x16", pose: 1, mess: "portr", userSelectable: true },
-        { article: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, mess: "design", userSelectable: true },
-        { article: "F11", name_en: "PHOTO BOX", name_th: "กล่องภาพถ่าย", size: "12x16", pose: 1, mess: "portr", userSelectable: true },
-        { article: "F12", name_en: "PHOTO COLLAGE IN ALUMINUM FRAME", name_th: "ภาพตัดปะกรอบอลูมิเนียม", size: "8x12", pose: 2, mess: "portr", userSelectable: true },
-        { article: "F13", name_en: "GOLD FRAMES", name_th: "กรอบทอง", size: "6x9", pose: 1, mess: "portr", userSelectable: true },
-        { article: "F14", name_en: "GOLD FRAMES", name_th: "กรอบทอง", size: "4x6", pose: 1, mess: "portr", userSelectable: true },
-        { article: "F15", name_en: "MAGNET INSTAX 2 psc", name_th: "แม่เหล็กอินสแตกซ์ 2 ชิ้น", size: "3x3.5", pose: 2, mess: "", userSelectable: true },
-        { article: "B11", name_en: "INSTABOOK 16 pages", name_th: "อินสตาบุ๊ค 16 หน้า", size: "5.5x5.5", pose: 16, mess: "", userSelectable: true },
-        { article: "B13", name_en: "ELITE SCHOOL BOOK 20 pages", name_th: "หนังสือเรียนชั้นสูง 20 หน้า", size: "8x12", pose: 31, mess: "", userSelectable: true },
-        { article: "K11", name_en: "WALL CALENDAR 13 pages", name_th: "ปฏิทินติดผนัง 13 หน้า", size: "30x42cm", pose: 20, mess: "", userSelectable: true },
-        { article: "K12", name_en: "WALL CALENDAR 1 sheet", name_th: "ปฏิทินติดผนัง 1 แผ่น", size: "24x36", pose: 1, mess: "", userSelectable: true },
-        { article: "K13", name_en: "DESK CALENDAR FLIP WOODEN", name_th: "ปฏิทินตั้งโต๊ะไม้", size: "6x9", pose: 12, mess: "", userSelectable: true },
-        { article: "K15", name_en: "CALENDAR GROUP CLASS M", name_th: "กลุ่มปฏิทิน ชั้นเรียน M", size: "16x24", pose: 1, mess: "group", userSelectable: false },
-        { article: "K16", name_en: "CALENDAR GROUP CLASS XL", name_th: "ปฏิทินกลุ่ม XL", size: "24x36", pose: 1, mess: "group", userSelectable: false },
-        { article: "D11", name_en: "MUG LOGO", name_th: "โลโก้แก้ว", size: "350 ml", pose: 2, mess: "logo school", userSelectable: false },
-        { article: "D12", name_en: "MUG INDIVIDUAL", name_th: "แก้วมัคบุคคล", size: "350 ml", pose: 4, mess: "", userSelectable: true },
-        { article: "S11", name_en: "SHAKING HEAD ACRYLIC STAND boy", name_th: "ขาตั้งอะคริลิคหัวสั่น", size: "10x10 cm", pose: 1, mess: "portrait", userSelectable: true },
-        { article: "Q1", name_en: "Package S", name_th: "แพ็คเกจ S", size: "6x9/4x6", pose: 6, mess: "package group", userSelectable: false },
-        { article: "Q2", name_en: "Package M", name_th: "แพ็คเกจ M", size: "mix", pose: 11, mess: "package group", userSelectable: false }
+    // Products based on table (article, pose, userSelectable flag)
+    const productsDB = [
+        { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", size: "8x12", pose: 1, selectable: false },
+        { article: "A12", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "12x12", pose: 1, selectable: true },
+        { article: "A13", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "5x5", pose: 1, selectable: true },
+        { article: "A14", name_en: "ACRYLIC PHOTO class + logo", name_th: "คลาสเรียน+โลโก้", size: "12x12", pose: 2, selectable: false },
+        { article: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "10x10", pose: 1, selectable: true },
+        { article: "W12", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "12x12", pose: 1, selectable: true },
+        { article: "W13", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "16x16", pose: 1, selectable: true },
+        { article: "W14", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "8x12", pose: 1, selectable: true },
+        { article: "W15", name_en: "FLOAT FRAME individual logo", name_th: "ลอยกรอบโลโก้ส่วนบุคคล", size: "10x15", pose: 1, selectable: true },
+        { article: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true },
+        { article: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false },
+        { article: "C11", name_en: "CANVAS", name_th: "ผ้าใบ", size: "12x18", pose: 1, selectable: true },
+        { article: "C12", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x24", pose: 1, selectable: true },
+        { article: "C13", name_en: "CANVAS", name_th: "ผ้าใบ", size: "20x30", pose: 1, selectable: true },
+        { article: "C14", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x16", pose: 1, selectable: true },
+        { article: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true },
+        { article: "F11", name_en: "PHOTO BOX", name_th: "กล่องภาพถ่าย", size: "12x16", pose: 1, selectable: true },
+        { article: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะกรอบอลูมิเนียม", size: "8x12", pose: 2, selectable: true },
+        { article: "F13", name_en: "GOLD FRAMES", name_th: "กรอบทอง", size: "6x9", pose: 1, selectable: true },
+        { article: "F14", name_en: "GOLD FRAMES", name_th: "กรอบทอง", size: "4x6", pose: 1, selectable: true },
+        { article: "F15", name_en: "MAGNET INSTAX", name_th: "แม่เหล็กอินสแตกซ์", size: "3x3.5", pose: 2, selectable: true },
+        { article: "B11", name_en: "INSTABOOK 16p", name_th: "อินสตาบุ๊ค", size: "5.5x5.5", pose: 16, selectable: true },
+        { article: "B13", name_en: "ELITE SCHOOL BOOK", name_th: "หนังสือเรียน", size: "8x12", pose: 31, selectable: true },
+        { article: "K11", name_en: "WALL CALENDAR", name_th: "ปฏิทินติดผนัง", size: "30x42cm", pose: 20, selectable: true },
+        { article: "K12", name_en: "CALENDAR POSTER", name_th: "ปฏิทินโปสเตอร์", size: "24x36", pose: 1, selectable: true },
+        { article: "K15", name_en: "CALENDAR GROUP M", name_th: "กลุ่มปฏิทิน M", size: "16x24", pose: 1, selectable: false },
+        { article: "D11", name_en: "MUG LOGO", name_th: "โลโก้แก้ว", size: "350ml", pose: 2, selectable: false },
+        { article: "D12", name_en: "MUG INDIVIDUAL", name_th: "แก้วบุคคล", size: "350ml", pose: 4, selectable: true },
+        { article: "Q1", name_en: "Package S", name_th: "แพ็คเกจ S", size: "6x9/4x6", pose: 6, selectable: false },
+        { article: "Q2", name_en: "Package M", name_th: "แพ็คเกจ M", size: "mix", pose: 11, selectable: false }
     ];
     
     let currentLang = 'en';
     let currentOrder = null;
-    let productAssignments = {};  // key: productKey -> { slotValues: [], userSelectable, productRef, poseCount }
+    let assignments = {};
     
-    const translations = {
-        en: {
-            enterTitle: "Enter Order Number", enterSub: "Please enter your order number to select photos",
-            loginBtn: "Continue", invalidCode: "Demo: use code 1111", loadOk: "✅ Order loaded!",
-            duplicateWarning: "⚠️ Photo number already used in this product",
-            invalidRange: `Photo number must be ${MIN_PHOTO}–${MAX_PHOTO}`,
-            saved: "✅ Selection confirmed!",
-            set: "Set", clear: "Clear", confirmAll: "✅ Confirm All",
-            back: "← Back", totalFilled: "filled", groupAuto: "Group photo (auto)",
-            notSelectable: "Auto-assigned", photoLabel: "Photo"
-        },
-        th: {
-            enterTitle: "กรุณากรอกหมายเลขคำสั่งซื้อ", enterSub: "กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ",
-            loginBtn: "ดำเนินการต่อ", invalidCode: "ทดสอบ: ใช้รหัส 1111", loadOk: "✅ โหลดออเดอร์เรียบร้อย!",
-            duplicateWarning: "⚠️ หมายเลขรูปนี้ถูกใช้ในสินค้านี้แล้ว",
-            invalidRange: `หมายเลขรูปต้องอยู่ระหว่าง ${MIN_PHOTO}–${MAX_PHOTO}`,
-            saved: "✅ บันทึกการเลือกแล้ว!",
-            set: "ตั้งค่า", clear: "ล้าง", confirmAll: "✅ ยืนยันทั้งหมด",
-            back: "← กลับ", totalFilled: "รูปที่เลือก", groupAuto: "รูปกลุ่ม (อัตโนมัติ)",
-            notSelectable: "ไม่ต้องเลือก", photoLabel: "รูปที่"
-        }
+    const trans = {
+        en: { enter: "Enter Order Number", sub: "Please enter order number", btn: "Continue", invalid: "Use code 1111", ok: "✓ Order loaded", dup: "⚠️ Photo already used", range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Confirmed", set: "Set", clear: "Clear", confirm: "✓ Confirm All", back: "← Back", filled: "filled", auto: "auto", photo: "Photo" },
+        th: { enter: "กรอกหมายเลขคำสั่งซื้อ", sub: "กรุณากรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", ok: "✓ โหลดสำเร็จ", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ บันทึกแล้ว", set: "ตั้ง", clear: "ล้าง", confirm: "✓ ยืนยันทั้งหมด", back: "← กลับ", filled: "รูป", auto: "อัตโนมัติ", photo: "รูป" }
     };
     
-    function t(key) { return translations[currentLang][key] || translations.en[key]; }
+    function t(key) { return trans[currentLang][key] || trans.en[key]; }
     
-    function showToast(msg) {
-        const toast = document.getElementById('toastMsg');
-        toast.textContent = msg;
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2600);
+    function toast(msg) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 2300);
     }
     
-    function isValidPhoto(num) {
-        return !isNaN(num) && num >= MIN_PHOTO && num <= MAX_PHOTO;
-    }
+    function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO; }
     
-    function isPhotoUsedInProduct(productKey, photoNum, excludeSlotIndex = -1) {
-        const assign = productAssignments[productKey];
-        if (!assign) return false;
-        for (let i = 0; i < assign.slotValues.length; i++) {
-            if (i !== excludeSlotIndex && assign.slotValues[i] === photoNum) return true;
+    function isUsedInProduct(prodKey, num, excludeIdx = -1) {
+        const a = assignments[prodKey];
+        if (!a) return false;
+        for (let i = 0; i < a.values.length; i++) {
+            if (i !== excludeIdx && a.values[i] === num) return true;
         }
         return false;
     }
     
-    function setPhotoSlot(productKey, slotIndex, photoNum) {
-        const assign = productAssignments[productKey];
-        if (!assign || !assign.userSelectable) return false;
-        if (!isValidPhoto(photoNum)) {
-            showToast(t('invalidRange'));
-            return false;
-        }
-        if (isPhotoUsedInProduct(productKey, photoNum, slotIndex)) {
-            showToast(t('duplicateWarning'));
-            return false;
-        }
-        assign.slotValues[slotIndex] = photoNum;
-        renderOrderInterface();
+    function setSlot(prodKey, idx, val) {
+        const a = assignments[prodKey];
+        if (!a || !a.selectable) return false;
+        if (!isValid(val)) { toast(t('range')); return false; }
+        if (isUsedInProduct(prodKey, val, idx)) { toast(t('dup')); return false; }
+        a.values[idx] = val;
+        render();
         return true;
     }
     
-    function clearSlot(productKey, slotIndex) {
-        const assign = productAssignments[productKey];
-        if (assign && assign.userSelectable) {
-            assign.slotValues[slotIndex] = null;
-            renderOrderInterface();
-        }
+    function clearSlot(prodKey, idx) {
+        const a = assignments[prodKey];
+        if (a && a.selectable) { a.values[idx] = null; render(); }
     }
     
-    function loadDemoOrder() {
-        // pick products that include W16 + some random selectable ones
-        let selectableProducts = productCatalog.filter(p => p.userSelectable === true);
-        let forcedProducts = [];
-        const w16 = productCatalog.find(p => p.article === "W16");
-        if (w16) forcedProducts.push(w16);
-        const a12 = productCatalog.find(p => p.article === "A12");
-        if (a12) forcedProducts.push(a12);
-        const c15 = productCatalog.find(p => p.article === "C15");
-        if (c15) forcedProducts.push(c15);
-        const f12 = productCatalog.find(p => p.article === "F12");
-        if (f12) forcedProducts.push(f12);
-        const k11 = productCatalog.find(p => p.article === "K11");
-        if (k11) forcedProducts.push(k11);
+    function loadOrder() {
+        // pick products: include W16, plus few random selectable, plus one non-selectable
+        const w16 = productsDB.find(p => p.article === "W16");
+        const c15 = productsDB.find(p => p.article === "C15");
+        const f12 = productsDB.find(p => p.article === "F12");
+        const b11 = productsDB.find(p => p.article === "B11");
+        const nonSel = productsDB.find(p => p.article === "A11");
         
-        let selected = [...forcedProducts];
-        const remaining = selectableProducts.filter(p => !forcedProducts.some(fp => fp.article === p.article));
-        for (let i = remaining.length - 1; i > 0; i--) {
+        let selected = [w16, c15, f12, b11].filter(Boolean);
+        if (nonSel && !selected.includes(nonSel)) selected.push(nonSel);
+        
+        // add few more random selectable
+        const selectableOnly = productsDB.filter(p => p.selectable === true && !selected.includes(p));
+        for (let i = selectableOnly.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [remaining[i], remaining[j]] = [remaining[j], remaining[i]];
+            [selectableOnly[i], selectableOnly[j]] = [selectableOnly[j], selectableOnly[i]];
         }
-        const extraCount = Math.min(3, remaining.length);
-        selected = [...selected, ...remaining.slice(0, extraCount)];
+        selected = [...selected, ...selectableOnly.slice(0, 2)];
         
-        // also add one non-selectable example
-        const nonSelectExample = productCatalog.find(p => p.article === "A11" || p.article === "W17");
-        if (nonSelectExample && !selected.some(s => s.article === nonSelectExample.article)) {
-            selected.push(nonSelectExample);
-        }
-        
-        currentOrder = { orderNumber: "1111", products: selected };
-        productAssignments = {};
+        currentOrder = { number: "1111", products: selected };
+        assignments = {};
         for (let prod of selected) {
-            const key = `prod_${prod.article}_${Date.now()}_${Math.random()}`;
-            const slotCount = prod.pose > 0 ? prod.pose : 1;
-            productAssignments[key] = {
-                id: key,
+            const key = `p_${prod.article}_${Date.now()}_${Math.random()}`;
+            assignments[key] = {
+                key: key,
                 article: prod.article,
                 nameEn: prod.name_en,
                 nameTh: prod.name_th,
                 size: prod.size,
-                poseCount: slotCount,
-                userSelectable: prod.userSelectable,
-                slotValues: new Array(slotCount).fill(null),
-                productRef: prod
+                pose: prod.pose,
+                selectable: prod.selectable,
+                values: new Array(prod.pose).fill(null)
             };
         }
-        renderOrderInterface();
-        showToast(t('loadOk'));
+        render();
+        toast(t('ok'));
     }
     
-    function renderOrderInterface() {
-        const container = document.getElementById('appContainer');
-        if (!currentOrder) return;
+    // dynamic circle size based on pose count
+    function getCircleSize(poseCount) {
+        if (poseCount <= 2) return 85;
+        if (poseCount <= 4) return 75;
+        if (poseCount <= 8) return 68;
+        if (poseCount <= 16) return 60;
+        return 54;
+    }
+    
+    function render() {
+        const container = document.getElementById('app');
+        if (!currentOrder) {
+            container.innerHTML = `<div class="login-card">
+                <h3>${t('enter')}</h3>
+                <p style="color:#6c757d; font-size:0.85rem;">${t('sub')}</p>
+                <input type="text" id="loginCode" class="order-input" placeholder="1111" value="1111">
+                <button class="btn-primary" id="loginExec">${t('btn')}</button>
+            </div>`;
+            document.getElementById('loginExec')?.addEventListener('click', () => {
+                const code = document.getElementById('loginCode').value.trim();
+                if (code === '1111') loadOrder();
+                else toast(t('invalid'));
+            });
+            return;
+        }
+        
         let totalSlots = 0, totalFilled = 0;
-        for (let a of Object.values(productAssignments)) {
-            totalSlots += a.slotValues.length;
-            totalFilled += a.slotValues.filter(v => v !== null).length;
+        for (let a of Object.values(assignments)) {
+            totalSlots += a.values.length;
+            totalFilled += a.values.filter(v => v !== null).length;
         }
         
         let html = `<div class="order-header">
-            <div class="order-badge">📦 Order: ${currentOrder.orderNumber}</div>
-            <div class="order-badge">🎯 ${totalFilled}/${totalSlots} ${t('totalFilled')}</div>
-            <button class="action-outline" id="backToLoginBtn">${t('back')}</button>
+            <div class="order-badge">📦 ${currentOrder.number}</div>
+            <div class="order-badge">${totalFilled}/${totalSlots} ${t('filled')}</div>
+            <button class="order-badge" id="backBtn" style="background:white; border:1px solid var(--teal); cursor:pointer;">${t('back')}</button>
         </div>`;
         
-        for (let [key, assign] of Object.entries(productAssignments)) {
-            const productName = currentLang === 'en' ? assign.nameEn : assign.nameTh;
-            const selectable = assign.userSelectable;
-            const slotCount = assign.poseCount;
+        for (let [key, asgn] of Object.entries(assignments)) {
+            const poseCount = asgn.pose;
+            const circleSize = getCircleSize(poseCount);
+            const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
+            const selectable = asgn.selectable;
             
             html += `<div class="product-card">
                 <div class="product-header">
-                    <div class="product-info">
-                        <span class="product-sku">${assign.article}</span>
-                        <span class="product-name">${productName || assign.article}</span>
-                        <span class="product-size">📐 ${assign.size}</span>
-                        ${!selectable ? `<span class="badge-locked">🔒 ${t('notSelectable')}</span>` : `<span class="badge-locked" style="background:var(--wf-teal-light);">🖼️ ${slotCount} pose${slotCount > 1 ? 's' : ''}</span>`}
+                    <div>
+                        <span class="product-title">${name || asgn.article}</span>
+                        <span class="product-sku">${asgn.article}</span>
+                        <span class="product-size">${asgn.size}</span>
+                        ${!selectable ? `<span class="badge-auto">🔒 ${t('auto')}</span>` : ''}
                     </div>
-                    <div class="order-badge">${assign.slotValues.filter(v=>v!==null).length}/${slotCount}</div>
+                    <div class="order-badge" style="font-size:0.7rem;">${asgn.values.filter(v=>v!==null).length}/${poseCount}</div>
                 </div>
-                <div class="slots-circle-grid">`;
+                <div class="slots-row">`;
             
-            // круглые колонки (как на картинке)
-            for (let i = 0; i < slotCount; i++) {
-                const currentVal = assign.slotValues[i];
-                const isFilled = currentVal !== null;
-                const circleClass = `circle ${isFilled ? 'filled' : ''} ${!selectable ? 'disabled-circle' : ''}`;
-                const displayValue = currentVal ? currentVal : '?';
+            for (let i = 0; i < poseCount; i++) {
+                const val = asgn.values[i];
+                const isFilled = val !== null;
+                const circleClass = `circle ${isFilled ? 'filled' : ''} ${!selectable ? 'disabled' : ''}`;
+                const displayVal = isFilled ? val : '?';
                 
-                html += `<div class="slot-circle">
-                    <div class="${circleClass}">${isFilled ? displayValue : '?'}</div>
-                    <div class="slot-number">${t('photoLabel')} ${i+1}</div>`;
+                html += `<div class="slot-wrapper" style="width:${circleSize}px;">
+                    <div class="${circleClass}" style="width:${circleSize}px; height:${circleSize}px; font-size:${Math.max(12, circleSize * 0.22)}px;">
+                        ${displayVal}
+                    </div>
+                    <div class="slot-label">${t('photo')} ${i+1}</div>`;
                 
                 if (selectable) {
                     if (isFilled) {
-                        html += `<div class="action-group">
-                            <button class="btn-clear-small" onclick="window.clearSlotHandler('${key}', ${i})">${t('clear')}</button>
-                        </div>`;
+                        html += `<button class="btn-clear" onclick="window.clearSlotAction('${key}', ${i})">${t('clear')}</button>`;
                     } else {
-                        html += `<div class="action-group">
-                            <input type="number" id="input_${key}_${i}" class="slot-input-small" placeholder="${MIN_PHOTO}-${MAX_PHOTO}" min="${MIN_PHOTO}" max="${MAX_PHOTO}">
-                            <button class="btn-set-small" onclick="window.setSlotHandler('${key}', ${i})">${t('set')}</button>
+                        html += `<div class="input-group-mini">
+                            <input type="number" id="inp_${key}_${i}" class="slot-input" placeholder="${MIN_PHOTO}" min="${MIN_PHOTO}" max="${MAX_PHOTO}">
+                            <button class="btn-set" onclick="window.setSlotAction('${key}', ${i})">${t('set')}</button>
                         </div>`;
                     }
-                    html += `<div class="info-note">💡 ${MIN_PHOTO}–${MAX_PHOTO}</div>`;
                 } else {
-                    html += `<div class="info-note">📸 ${t('groupAuto')}</div>`;
+                    html += `<div class="auto-note">📸 ${t('auto')}</div>`;
                 }
                 html += `</div>`;
             }
             html += `</div><div class="product-footer"></div></div>`;
         }
         
-        html += `<div class="global-actions"><button class="btn-primary" id="globalConfirmBtn" style="width:auto; padding:0.7rem 2rem;">${t('confirmAll')}</button></div>`;
+        html += `<div class="global-actions"><button class="btn-primary" id="confirmFinalBtn" style="width:auto; padding:0.5rem 1.5rem;">${t('confirm')}</button></div>`;
         container.innerHTML = html;
         
-        document.getElementById('backToLoginBtn')?.addEventListener('click', () => { currentOrder = null; showLoginScreen(); });
-        document.getElementById('globalConfirmBtn')?.addEventListener('click', confirmAllSelections);
-    }
-    
-    function confirmAllSelections() {
-        let summary = "📸 WHITE FOX STUDIO SELECTION\n━━━━━━━━━━━━━━━━━━━━\n";
-        for (let [key, assign] of Object.entries(productAssignments)) {
-            const name = currentLang === 'en' ? assign.nameEn : assign.nameTh;
-            summary += `\n📌 ${assign.article} — ${name}\n   📐 ${assign.size}  |  ${assign.poseCount} slot(s)\n`;
-            for (let i = 0; i < assign.slotValues.length; i++) {
-                const val = assign.slotValues[i];
-                summary += `      Photo ${i+1}: ${val ? val : '❌ NOT SET'}\n`;
+        document.getElementById('backBtn')?.addEventListener('click', () => { currentOrder = null; render(); });
+        document.getElementById('confirmFinalBtn')?.addEventListener('click', () => {
+            let summary = "WHITE FOX STUDIO\n━━━━━━━━━━━━━━━━\n";
+            for (let [key, a] of Object.entries(assignments)) {
+                const name = currentLang === 'en' ? a.nameEn : a.nameTh;
+                summary += `\n${a.article} — ${name}\n${a.size} | ${a.pose} pose(s)\n`;
+                for (let i = 0; i < a.values.length; i++) {
+                    summary += `  ${t('photo')} ${i+1}: ${a.values[i] || '❌'}\n`;
+                }
             }
-        }
-        alert(summary);
-        showToast(t('saved'));
-    }
-    
-    function showLoginScreen() {
-        const container = document.getElementById('appContainer');
-        container.innerHTML = `<div class="login-card">
-            <h2>${t('enterTitle')}</h2>
-            <p>${t('enterSub')}</p>
-            <input type="text" id="orderLoginInput" class="order-input" placeholder="1111" value="1111">
-            <button class="btn-primary" id="loginExecuteBtn">${t('loginBtn')}</button>
-        </div>`;
-        document.getElementById('loginExecuteBtn')?.addEventListener('click', () => {
-            const code = document.getElementById('orderLoginInput').value.trim();
-            if (code === '1111') loadDemoOrder();
-            else showToast(t('invalidCode'));
+            alert(summary);
+            toast(t('saved'));
         });
-        document.getElementById('orderLoginInput')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('loginExecuteBtn')?.click(); });
     }
     
-    window.setSlotHandler = (productKey, slotIdx) => {
-        const input = document.getElementById(`input_${productKey}_${slotIdx}`);
-        if (input) {
-            const raw = parseInt(input.value);
-            if (!isNaN(raw)) {
-                setPhotoSlot(productKey, slotIdx, raw);
-                input.value = '';
-            } else {
-                showToast(t('invalidRange'));
-            }
+    window.setSlotAction = (prodKey, idx) => {
+        const inp = document.getElementById(`inp_${prodKey}_${idx}`);
+        if (inp) {
+            const raw = parseInt(inp.value);
+            if (!isNaN(raw)) { setSlot(prodKey, idx, raw); inp.value = ''; }
+            else toast(t('range'));
         }
     };
+    window.clearSlotAction = (prodKey, idx) => { clearSlot(prodKey, idx); };
     
-    window.clearSlotHandler = (productKey, slotIdx) => {
-        clearSlot(productKey, slotIdx);
-    };
-    
-    function updateLanguageUI() {
-        const iconSpan = document.getElementById('langIcon');
-        const textSpan = document.getElementById('langText');
-        if (iconSpan) iconSpan.textContent = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
-        if (textSpan) textSpan.textContent = currentLang === 'en' ? 'EN' : 'TH';
-        if (currentOrder) renderOrderInterface();
-        else showLoginScreen();
+    function updateLangUI() {
+        document.getElementById('langIcon').innerText = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
+        document.getElementById('langText').innerText = currentLang === 'en' ? 'EN' : 'TH';
+        if (currentOrder) render();
+        else render();
     }
     
-    document.getElementById('langToggleBtn')?.addEventListener('click', () => {
+    document.getElementById('langBtn')?.addEventListener('click', () => {
         currentLang = currentLang === 'en' ? 'th' : 'en';
-        updateLanguageUI();
+        updateLangUI();
     });
-    document.getElementById('checkOrderMainBtn')?.addEventListener('click', () => {
-        const code = document.getElementById('orderMainInput').value.trim();
-        if (code === '1111') loadDemoOrder();
-        else showToast(t('invalidCode'));
+    document.getElementById('checkBtn')?.addEventListener('click', () => {
+        const code = document.getElementById('orderInput').value.trim();
+        if (code === '1111') loadOrder();
+        else toast(t('invalid'));
     });
-    document.getElementById('orderMainInput')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') document.getElementById('checkOrderMainBtn')?.click();
+    document.getElementById('orderInput')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') document.getElementById('checkBtn')?.click();
     });
     
-    showLoginScreen();
-    updateLanguageUI();
+    render();
+    updateLangUI();
 </script>
 </body>
 </html>
