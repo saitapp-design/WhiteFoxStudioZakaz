@@ -26,7 +26,6 @@
             --red: #dc2626;
             --red-light: #fee2e2;
             --slot-filled: #c8e6df;
-            --gray-bg: #f8fafc;
         }
 
         .header {
@@ -87,7 +86,7 @@
         .search-box input {
             border: none;
             padding: 0 1rem;
-            width: 200px;
+            width: 180px;
             font-size: 0.9rem;
             outline: none;
         }
@@ -206,6 +205,45 @@
             font-weight: 600;
         }
 
+        .filter-bar {
+            background: white;
+            border-radius: 1rem;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #f1f3f5;
+            border: 1px solid var(--border);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--teal);
+            color: white;
+            border-color: var(--teal);
+        }
+
+        .filter-btn:hover:not(.active) {
+            background: var(--teal-light);
+        }
+
         .product-card {
             background: white;
             border-radius: 1rem;
@@ -313,7 +351,7 @@
             gap: 1rem;
             align-items: center;
             justify-content: flex-start;
-            background: var(--gray-bg);
+            background: #f8fafc;
         }
 
         .slot-wrapper {
@@ -337,6 +375,7 @@
             transition: all 0.15s;
             height: 44px;
             padding: 0 0.6rem;
+            min-width: 70px;
         }
 
         .oval:hover:not(.disabled) {
@@ -369,6 +408,7 @@
             font-family: monospace;
             height: 44px;
             padding: 0 0.6rem;
+            min-width: 70px;
         }
 
         .slot-number {
@@ -430,45 +470,6 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
 
-        .filter-bar {
-            background: white;
-            border-radius: 1rem;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            background: #f1f3f5;
-            border: 1px solid var(--border);
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .filter-btn.active {
-            background: var(--teal);
-            color: white;
-            border-color: var(--teal);
-        }
-
-        .filter-btn:hover:not(.active) {
-            background: var(--teal-light);
-        }
-
         .loading-spinner {
             text-align: center;
             padding: 3rem;
@@ -517,20 +518,6 @@
     const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
     
-    // Full product database with images
-    const fullProductDatabase = [
-        { article: "A11", sku: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", size: "8x12 inch", pose: 1, selectable: false, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-        { article: "A12", sku: "A12", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "12x12 inch", pose: 1, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-        { article: "W11", sku: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "10x10 inch", pose: 1, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-        { article: "W14", sku: "W14", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "8x12 inch", pose: 1, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-        { article: "C11", sku: "C11", name_en: "CANVAS", name_th: "ผ้าใบ", size: "12x18 inch", pose: 1, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-        { article: "C15", sku: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20 inch", pose: 9, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-        { article: "B11", sku: "B11", name_en: "INSTABOOK 16 pages", name_th: "อินสตาบุ๊ค 16 หน้า", size: "5.5x5.5 inch", pose: 16, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-        { article: "B13", sku: "B13", name_en: "ELITE SCHOOL BOOK", name_th: "หนังสือเรียนชั้นสูง", size: "8x12 inch", pose: 20, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-        { article: "K11", sku: "K11", name_en: "WALL CALENDAR", name_th: "ปฏิทินติดผนัง", size: "30x42 cm", pose: 13, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-        { article: "D12", sku: "D12", name_en: "MUG INDIVIDUAL", name_th: "แก้วมัคบุคคล", size: "350 ml", pose: 4, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" }
-    ];
-    
     let supabaseClient = null;
     let productsDB = [];
     let currentLang = 'en';
@@ -538,12 +525,12 @@
     let assignments = {};
     let editingSlot = null;
     let isLoading = true;
-    let filterType = 'all'; // all, selectable, fixed
+    let filterType = 'all';
 
     const trans = {
         en: { 
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
-            ok: "✓ Order loaded", dup: "⚠️ Photo number already used", 
+            ok: "✓ Order loaded", dup: "⚠️ Photo number already used in this product", 
             range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Selection saved", back: "← Back", 
             notSelectable: "Auto (not selectable)", selectable: "Selectable", loading: "Loading products...", 
             error: "Error", viewPhoto: "View photo", size: "Size", pose: "Poses", 
@@ -552,7 +539,7 @@
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
-            ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำในสินค้านี้", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
             saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "อัตโนมัติ (เลือกไม่ได้)", 
             selectable: "เลือกได้", loading: "กำลังโหลดสินค้า...", error: "เกิดข้อผิดพลาด", 
             viewPhoto: "ดูรูป", size: "ขนาด", pose: "จำนวนรูป", all: "สินค้าทั้งหมด", 
@@ -635,22 +622,23 @@
                 .from('product_cards')
                 .select('*');
             
-            if (cardsError || !productCards || productCards.length === 0) {
-                console.log('Using fallback product data');
-                productsDB = [...fullProductDatabase];
-            } else {
+            if (cardsError) {
+                console.warn('Supabase error, using demo data');
+                productsDB = getDemoProducts();
+            } else if (productCards && productCards.length > 0) {
                 productsDB = [];
                 for (const card of productCards) {
                     let pose = 1;
                     let selectable = true;
                     let size = card.size || '';
+                    let imageUrl = card.cover_image || null;
                     
-                    // Parse variants for pose count
                     if (card.variants) {
                         try {
                             const variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
-                            if (variants && variants.length > 0 && variants[0].pose) {
-                                pose = Math.min(parseInt(variants[0].pose), 30);
+                            if (variants && variants.length > 0) {
+                                if (variants[0].pose) pose = Math.min(parseInt(variants[0].pose), 30);
+                                if (variants[0].size_label) size = variants[0].size_label;
                             }
                         } catch(e) {}
                     }
@@ -658,11 +646,11 @@
                     if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 30);
                     if (pose < 1) pose = 1;
                     
-                    const nameEn = card.name_en || (fullProductDatabase.find(p => p.sku === card.sku)?.name_en || 'Product');
-                    const nameTh = card.name_th || (fullProductDatabase.find(p => p.sku === card.sku)?.name_th || 'สินค้า');
+                    const nameEn = card.name_en || 'Product';
+                    const nameTh = card.name_th || 'สินค้า';
                     
-                    if (nameEn?.toLowerCase().includes('group') || nameEn?.toLowerCase().includes('logo') || 
-                        card.mess?.toLowerCase().includes('group')) {
+                    if (nameEn.toLowerCase().includes('group') || nameEn.toLowerCase().includes('logo') || 
+                        (card.mess && card.mess.toLowerCase().includes('group'))) {
                         selectable = false;
                     }
                     
@@ -671,31 +659,43 @@
                         sku: card.sku || card.article,
                         name_en: nameEn,
                         name_th: nameTh,
-                        size: size || (fullProductDatabase.find(p => p.sku === card.sku)?.size || ''),
+                        size: size,
                         pose: pose,
                         selectable: selectable,
-                        image: card.cover_image || (fullProductDatabase.find(p => p.sku === card.sku)?.image || null)
+                        image: imageUrl
                     });
                 }
+            } else {
+                productsDB = getDemoProducts();
             }
             
-            if (productsDB.length === 0) productsDB = [...fullProductDatabase];
+            if (productsDB.length === 0) productsDB = getDemoProducts();
             
             isLoading = false;
             toast(`✅ ${productsDB.length} products loaded`);
             
         } catch (error) {
             console.error('Error loading:', error);
-            productsDB = [...fullProductDatabase];
+            productsDB = getDemoProducts();
             isLoading = false;
             toast(`✅ ${productsDB.length} products loaded (offline mode)`);
         }
     }
 
+    function getDemoProducts() {
+        return [
+            { article: "A11", sku: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", size: "8x12 inch", pose: 1, selectable: false, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+            { article: "A12", sku: "A12", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "12x12 inch", pose: 1, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+            { article: "W11", sku: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "10x10 inch", pose: 1, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+            { article: "C15", sku: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20 inch", pose: 9, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+            { article: "B11", sku: "B11", name_en: "INSTABOOK", name_th: "อินสตาบุ๊ค", size: "5.5x5.5 inch", pose: 16, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+            { article: "D12", sku: "D12", name_en: "MUG", name_th: "แก้วมัค", size: "350 ml", pose: 4, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" }
+        ];
+    }
+
     function loadRandomOrder() {
         if (productsDB.length === 0) return;
         
-        // Filter products based on current filter
         let filtered = [...productsDB];
         if (filterType === 'selectable') filtered = filtered.filter(p => p.selectable === true);
         if (filterType === 'fixed') filtered = filtered.filter(p => p.selectable === false);
@@ -773,7 +773,7 @@
     function setFilter(type) {
         filterType = type;
         if (currentOrder) {
-            loadRandomOrder(); // Reload with new filter
+            loadRandomOrder();
         } else {
             render();
         }
