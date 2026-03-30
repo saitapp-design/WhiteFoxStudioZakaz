@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio · Photo Selection System</title>
+    <title>White Fox Studio · Photo Selection</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         * {
@@ -70,7 +70,6 @@
             display: flex;
             align-items: center;
             gap: 0.8rem;
-            flex-wrap: wrap;
         }
 
         .search-box {
@@ -86,7 +85,7 @@
         .search-box input {
             border: none;
             padding: 0 1rem;
-            width: 180px;
+            width: 170px;
             font-size: 0.9rem;
             outline: none;
         }
@@ -99,11 +98,6 @@
             height: 100%;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .search-box button:hover {
-            background: var(--teal-dark);
         }
 
         .lang-toggle {
@@ -118,11 +112,6 @@
             align-items: center;
             gap: 5px;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .lang-toggle:hover {
-            background: var(--teal-light);
         }
 
         .main-content {
@@ -139,7 +128,6 @@
             border-radius: 1.5rem;
             text-align: center;
             border: 1px solid var(--border);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         .order-input {
@@ -151,11 +139,6 @@
             text-align: center;
             font-size: 1rem;
             outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .order-input:focus {
-            border-color: var(--teal);
         }
 
         .btn-primary {
@@ -167,11 +150,6 @@
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            transition: background 0.2s;
-        }
-
-        .btn-primary:hover {
-            background: var(--teal-dark);
         }
 
         .order-header {
@@ -183,8 +161,6 @@
             justify-content: space-between;
             align-items: center;
             border: 1px solid var(--teal);
-            flex-wrap: wrap;
-            gap: 0.5rem;
         }
 
         .order-badge {
@@ -194,54 +170,6 @@
             font-size: 0.8rem;
             font-weight: 600;
             color: var(--teal);
-        }
-
-        .stats-badge {
-            background: var(--teal);
-            color: white;
-            padding: 0.35rem 1rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .filter-bar {
-            background: white;
-            border-radius: 1rem;
-            padding: 0.8rem 1rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            background: #f1f3f5;
-            border: 1px solid var(--border);
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .filter-btn.active {
-            background: var(--teal);
-            color: white;
-            border-color: var(--teal);
-        }
-
-        .filter-btn:hover:not(.active) {
-            background: var(--teal-light);
         }
 
         .product-card {
@@ -254,51 +182,58 @@
         }
 
         .product-card:hover {
-            box-shadow: 0 6px 16px rgba(0,120,131,0.12);
+            box-shadow: 0 4px 12px rgba(0,120,131,0.1);
+        }
+
+        .product-content {
+            padding: 1rem;
         }
 
         .product-header {
-            padding: 1rem 1.2rem;
-            background: linear-gradient(135deg, #fafcfd 0%, #ffffff 100%);
-            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
+            align-items: flex-start;
             gap: 1rem;
+            margin-bottom: 0.8rem;
+            flex-wrap: wrap;
         }
 
         .product-info {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.6rem;
             flex: 1;
         }
 
         .product-sku {
             background: var(--teal-light);
-            padding: 0.3rem 0.8rem;
+            padding: 0.25rem 0.8rem;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: var(--teal);
             font-family: monospace;
+            display: inline-block;
+            margin-bottom: 0.5rem;
         }
 
         .product-title {
             font-weight: 700;
             font-size: 1rem;
             color: var(--teal);
+            margin-bottom: 0.3rem;
+        }
+
+        .product-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
         }
 
         .product-size {
             font-size: 0.7rem;
-            color: #2c3e50;
+            color: #6c757d;
             background: #e9ecef;
             padding: 0.2rem 0.6rem;
             border-radius: 20px;
-            font-weight: 500;
         }
 
         .product-pose {
@@ -317,41 +252,34 @@
             font-size: 0.65rem;
             color: var(--red);
             font-weight: 500;
-        }
-
-        .badge-selectable {
-            background: #e3f2e9;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            color: #2e7d5e;
-            font-weight: 500;
+            display: inline-block;
         }
 
         .product-image {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             object-fit: cover;
             border-radius: 12px;
             border: 1px solid var(--border);
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s;
             background: #f5f5f5;
+            flex-shrink: 0;
         }
 
         .product-image:hover {
             transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .slots-row {
-            padding: 1.2rem;
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid var(--border);
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.8rem;
             align-items: center;
             justify-content: flex-start;
-            background: #f8fafc;
         }
 
         .slot-wrapper {
@@ -373,15 +301,14 @@
             color: #1e2f3a;
             cursor: pointer;
             transition: all 0.15s;
-            height: 44px;
-            padding: 0 0.6rem;
+            height: 42px;
+            padding: 0 0.8rem;
             min-width: 70px;
         }
 
-        .oval:hover:not(.disabled) {
+        .oval:hover {
             border-color: var(--teal-dark);
             background: #f0f9fa;
-            transform: translateY(-2px);
         }
 
         .oval.filled {
@@ -392,9 +319,12 @@
 
         .oval.disabled {
             background: var(--red-light);
-            border-color: #e2a3a3;
+            border-color: var(--red);
             cursor: not-allowed;
-            opacity: 0.7;
+        }
+
+        .oval.disabled:hover {
+            background: var(--red-light);
         }
 
         .oval-input {
@@ -406,13 +336,13 @@
             font-size: 0.85rem;
             outline: none;
             font-family: monospace;
-            height: 44px;
-            padding: 0 0.6rem;
+            height: 42px;
+            padding: 0 0.8rem;
             min-width: 70px;
         }
 
         .slot-number {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             font-weight: 500;
             color: #8b9aab;
         }
@@ -430,7 +360,6 @@
             margin-top: 1.5rem;
             display: flex;
             justify-content: flex-end;
-            gap: 1rem;
         }
 
         .toast {
@@ -440,12 +369,11 @@
             transform: translateX(-50%);
             background: var(--teal);
             color: white;
-            padding: 0.7rem 1.6rem;
+            padding: 0.6rem 1.4rem;
             border-radius: 40px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             z-index: 2000;
             display: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
         .image-modal {
@@ -454,7 +382,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.92);
+            background: rgba(0,0,0,0.9);
             z-index: 3000;
             display: flex;
             align-items: center;
@@ -467,10 +395,9 @@
             max-height: 90vh;
             object-fit: contain;
             border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
 
-        .loading-spinner {
+        .loading {
             text-align: center;
             padding: 3rem;
             color: var(--teal);
@@ -478,13 +405,10 @@
         }
 
         @media (max-width: 700px) {
-            .slots-row { gap: 0.8rem; justify-content: center; }
-            .oval { height: 38px; font-size: 0.7rem; min-width: 55px; }
-            .product-image { width: 48px; height: 48px; }
-            .product-header { padding: 0.8rem; }
-            .product-info { gap: 0.4rem; }
-            .product-title { font-size: 0.85rem; }
-            .filter-bar { flex-direction: column; align-items: stretch; }
+            .slots-row { gap: 0.6rem; }
+            .oval { height: 38px; font-size: 0.75rem; min-width: 60px; padding: 0 0.5rem; }
+            .product-image { width: 55px; height: 55px; }
+            .product-title { font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -525,25 +449,22 @@
     let assignments = {};
     let editingSlot = null;
     let isLoading = true;
-    let filterType = 'all';
 
     const trans = {
         en: { 
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
-            ok: "✓ Order loaded", dup: "⚠️ Photo number already used in this product", 
-            range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Selection saved", back: "← Back", 
-            notSelectable: "Auto (not selectable)", selectable: "Selectable", loading: "Loading products...", 
-            error: "Error", viewPhoto: "View photo", size: "Size", pose: "Poses", 
-            all: "All Products", onlySelectable: "Selectable Only", onlyFixed: "Fixed Only",
-            total: "Total", filled: "Filled"
+            ok: "✓ Order loaded", dup: "⚠️ Photo number already used", 
+            range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            saved: "✓ Selection saved", back: "← Back", notSelectable: "Auto-assigned",
+            loading: "Loading products...", error: "Error", viewPhoto: "View photo", 
+            size: "Size", pose: "Photos", noImage: "No image"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
-            ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำในสินค้านี้", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "อัตโนมัติ (เลือกไม่ได้)", 
-            selectable: "เลือกได้", loading: "กำลังโหลดสินค้า...", error: "เกิดข้อผิดพลาด", 
-            viewPhoto: "ดูรูป", size: "ขนาด", pose: "จำนวนรูป", all: "สินค้าทั้งหมด", 
-            onlySelectable: "แบบเลือกได้", onlyFixed: "แบบกำหนดให้", total: "ทั้งหมด", filled: "กรอกแล้ว"
+            ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "กำหนดอัตโนมัติ",
+            loading: "กำลังโหลดสินค้า...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูป",
+            size: "ขนาด", pose: "จำนวนรูป", noImage: "ไม่มีรูป"
         }
     };
 
@@ -553,7 +474,7 @@
         const el = document.getElementById('toast');
         el.textContent = msg;
         el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 2200);
+        setTimeout(() => el.style.display = 'none', 2000);
     }
 
     function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO && Number.isInteger(n); }
@@ -578,13 +499,13 @@
     }
 
     function getOvalWidth(poseCount) {
-        if (poseCount <= 2) return 100;
-        if (poseCount <= 3) return 92;
-        if (poseCount <= 4) return 86;
-        if (poseCount <= 6) return 80;
-        if (poseCount <= 10) return 74;
-        if (poseCount <= 16) return 68;
-        return 62;
+        if (poseCount <= 2) return 95;
+        if (poseCount <= 3) return 88;
+        if (poseCount <= 4) return 82;
+        if (poseCount <= 6) return 76;
+        if (poseCount <= 10) return 70;
+        if (poseCount <= 16) return 64;
+        return 58;
     }
 
     function getDirectImageUrl(imgUrl) {
@@ -612,36 +533,51 @@
     }
 
     async function loadProductsFromSupabase() {
+        console.log('🚀 Initializing Supabase client...');
+        
         try {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase client initialized successfully');
+            console.log('📡 Supabase URL:', SUPABASE_URL);
+            
             isLoading = true;
             render();
             
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            
+            console.log('📥 Fetching products from product_cards table...');
             const { data: productCards, error: cardsError } = await supabaseClient
                 .from('product_cards')
                 .select('*');
             
             if (cardsError) {
-                console.warn('Supabase error, using demo data');
-                productsDB = getDemoProducts();
-            } else if (productCards && productCards.length > 0) {
+                console.error('❌ Error fetching from Supabase:', cardsError);
+                throw cardsError;
+            }
+            
+            console.log(`✅ Fetched ${productCards?.length || 0} products from Supabase`);
+            
+            if (productCards && productCards.length > 0) {
                 productsDB = [];
+                
                 for (const card of productCards) {
+                    console.log(`📦 Processing product: ${card.sku || card.article} - ${card.name_en}`);
+                    
                     let pose = 1;
                     let selectable = true;
                     let size = card.size || '';
                     let imageUrl = card.cover_image || null;
                     
+                    // Parse variants for pose and size
                     if (card.variants) {
                         try {
                             const variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
                             if (variants && variants.length > 0) {
                                 if (variants[0].pose) pose = Math.min(parseInt(variants[0].pose), 30);
                                 if (variants[0].size_label) size = variants[0].size_label;
+                                if (variants[0].image_url && !imageUrl) imageUrl = variants[0].image_url;
                             }
-                        } catch(e) {}
+                        } catch(e) { console.warn('Parse variants error:', e); }
                     }
+                    
                     if (card.pose) pose = Math.min(parseInt(card.pose), 30);
                     if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 30);
                     if (pose < 1) pose = 1;
@@ -649,7 +585,9 @@
                     const nameEn = card.name_en || 'Product';
                     const nameTh = card.name_th || 'สินค้า';
                     
-                    if (nameEn.toLowerCase().includes('group') || nameEn.toLowerCase().includes('logo') || 
+                    // Determine if product is selectable (group photos are not selectable)
+                    if (nameEn.toLowerCase().includes('group') || 
+                        nameEn.toLowerCase().includes('logo') || 
                         (card.mess && card.mess.toLowerCase().includes('group'))) {
                         selectable = false;
                     }
@@ -664,51 +602,54 @@
                         selectable: selectable,
                         image: imageUrl
                     });
+                    
+                    console.log(`   → SKU: ${card.sku}, Pose: ${pose}, Selectable: ${selectable}, Size: ${size}`);
                 }
             } else {
+                console.warn('⚠️ No products found in Supabase, using demo data');
                 productsDB = getDemoProducts();
             }
             
-            if (productsDB.length === 0) productsDB = getDemoProducts();
+            if (productsDB.length === 0) {
+                productsDB = getDemoProducts();
+            }
+            
+            console.log(`✅ Total products loaded: ${productsDB.length}`);
+            console.log('📊 Product list:', productsDB.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose, selectable: p.selectable })));
             
             isLoading = false;
             toast(`✅ ${productsDB.length} products loaded`);
             
         } catch (error) {
-            console.error('Error loading:', error);
+            console.error('❌ Supabase initialization/loading error:', error);
             productsDB = getDemoProducts();
             isLoading = false;
-            toast(`✅ ${productsDB.length} products loaded (offline mode)`);
+            toast(`⚠️ Using demo data (${productsDB.length} products)`);
         }
     }
 
     function getDemoProducts() {
+        console.log('📦 Using demo product data');
         return [
-            { article: "A11", sku: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", size: "8x12 inch", pose: 1, selectable: false, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-            { article: "A12", sku: "A12", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "12x12 inch", pose: 1, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-            { article: "W11", sku: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "10x10 inch", pose: 1, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-            { article: "C15", sku: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20 inch", pose: 9, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-            { article: "B11", sku: "B11", name_en: "INSTABOOK", name_th: "อินสตาบุ๊ค", size: "5.5x5.5 inch", pose: 16, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
-            { article: "D12", sku: "D12", name_en: "MUG", name_th: "แก้วมัค", size: "350 ml", pose: 4, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" }
+            { article: "DEMO01", sku: "DEMO01", name_en: "Demo Product 1", name_th: "สินค้าตัวอย่าง 1", size: "8x12 inch", pose: 2, selectable: true, image: null },
+            { article: "DEMO02", sku: "DEMO02", name_en: "Demo Product 2", name_th: "สินค้าตัวอย่าง 2", size: "10x10 inch", pose: 1, selectable: true, image: null },
+            { article: "DEMO03", sku: "DEMO03", name_en: "Group Photo", name_th: "ภาพกลุ่ม", size: "12x12 inch", pose: 1, selectable: false, image: null }
         ];
     }
 
     function loadRandomOrder() {
         if (productsDB.length === 0) return;
         
-        let filtered = [...productsDB];
-        if (filterType === 'selectable') filtered = filtered.filter(p => p.selectable === true);
-        if (filterType === 'fixed') filtered = filtered.filter(p => p.selectable === false);
+        console.log('🔄 Loading random order with products...');
         
-        if (filtered.length === 0) filtered = [...productsDB];
-        
-        const shuffled = [...filtered];
+        const shuffled = [...productsDB];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
         
         const selected = shuffled.slice(0, Math.min(8, shuffled.length));
+        console.log(`📋 Selected ${selected.length} products for order`);
         
         currentOrder = { number: "1111", products: selected };
         assignments = {};
@@ -748,7 +689,7 @@
         input.className = 'oval-input';
         input.min = MIN_PHOTO;
         input.max = MAX_PHOTO;
-        input.style.width = `${Math.max(width, 70)}px`;
+        input.style.width = `${width}px`;
         input.style.height = `${height}px`;
         
         ovalDiv.replaceWith(input);
@@ -766,42 +707,27 @@
         };
         
         input.addEventListener('blur', save);
-        input.addEventListener('keypress', (e) => { if (e.key === 'Enter') save(); });
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') save();
+        });
+        
         editingSlot = `${prodKey}_${idx}`;
-    }
-
-    function setFilter(type) {
-        filterType = type;
-        if (currentOrder) {
-            loadRandomOrder();
-        } else {
-            render();
-        }
     }
 
     function render() {
         const container = document.getElementById('app');
         
         if (isLoading) {
-            container.innerHTML = `<div class="login-card"><div class="loading-spinner">⏳ ${t('loading')}</div></div>`;
+            container.innerHTML = `<div class="login-card"><div class="loading">⏳ ${t('loading')}</div></div>`;
             return;
         }
         
         if (!currentOrder) {
-            container.innerHTML = `
-                <div class="filter-bar">
-                    <div class="filter-group">
-                        <button class="filter-btn ${filterType === 'all' ? 'active' : ''}" onclick="setFilter('all')">📦 ${t('all')}</button>
-                        <button class="filter-btn ${filterType === 'selectable' ? 'active' : ''}" onclick="setFilter('selectable')">✅ ${t('onlySelectable')}</button>
-                        <button class="filter-btn ${filterType === 'fixed' ? 'active' : ''}" onclick="setFilter('fixed')">🔒 ${t('onlyFixed')}</button>
-                    </div>
-                </div>
-                <div class="login-card">
-                    <h3>🎓 ${t('enter')}</h3>
-                    <input type="text" id="loginCode" class="order-input" placeholder="1111" value="1111">
-                    <button class="btn-primary" id="loginExec">${t('btn')}</button>
-                </div>
-            `;
+            container.innerHTML = `<div class="login-card">
+                <h3>${t('enter')}</h3>
+                <input type="text" id="loginCode" class="order-input" placeholder="1111" value="1111">
+                <button class="btn-primary" id="loginExec">${t('btn')}</button>
+            </div>`;
             document.getElementById('loginExec')?.addEventListener('click', () => {
                 const code = document.getElementById('loginCode').value.trim();
                 if (code === '1111') loadRandomOrder();
@@ -816,42 +742,36 @@
             totalFilled += a.values.filter(v => v !== null).length;
         }
         
-        let html = `
-            <div class="filter-bar">
-                <div class="filter-group">
-                    <button class="filter-btn ${filterType === 'all' ? 'active' : ''}" onclick="setFilter('all')">📦 ${t('all')}</button>
-                    <button class="filter-btn ${filterType === 'selectable' ? 'active' : ''}" onclick="setFilter('selectable')">✅ ${t('onlySelectable')}</button>
-                    <button class="filter-btn ${filterType === 'fixed' ? 'active' : ''}" onclick="setFilter('fixed')">🔒 ${t('onlyFixed')}</button>
-                </div>
-            </div>
-            <div class="order-header">
-                <div class="order-badge">📦 Order: ${currentOrder.number}</div>
-                <div class="stats-badge">📸 ${t('filled')}: ${totalFilled}/${totalSlots}</div>
-                <button class="order-badge" id="backBtn" style="background:white; cursor:pointer;">${t('back')}</button>
-            </div>
-        `;
+        let html = `<div class="order-header">
+            <div class="order-badge">📦 ${currentOrder.number}</div>
+            <div class="order-badge">${totalFilled}/${totalSlots}</div>
+            <button class="order-badge" id="backBtn" style="background:white; cursor:pointer;">${t('back')}</button>
+        </div>`;
         
         for (let [key, asgn] of Object.entries(assignments)) {
             const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
             const poseCount = asgn.pose;
             const ovalWidth = getOvalWidth(poseCount);
-            const ovalHeight = 44;
+            const ovalHeight = 42;
             const imageUrl = getDirectImageUrl(asgn.image);
             
             html += `<div class="product-card">
-                <div class="product-header">
-                    <div class="product-info">
-                        <span class="product-sku">${asgn.sku || asgn.article}</span>
-                        <span class="product-title">${name || asgn.article}</span>
-                        <span class="product-size">📏 ${t('size')}: ${asgn.size || '—'}</span>
-                        <span class="product-pose">🎞️ ${t('pose')}: ${poseCount}</span>
-                        ${asgn.selectable ? 
-                            '<span class="badge-selectable">✅ ' + t('selectable') + '</span>' : 
-                            '<span class="badge-auto">🔒 ' + t('notSelectable') + '</span>'}
+                <div class="product-content">
+                    <div class="product-header">
+                        <div class="product-info">
+                            <div>
+                                <span class="product-sku">${asgn.sku || asgn.article}</span>
+                            </div>
+                            <div class="product-title">${name || asgn.article}</div>
+                            <div class="product-details">
+                                ${asgn.size ? `<span class="product-size">📏 ${t('size')}: ${asgn.size}</span>` : ''}
+                                <span class="product-pose">📷 ${t('pose')}: ${poseCount}</span>
+                                ${!asgn.selectable ? `<span class="badge-auto">🔒 ${t('notSelectable')}</span>` : ''}
+                            </div>
+                        </div>
+                        ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onerror="this.src='https://placehold.co/70x70?text=No+Image'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:70px; height:70px; background:#f0f0f0; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#999;">No img</div>'}
                     </div>
-                    ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onerror="this.style.opacity='0.5'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:60px;"></div>'}
-                </div>
-                <div class="slots-row">`;
+                    <div class="slots-row">`;
             
             for (let i = 0; i < poseCount; i++) {
                 const val = asgn.values[i];
@@ -861,31 +781,29 @@
                     html += `<div class="slot-wrapper">
                         <div id="oval_${key}_${i}" class="oval ${isFilled ? 'filled' : ''}" 
                              style="width:${ovalWidth}px; height:${ovalHeight}px;"
-                             onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : '📷'}</div>
-                        <span class="slot-number">#${i+1}</span>
+                             onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : '➕'}</div>
+                        <span class="slot-number">${i+1}</span>
                     </div>`;
                 } else {
                     html += `<div class="slot-wrapper">
                         <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;">🔒</div>
-                        <span class="slot-number">#${i+1}</span>
+                        <span class="slot-number">${i+1}</span>
                         <span class="auto-note">${t('notSelectable')}</span>
                     </div>`;
                 }
             }
-            html += `</div></div>`;
+            html += `</div></div></div>`;
         }
         
-        html += `<div class="global-actions">
-            <button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.6rem 1.8rem;">✓ ${t('saved')}</button>
-        </div>`;
+        html += `<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.5rem 1.5rem;">✓ ${t('saved')}</button></div>`;
         container.innerHTML = html;
         
         document.getElementById('backBtn')?.addEventListener('click', () => { currentOrder = null; render(); });
         document.getElementById('confirmBtn')?.addEventListener('click', () => {
-            let summary = "═══════════════════════════\n   WHITE FOX STUDIO\n   PHOTO SELECTION REPORT\n═══════════════════════════\n";
+            let summary = "═══════════════════════════\n   WHITE FOX STUDIO\n   PHOTO SELECTION\n═══════════════════════════\n";
             for (let [key, a] of Object.entries(assignments)) {
                 const name = currentLang === 'en' ? a.nameEn : a.nameTh;
-                summary += `\n📦 ${a.sku || a.article} — ${name}\n📏 Size: ${a.size || '—'}  |  🎞️ Poses: ${a.pose}\n`;
+                summary += `\n📦 ${a.sku || a.article} — ${name}\n📏 ${t('size')}: ${a.size || '—'}  |  📷 ${t('pose')}: ${a.pose}\n`;
                 for (let i = 0; i < a.values.length; i++) {
                     summary += `   ${String(i+1).padStart(2)}: ${a.values[i] || '❌'}\n`;
                 }
@@ -897,7 +815,6 @@
 
     window.handleOvalClick = handleOvalClick;
     window.showImageModal = showImageModal;
-    window.setFilter = setFilter;
 
     function updateLang() {
         const iconSpan = document.getElementById('langIcon');
