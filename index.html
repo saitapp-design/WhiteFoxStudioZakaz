@@ -3,57 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio - Photo Selection</title>
+    <title>White Fox Studio · Photo Selection</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
-        :root {
-            --accent-primary: #007883;
-            --accent-hover: #0a6570;
-            --accent-light: rgba(0, 120, 131, 0.1);
-            --accent-soft: #d9f0f2;
-            --bg-secondary: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #475569;
-            --text-muted: #94a3b8;
-            --border-color: #e2e8f0;
-            --shadow-color: rgba(0, 120, 131, 0.15);
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            --purple: #8b5cf6;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         }
 
         body {
-            background: #f5f7fa;
+            background: #f4f7fc;
             min-height: 100vh;
+        }
+
+        :root {
+            --wf-teal: #007883;
+            --wf-teal-dark: #0a6570;
+            --wf-teal-light: #e0f2f4;
+            --wf-gray-bg: #f8fafc;
+            --wf-border: #e2edf2;
+            --wf-text: #1e2f3a;
+            --wf-text-light: #4b5e6c;
+            --wf-success: #2b8c5e;
+            --wf-warning: #e6a017;
         }
 
         .header {
             position: sticky;
             top: 0;
             z-index: 100;
-            background: var(--bg-secondary);
-            box-shadow: 0 4px 20px var(--shadow-color);
-            border-bottom: 3px solid var(--accent-primary);
+            background: white;
+            box-shadow: 0 6px 18px rgba(0,120,131,0.08);
+            border-bottom: 2px solid var(--wf-teal);
         }
 
         .top-bar {
+            max-width: 1300px;
+            margin: 0 auto;
             padding: 0.8rem 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 1rem;
-            max-width: 1400px;
-            margin: 0 auto;
         }
 
         .logo-area {
@@ -63,21 +57,23 @@
         }
 
         .logo-img {
-            width: 42px;
-            height: 42px;
+            width: 44px;
+            height: 44px;
             object-fit: contain;
         }
 
         .logo-text {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            color: var(--accent-primary);
+            letter-spacing: -0.3px;
+            color: var(--wf-teal);
         }
 
         .right-actions {
             display: flex;
             align-items: center;
             gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .search-box {
@@ -85,174 +81,145 @@
             align-items: center;
             background: white;
             border-radius: 60px;
-            padding: 0.1rem 0.1rem 0.1rem 1.5rem;
-            border: 2px solid var(--accent-primary);
+            border: 2px solid var(--wf-teal);
             height: 48px;
+            overflow: hidden;
+            backdrop-filter: blur(2px);
         }
 
         .search-box input {
-            background: transparent;
             border: none;
-            padding: 0.5rem 0;
-            width: 250px;
-            outline: none;
+            padding: 0 1rem;
+            width: 220px;
             font-size: 1rem;
+            outline: none;
+            background: transparent;
         }
 
         .search-box button {
-            background: var(--accent-primary);
+            background: var(--wf-teal);
             border: none;
             color: white;
-            padding: 0.5rem 2rem;
-            border-radius: 60px;
+            padding: 0 1.4rem;
+            height: 100%;
             font-weight: 600;
             cursor: pointer;
+            transition: 0.2s;
         }
 
         .lang-toggle {
             background: white;
-            border: 2px solid var(--accent-primary);
+            border: 2px solid var(--wf-teal);
             border-radius: 60px;
-            padding: 0.5rem 1.2rem;
-            cursor: pointer;
-            color: var(--accent-primary);
+            padding: 0 1.3rem;
+            height: 48px;
             font-weight: 600;
+            color: var(--wf-teal);
             display: flex;
             align-items: center;
             gap: 8px;
-            height: 48px;
+            cursor: pointer;
         }
 
         .main-content {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
-            min-height: calc(100vh - 120px);
+            padding: 2rem 1.5rem;
+            min-height: 75vh;
         }
 
-        .login-screen {
-            max-width: 500px;
-            margin: 3rem auto;
-            text-align: center;
+        /* login card */
+        .login-card {
             background: white;
-            padding: 3rem;
-            border-radius: 30px;
-            border: 2px solid var(--border-color);
-            box-shadow: 0 10px 30px var(--shadow-color);
-        }
-
-        .login-screen h1 {
-            font-size: 2rem;
-            color: var(--accent-primary);
-            margin-bottom: 1rem;
+            max-width: 480px;
+            margin: 2rem auto;
+            padding: 2.5rem 2rem;
+            border-radius: 2rem;
+            text-align: center;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+            border: 1px solid var(--wf-border);
         }
 
         .order-input {
             width: 100%;
-            padding: 1rem 1.5rem;
+            padding: 1rem 1.2rem;
             font-size: 1.2rem;
-            border: 2px solid var(--border-color);
+            border: 2px solid var(--wf-border);
             border-radius: 60px;
-            outline: none;
+            margin: 1rem 0;
             text-align: center;
-            margin-bottom: 1rem;
+            outline: none;
         }
 
         .btn-primary {
-            width: 100%;
-            padding: 1rem;
-            background: var(--accent-primary);
+            background: var(--wf-teal);
             color: white;
             border: none;
+            padding: 0.9rem 1.5rem;
             border-radius: 60px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
+            width: 100%;
         }
 
+        /* order header */
         .order-header {
             background: white;
-            border-radius: 24px;
-            padding: 1.2rem 1.8rem;
+            border-radius: 2rem;
+            padding: 1rem 2rem;
             margin-bottom: 2rem;
-            border: 2px solid var(--accent-primary);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
+            border: 1px solid var(--wf-teal);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
         }
 
         .order-badge {
-            background: var(--accent-soft);
-            padding: 0.5rem 1.2rem;
+            background: var(--wf-teal-light);
+            padding: 0.4rem 1.2rem;
             border-radius: 40px;
             font-weight: 600;
-            color: var(--accent-primary);
+            color: var(--wf-teal);
         }
 
         .product-card {
             background: white;
-            border-radius: 28px;
-            margin-bottom: 1.8rem;
-            border: 1px solid var(--border-color);
+            border-radius: 1.8rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--wf-border);
             overflow: hidden;
-        }
-
-        .product-card:hover {
-            border-color: var(--accent-primary);
-            box-shadow: 0 8px 25px var(--shadow-color);
+            transition: all 0.2s;
         }
 
         .product-header {
-            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-            padding: 1.2rem 1.5rem;
-            border-bottom: 2px solid var(--accent-soft);
+            background: white;
+            padding: 1.2rem 1.8rem;
+            border-bottom: 2px solid var(--wf-teal-light);
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.8rem;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .product-info {
-            display: flex;
-            align-items: baseline;
-            flex-wrap: wrap;
-            gap: 8px;
         }
 
         .product-sku {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--accent-primary);
             font-family: monospace;
-            background: var(--accent-soft);
-            padding: 0.2rem 0.6rem;
+            background: var(--wf-teal-light);
+            padding: 0.2rem 0.7rem;
             border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--wf-teal);
         }
 
         .product-name {
+            font-weight: 800;
             font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-        }
-
-        .product-size-badge {
-            background: var(--purple);
-            color: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .product-type-badge {
-            background: var(--info);
-            color: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
+            color: var(--wf-teal);
         }
 
         .product-stats {
@@ -260,19 +227,9 @@
         }
 
         .photos-counter {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-        }
-
-        .package-contents {
-            background: #fefce8;
-            padding: 0.8rem 1rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            font-size: 0.8rem;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--wf-teal);
         }
 
         .assignment-grid {
@@ -283,844 +240,523 @@
         }
 
         .slot-card {
-            background: #fafcff;
-            border-radius: 20px;
+            background: #fefefe;
+            border-radius: 1.2rem;
             padding: 1rem;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--wf-border);
+            transition: 0.1s;
         }
 
         .slot-title {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.8rem;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            border-bottom: 1px dashed var(--wf-border);
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .slot-icon {
-            font-size: 1.3rem;
-        }
-
-        .slot-name {
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .size-badge {
-            font-size: 0.7rem;
-            background: var(--purple);
-            color: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-        }
-
-        .slot-badge {
-            font-size: 0.65rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            background: var(--accent-soft);
-            color: var(--accent-primary);
-        }
-
-        .slot-badge.required {
-            background: var(--accent-primary);
-            color: white;
-        }
-
-        .assigned-photo-card {
-            background: var(--accent-soft);
-            border-radius: 16px;
-            padding: 0.6rem 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .photo-number-large {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-        }
-
-        .remove-btn {
-            background: none;
-            border: none;
-            font-size: 1.1rem;
-            cursor: pointer;
-            color: var(--danger);
         }
 
         .photo-input-wrapper {
             display: flex;
-            gap: 0.5rem;
-            align-items: center;
+            gap: 0.6rem;
             flex-wrap: wrap;
+            margin: 0.8rem 0;
         }
 
         .photo-input {
-            padding: 0.5rem 0.8rem;
-            border: 2px solid var(--border-color);
+            width: 85px;
+            padding: 0.5rem;
+            border: 2px solid var(--wf-border);
             border-radius: 40px;
             text-align: center;
-            width: 80px;
+            font-weight: 600;
         }
 
         .action-btn {
-            background: var(--accent-primary);
+            background: var(--wf-teal);
             color: white;
             border: none;
-            padding: 0.4rem 0.8rem;
+            padding: 0.4rem 1rem;
             border-radius: 40px;
-            font-size: 0.7rem;
             font-weight: 600;
             cursor: pointer;
+            font-size: 0.75rem;
         }
 
-        .interior-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.8rem;
-            max-height: 180px;
-            overflow-y: auto;
+        .action-btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--wf-teal);
+            color: var(--wf-teal);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.75rem;
         }
 
         .photo-tag {
-            background: var(--accent-soft);
-            padding: 0.3rem 0.7rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: flex;
+            background: var(--wf-teal-light);
+            display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 8px;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
         }
 
         .photo-tag button {
             background: none;
             border: none;
-            cursor: pointer;
-            color: var(--danger);
             font-weight: bold;
-        }
-
-        .status-message {
-            margin-top: 0.5rem;
-            font-size: 0.7rem;
-            padding: 0.3rem 0.6rem;
-            border-radius: 20px;
-            display: inline-block;
+            color: #c2410c;
+            cursor: pointer;
+            font-size: 1rem;
         }
 
         .status-warning {
-            background: #fef3c7;
-            color: var(--warning);
+            background: #fff3e0;
+            color: var(--wf-warning);
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            display: inline-block;
         }
 
         .status-success {
-            background: #d1fae5;
-            color: var(--success);
+            background: #e0f2e9;
+            color: var(--wf-success);
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
         }
 
         .product-footer {
-            padding: 1rem 1.5rem 1.5rem;
-            border-top: 1px solid var(--border-color);
+            padding: 1rem 1.8rem 1.5rem;
             display: flex;
             justify-content: flex-end;
-            gap: 0.8rem;
+            gap: 1rem;
+            border-top: 1px solid var(--wf-border);
         }
 
         .global-actions {
             display: flex;
             justify-content: flex-end;
-            gap: 1rem;
+            gap: 1.2rem;
             margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid var(--border-color);
         }
 
-        .toast {
+        .toast-msg {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--accent-primary);
+            background: var(--wf-teal);
             color: white;
-            padding: 0.8rem 1.8rem;
+            padding: 0.7rem 1.8rem;
             border-radius: 60px;
             font-weight: 600;
             z-index: 2000;
             display: none;
+            white-space: nowrap;
         }
 
-        .toast.show {
-            display: block;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translate(-50%, 20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
-        }
-
-        @media (max-width: 768px) {
-            .top-bar { flex-direction: column; padding: 0.8rem 1rem; }
-            .right-actions { width: 100%; flex-direction: column; }
-            .search-box { width: 100%; }
+        @media (max-width: 700px) {
+            .top-bar { flex-direction: column; align-items: stretch; }
             .assignment-grid { grid-template-columns: 1fr; }
-            .main-content { padding: 1rem; }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="top-bar">
-            <div class="logo-area">
-                <img class="logo-img" src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="White Fox Studio">
-                <span class="logo-text">WHITE FOX STUDIO</span>
-            </div>
-            <div class="right-actions">
-                <div class="search-box">
-                    <input type="text" id="orderNumber" placeholder="Order number (1111)" value="1111">
-                    <button id="checkOrderBtn">OK</button>
-                </div>
-                <button class="lang-toggle" id="langToggle">
-                    <span id="lang-icon">🇬🇧</span>
-                    <span id="lang-text">EN</span>
-                </button>
-            </div>
+<header class="header">
+    <div class="top-bar">
+        <div class="logo-area">
+            <img class="logo-img" src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="White Fox">
+            <span class="logo-text">WHITE FOX STUDIO</span>
         </div>
-    </header>
-
-    <main class="main-content" id="mainContent">
-        <div class="login-screen" id="loginScreen">
-            <h1 id="title">Enter Order Number</h1>
-            <p class="subtitle" id="subtitle">Please enter your order number to select photos</p>
-            <input type="text" id="orderNumberInput" class="order-input" placeholder="Enter order number (1111)" value="1111">
-            <button class="btn-primary" id="loginBtn">Continue</button>
+        <div class="right-actions">
+            <div class="search-box">
+                <input type="text" id="orderNumberInputMain" placeholder="Order number (1111)" value="1111">
+                <button id="checkOrderBtnMain">OK</button>
+            </div>
+            <button class="lang-toggle" id="langToggleMain">
+                <span id="langIconMain">🇬🇧</span>
+                <span id="langTextMain">EN</span>
+            </button>
         </div>
-    </main>
+    </div>
+</header>
+<main class="main-content" id="mainAppContainer"></main>
+<div id="globalToast" class="toast-msg"></div>
 
-    <div id="toast" class="toast"></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
-        
-        let supabaseClient = null;
-        let allProducts = [];
-        let currentOrder = null;
-        let photoAssignments = {};
-        let isLoading = true;
-        
-        const MAX_PHOTOS = 31;
-        
-        function validatePhotoNumber(num) {
-            if (isNaN(num) || num < 1 || num > MAX_PHOTOS) {
-                showToast(`Photo number must be between 1 and ${MAX_PHOTOS}`);
-                return false;
-            }
-            return true;
+<script>
+    // ---------- CONSTANTS & GLOBALS ----------
+    const MAX_PHOTOS = 31;
+    let currentLang = 'en';
+    let currentOrderData = null;        // { orderNumber, products[] }
+    let assignments = {};               // key: productKey -> { cover, back, interior[], packageSlots: {} }
+    
+    // product list (simulated from the architecture of original table)
+    // based on the provided image/description: we recreate similar structure but keep clean & flexible
+    // We'll create a rich catalog that mirrors "A11, W16, Q1, etc" + packages
+    const productCatalog = [
+        { id: "A11", sku: "A11", name_en: "Acrylic Photo class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", pose: 1, type: "single", size: "8x12" },
+        { id: "A12", sku: "A12", name_en: "Acrylic Photo", name_th: "ภาพถ่ายอะคริลิค", pose: 1, type: "single", size: "12x12" },
+        { id: "A14", sku: "A14", name_en: "Acrylic Photo class + individual logo", name_th: "คลาสเรียนถ่ายภาพอะคริลิค + โลโก้ส่วนตัว", pose: 2, type: "double", size: "12x12" },
+        { id: "W16", sku: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", pose: 3, type: "multi", size: "12x18" },
+        { id: "W11", sku: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", pose: 1, type: "single", size: "10x10" },
+        { id: "C15", sku: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", pose: 9, type: "multi", size: "20x20" },
+        { id: "B13", sku: "B13", name_en: "ELITE SCHOOL BOOK 20 pages", name_th: "หนังสือเรียนชั้นสูง 20 หน้า", pose: 20, type: "book", size: "8x12" },
+        { id: "K11", sku: "K11", name_en: "WALL CALENDAR 13 pages", name_th: "ปฏิทินติดผนัง 13 หน้า", pose: 13, type: "calendar", size: "30x42cm" },
+        { id: "Q1", sku: "Q1", name_en: "Package S (Class Serious + Logo + Individual)", name_th: "แพ็คเกจ S คลาสซีเรียส + โลโก้ + รายบุคคล", pose: 6, type: "package", isPackage: true, packageContents: [
+            { label_en: "Class Serious + Logo", label_th: "คลาสซีเรียส + โลโก้", qty: 1, size: "6x9" },
+            { label_en: "Individual + Logo", label_th: "รายบุคคล + โลโก้", qty: 1, size: "4x6" },
+            { label_en: "Individual", label_th: "รายบุคคล", qty: 4, size: "4x6" }
+        ]},
+        { id: "PKG_M", sku: "Q2", name_en: "Package M (Class + Sabai + Individual)", name_th: "แพ็คเกจ M คลาส + สบาย + รายบุคคล", pose: 11, type: "package", isPackage: true, packageContents: [
+            { label_en: "Class Serious + Logo", label_th: "คลาสซีเรียส + โลโก้", qty: 1 },
+            { label_en: "Class Sabai", label_th: "คลาสสบาย", qty: 1 },
+            { label_en: "Individual + Logo", label_th: "รายบุคคล + โลโก้", qty: 1 },
+            { label_en: "Individual", label_th: "รายบุคคล", qty: 8 }
+        ]},
+        { id: "PKG_L", sku: "Q3", name_en: "Package L (Class + Individual + Sabai)", name_th: "แพ็คเกจ L", pose: 13, type: "package", isPackage: true, packageContents: [
+            { label_en: "Class Serious + Logo", label_th: "คลาสซีเรียส + โลโก้", qty: 1 },
+            { label_en: "Individual + Logo", label_th: "รายบุคคล + โลโก้", qty: 1 },
+            { label_en: "Class Sabai", label_th: "คลาสสบาย", qty: 1 },
+            { label_en: "Individual (6x9)", label_th: "รายบุคคล 6x9", qty: 1 },
+            { label_en: "Individual (4x6)", label_th: "รายบุคคล 4x6", qty: 10 }
+        ]},
+        { id: "S11", sku: "S11", name_en: "SHAKING HEAD ACRYLIC STAND", name_th: "ขาตั้งอะคริลิคหัวสั่น", pose: 1, type: "single", size: "10x10cm" },
+        { id: "E12", sku: "E12", name_en: "NOTEBOOK Hardcover", name_th: "สมุดโน๊ตปกแข็ง", pose: 6, type: "multi", size: "6x8" },
+        { id: "F12", sku: "F12", name_en: "PHOTO COLLAGE IN ALUMINUM FRAME", name_th: "ภาพตัดปะกรอบอลูมิเนียม", pose: 2, type: "double", size: "8x12" }
+    ];
+    
+    // helper translations
+    const trans = {
+        en: {
+            enterTitle: "Enter Order Number", enterSub: "Please enter your order number to select photos",
+            loginBtn: "Continue", invalidCode: "Demo: use code 1111", loadOk: "✅ Order loaded!",
+            duplicate: "⚠️ Photo #{num} already used in this product",
+            allFilled: "✓ All slots filled!", saved: "✅ Selection confirmed!",
+            invalidNum: `Photo number must be 1–${MAX_PHOTOS}`,
+            set: "Set", randomFill: "🎲 Random", reset: "Reset", confirmAll: "✅ Confirm All",
+            back: "← Back", totalPhotos: "total", moreNeeded: "more needed", filled: "Complete!",
+            cover: "Front Cover", backCover: "Back Cover", interior: "Interior Pages",
+            mainPhoto: "Main Photo", size: "Size", optional: "Optional"
+        },
+        th: {
+            enterTitle: "กรุณากรอกหมายเลขคำสั่งซื้อ", enterSub: "กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ",
+            loginBtn: "ดำเนินการต่อ", invalidCode: "ทดสอบ: ใช้รหัส 1111", loadOk: "✅ โหลดออเดอร์เรียบร้อย!",
+            duplicate: "⚠️ รูป #{num} ถูกใช้ในสินค้านี้แล้ว",
+            allFilled: "✓ ครบทุกตำแหน่ง!", saved: "✅ บันทึกการเลือกแล้ว!",
+            invalidNum: `หมายเลขรูปต้องอยู่ระหว่าง 1-${MAX_PHOTOS}`,
+            set: "ตั้งค่า", randomFill: "🎲 สุ่ม", reset: "รีเซ็ต", confirmAll: "✅ ยืนยันทั้งหมด",
+            back: "← กลับ", totalPhotos: "รูปทั้งหมด", moreNeeded: "ต้องเลือกเพิ่ม", filled: "ครบถ้วน!",
+            cover: "ปกหน้า", backCover: "ปกหลัง", interior: "หน้าภายใน",
+            mainPhoto: "รูปหลัก", size: "ขนาด", optional: "ไม่บังคับ"
         }
-        
-        function detectProductType(product) {
-            const pose = Math.min(product.pose || 0, MAX_PHOTOS);
-            
-            if (product.isPackage) {
-                return { type: 'package', hasCover: false, hasBack: false, hasInterior: false, label: '📦 Package' };
-            }
-            
-            if (pose === 1) {
-                return { type: 'single', hasCover: true, hasBack: false, hasInterior: false, label: '📷 Single Photo' };
-            }
-            
-            if (pose === 2) {
-                return { type: 'double', hasCover: true, hasBack: true, hasInterior: false, label: '🖼️ Double Photo' };
-            }
-            
-            return { type: 'multi', hasCover: true, hasBack: true, hasInterior: true, label: '📚 Book / Calendar' };
-        }
-        
-        function getProductSizes(variants) {
-            if (!variants || variants.length === 0) return [];
-            const sizes = new Set();
-            variants.forEach(v => {
-                if (v.size_label) sizes.add(v.size_label);
-            });
-            return Array.from(sizes);
-        }
-        
-        const translations = {
-            en: {
-                title: 'Enter Order Number', subtitle: 'Please enter your order number to select photos',
-                loginBtn: 'Continue', toastError: 'Please enter order number',
-                placeholder: 'Enter order number (1111)', toastOrderLoaded: '✅ Random products loaded!',
-                toastInvalidCode: 'Demo: Use code 1111', toastDuplicate: '⚠️ Photo #{num} already used',
-                toastAllFilled: '✓ All slots filled!', toastConfirm: '✅ Selection saved!',
-                toastInvalidNumber: `Photo number must be between 1 and ${MAX_PHOTOS}`,
-                set: 'Set', randomFill: '🎲 Random', reset: 'Reset',
-                confirmAll: '✅ Confirm All', backToLogin: '← Back', totalPhotos: 'Total',
-                moreNeeded: 'more needed', filled: 'Complete!', packageContents: 'Package Contents:',
-                cover: 'Front Cover', back: 'Back Cover', interior: 'Interior Pages',
-                mainPhoto: 'Main Photo', size: 'Size'
-            },
-            th: {
-                title: 'กรุณากรอกหมายเลขคำสั่งซื้อ', subtitle: 'กรุณากรอกหมายเลขคำสั่งซื้อเพื่อเลือกรูปภาพ',
-                loginBtn: 'ดำเนินการต่อ', toastError: 'กรุณากรอกหมายเลขคำสั่งซื้อ',
-                placeholder: 'กรอกหมายเลขคำสั่งซื้อ (1111)', toastOrderLoaded: '✅ โหลดสินค้าสุ่มเรียบร้อย!',
-                toastInvalidCode: 'ทดสอบ: ใช้รหัส 1111', toastDuplicate: '⚠️ รูป #{num} ถูกใช้แล้ว',
-                toastAllFilled: '✓ ครบทุกตำแหน่งแล้ว!', toastConfirm: '✅ บันทึกการเลือกแล้ว!',
-                toastInvalidNumber: `หมายเลขรูปต้องอยู่ระหว่าง 1 ถึง ${MAX_PHOTOS}`,
-                set: 'ตั้งค่า', randomFill: '🎲 สุ่ม', reset: 'รีเซ็ต',
-                confirmAll: '✅ ยืนยันทั้งหมด', backToLogin: '← กลับ', totalPhotos: 'รูปทั้งหมด',
-                moreNeeded: 'ต้องเลือกเพิ่ม', filled: 'ครบถ้วน!', packageContents: 'ส่วนประกอบแพ็คเกจ:',
-                cover: 'ปกหน้า', back: 'ปกหลัง', interior: 'หน้าภายใน',
-                mainPhoto: 'รูปหลัก', size: 'ขนาด'
-            }
-        };
-        
-        let currentLang = 'en';
-        
-        function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
-        
-        function updateLanguage() {
-            if (document.getElementById('title')) {
-                document.getElementById('title').textContent = translations[currentLang].title;
-                document.getElementById('subtitle').textContent = translations[currentLang].subtitle;
-                document.getElementById('loginBtn').textContent = translations[currentLang].loginBtn;
-                document.getElementById('orderNumberInput').placeholder = translations[currentLang].placeholder;
-            }
-            const icon = document.getElementById('lang-icon'), text = document.getElementById('lang-text');
-            icon.textContent = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
-            text.textContent = currentLang === 'en' ? 'EN' : 'TH';
-            if (currentOrder) renderOrderInterface();
-        }
-        
-        async function initSupabase() {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } });
-            await loadProductsFromSupabase();
-            if (document.getElementById('orderNumberInput')?.value === '1111') {
-                await checkOrder();
-            }
-        }
-        
-        async function loadProductsFromSupabase() {
-            try {
-                showToast('Loading products from database...');
-                const { data: productCards } = await supabaseClient.from('product_cards').select('*');
-                const { data: packages } = await supabaseClient.from('packages_with_price').select('*');
-                
-                allProducts = [];
-                
-                if (productCards) {
-                    productCards.forEach(card => {
-                        let pose = 0;
-                        let variants = [];
-                        
-                        try {
-                            if (card.variants) {
-                                variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
-                                if (variants.length > 0 && variants[0].pose) {
-                                    pose = Math.min(parseInt(variants[0].pose), MAX_PHOTOS);
-                                }
-                            }
-                        } catch(e) {}
-                        
-                        if (!pose && card.pose) pose = Math.min(parseInt(card.pose), MAX_PHOTOS);
-                        if (!pose && card.total_photos) pose = Math.min(parseInt(card.total_photos), MAX_PHOTOS);
-                        
-                        if (pose === 0) {
-                            const name = (card.name_en || card.name_th || '').toLowerCase();
-                            if (name.includes('calendar') && name.includes('13')) pose = 13;
-                            else if (name.includes('calendar')) pose = Math.min(12, MAX_PHOTOS);
-                            else if (name.includes('book') || name.includes('album') || name.includes('notebook')) pose = Math.min(10, MAX_PHOTOS);
-                            else pose = 1;
-                        }
-                        
-                        let cardSku = card.sku;
-                        if (!cardSku && variants.length > 0) {
-                            cardSku = variants[0].sku;
-                        }
-                        if (!cardSku) {
-                            cardSku = card.card_id || `PROD_${Date.now()}`;
-                        }
-                        
-                        allProducts.push({
-                            id: card.card_id || `card_${cardSku}`,
-                            sku: cardSku,
-                            name_en: card.name_en,
-                            name_th: card.name_th,
-                            pose: pose,
-                            isPackage: false,
-                            variants: variants
-                        });
-                    });
-                }
-                
-                if (packages) {
-                    packages.forEach(pkg => {
-                        let contents = [];
-                        try {
-                            if (pkg.contents) {
-                                contents = typeof pkg.contents === 'string' ? JSON.parse(pkg.contents) : pkg.contents;
-                            }
-                        } catch(e) {}
-                        
-                        let totalPhotos = pkg.total_photos || 0;
-                        if (!totalPhotos && contents.length) {
-                            totalPhotos = contents.reduce((s, i) => s + (i.qty || 1), 0);
-                        }
-                        totalPhotos = Math.min(totalPhotos, MAX_PHOTOS);
-                        if (totalPhotos === 0) totalPhotos = 1;
-                        
-                        allProducts.push({
-                            id: pkg.id || `pkg_${pkg.sku}`,
-                            sku: pkg.sku || pkg.slug || `PKG_${Date.now()}`,
-                            name_en: pkg.name_en,
-                            name_th: pkg.name_th,
-                            pose: totalPhotos,
-                            isPackage: true,
-                            packageContents: contents,
-                            variants: []
-                        });
-                    });
-                }
-                
-                console.log(`✅ Loaded ${allProducts.length} products (max ${MAX_PHOTOS} photos)`);
-                isLoading = false;
-            } catch(e) { 
-                console.error('Error loading products:', e);
-                showToast('Error loading products');
-                isLoading = false;
-            }
-        }
-        
-        async function checkOrder() {
-            if (isLoading) {
-                showToast('Loading products, please wait...');
-                return;
-            }
-            
-            const code = document.getElementById('orderNumberInput')?.value.trim() || document.getElementById('orderNumber')?.value.trim();
-            if (!code) { showToast(translations[currentLang].toastError); return; }
-            if (code === '1111') {
-                await loadRandomOrder();
-                renderOrderInterface();
-                showToast(translations[currentLang].toastOrderLoaded);
-            } else { showToast(translations[currentLang].toastInvalidCode); }
-        }
-        
-        async function loadRandomOrder() {
-            if (allProducts.length === 0) {
-                showToast('No products found in database');
-                return;
-            }
-            
-            const numProducts = Math.min(Math.floor(Math.random() * 3) + 4, allProducts.length);
-            const shuffled = [...allProducts];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            
-            const selectedItems = shuffled.slice(0, numProducts);
-            
-            currentOrder = { number: '1111', items: selectedItems };
-            photoAssignments = {};
-            
-            selectedItems.forEach((item, idx) => {
-                const itemId = `item_${idx}_${(item.sku || Date.now()).replace(/[^a-zA-Z0-9]/g, '_')}`;
-                const productType = detectProductType(item);
-                const maxPose = Math.min(item.pose, MAX_PHOTOS);
-                const sizes = getProductSizes(item.variants);
-                const displaySize = sizes.length > 0 ? sizes[0] : null;
-                
-                if (item.isPackage && item.packageContents && item.packageContents.length > 0) {
-                    const contentSlots = {};
-                    item.packageContents.forEach(content => {
-                        const qty = Math.min(content.qty || 1, maxPose);
-                        const slotKey = `${content.sku || 'photo'}_${content.size || content.name_en || ''}`.replace(/[^a-zA-Z0-9]/g, '_');
-                        contentSlots[slotKey] = {
-                            label: `${content.name_en || content.sku || 'Photo'} ${content.size ? `(${content.size})` : ''}`,
-                            required: qty,
-                            assigned: []
-                        };
-                    });
-                    
-                    photoAssignments[itemId] = {
-                        id: itemId,
-                        sku: item.sku,
-                        name: item.name_en || item.name_th || item.sku,
-                        total: maxPose,
-                        productType: productType,
-                        isPackage: true,
-                        packageContents: item.packageContents,
-                        contentSlots: contentSlots,
-                        variants: item.variants || [],
-                        size: displaySize
-                    };
-                } else {
-                    let displaySku = item.sku;
-                    if (item.variants && item.variants.length > 0 && item.variants[0]?.sku) {
-                        displaySku = item.variants[0].sku;
-                    }
-                    
-                    photoAssignments[itemId] = {
-                        id: itemId,
-                        sku: displaySku,
-                        originalSku: item.sku,
-                        name: item.name_en || item.name_th || item.sku,
-                        total: maxPose,
-                        productType: productType,
-                        isPackage: false,
-                        variants: item.variants || [],
-                        size: displaySize,
-                        cover: null,
-                        back: null,
-                        interior: []
-                    };
-                }
-            });
-        }
-        
-        function isPhotoUsedInProduct(itemId, num) {
-            const a = photoAssignments[itemId];
-            if (!a) return false;
-            if (a.cover === num) return true;
-            if (a.back === num) return true;
-            if (a.interior?.includes(num)) return true;
-            if (a.contentSlots) {
-                for (const slot of Object.values(a.contentSlots)) {
-                    if (slot.assigned?.includes(num)) return true;
-                }
-            }
+    };
+    
+    function t(key) { return trans[currentLang][key] || trans.en[key]; }
+    
+    function showToast(msg) {
+        const toast = document.getElementById('globalToast');
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2600);
+    }
+    
+    function validatePhoto(num) {
+        if (isNaN(num) || num < 1 || num > MAX_PHOTOS) {
+            showToast(t('invalidNum'));
             return false;
         }
-        
-        function setCover(itemId, num) {
-            if (!validatePhotoNumber(num)) return false;
-            const a = photoAssignments[itemId];
-            if (!a || a.isPackage) return false;
-            if (isPhotoUsedInProduct(itemId, num)) {
-                showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
-                return false;
+        return true;
+    }
+    
+    // check if photo used inside same product
+    function isPhotoUsedInProduct(productKey, photoNum) {
+        const a = assignments[productKey];
+        if (!a) return false;
+        if (a.cover === photoNum) return true;
+        if (a.back === photoNum) return true;
+        if (a.interior && a.interior.includes(photoNum)) return true;
+        if (a.packageSlots) {
+            for (let slot of Object.values(a.packageSlots)) {
+                if (slot.assigned && slot.assigned.includes(photoNum)) return true;
             }
-            a.cover = num;
-            renderOrderInterface();
-            return true;
         }
-        
-        function setBack(itemId, num) {
-            if (!validatePhotoNumber(num)) return false;
-            const a = photoAssignments[itemId];
-            if (!a || a.isPackage) return false;
-            if (a.total < 2) {
-                showToast('This product does not have a back cover');
-                return false;
-            }
-            if (isPhotoUsedInProduct(itemId, num)) {
-                showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
-                return false;
-            }
-            a.back = num;
-            renderOrderInterface();
-            return true;
-        }
-        
-        function addInterior(itemId, num) {
-            if (!validatePhotoNumber(num)) return false;
-            const a = photoAssignments[itemId];
-            if (!a || a.isPackage) return false;
-            if (a.total < 3) {
-                showToast('This product does not have interior pages');
-                return false;
-            }
-            if (isPhotoUsedInProduct(itemId, num)) {
-                showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
-                return false;
-            }
-            
-            // Interior capacity = total - 2 (cover and back)
-            const interiorCapacity = a.total - 2;
-            if (a.interior.length >= interiorCapacity) {
-                showToast(translations[currentLang].toastAllFilled);
-                return false;
-            }
-            
-            a.interior.push(num);
-            renderOrderInterface();
-            return true;
-        }
-        
-        function addPackagePhoto(itemId, slotKey, num) {
-            if (!validatePhotoNumber(num)) return false;
-            const a = photoAssignments[itemId];
-            if (!a || !a.contentSlots) return false;
-            const slot = a.contentSlots[slotKey];
-            if (!slot) return false;
-            if (isPhotoUsedInProduct(itemId, num)) {
-                showToast(translations[currentLang].toastDuplicate.replace('{num}', num));
-                return false;
-            }
-            if (slot.assigned.length >= slot.required) {
-                showToast(`All ${slot.required} photos for ${slot.label} are filled`);
-                return false;
-            }
-            slot.assigned.push(num);
-            renderOrderInterface();
-            return true;
-        }
-        
-        function removeCover(itemId) { const a = photoAssignments[itemId]; if (a) a.cover = null; renderOrderInterface(); }
-        function removeBack(itemId) { const a = photoAssignments[itemId]; if (a) a.back = null; renderOrderInterface(); }
-        function removeInterior(itemId, idx) { const a = photoAssignments[itemId]; if (a && a.interior) a.interior.splice(idx, 1); renderOrderInterface(); }
-        function removePackagePhoto(itemId, slotKey, idx) { const a = photoAssignments[itemId]; if (a && a.contentSlots?.[slotKey]) a.contentSlots[slotKey].assigned.splice(idx, 1); renderOrderInterface(); }
-        
-        function randomFillInterior(itemId) {
-            const a = photoAssignments[itemId];
-            if (!a || a.isPackage) return;
-            if (a.total < 3) {
-                showToast('This product does not have interior pages');
-                return;
-            }
-            
-            const used = new Set();
-            if (a.cover) used.add(a.cover);
-            if (a.back) used.add(a.back);
-            a.interior.forEach(n => used.add(n));
-            
-            // Interior capacity = total - 2 (cover and back)
-            const interiorCapacity = a.total - 2;
-            const currentInterior = a.interior.length;
-            const need = interiorCapacity - currentInterior;
-            
-            if (need <= 0) { 
-                showToast(translations[currentLang].toastAllFilled); 
-                return; 
-            }
-            
-            // Generate random numbers from 1 to MAX_PHOTOS (31), excluding used ones
-            const available = [];
-            for (let i = 1; i <= MAX_PHOTOS; i++) {
-                if (!used.has(i)) available.push(i);
-            }
-            
-            // Shuffle available numbers
-            for (let i = available.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [available[i], available[j]] = [available[j], available[i]];
-            }
-            
-            const added = available.slice(0, need);
-            added.forEach(n => a.interior.push(n));
-            renderOrderInterface();
-            showToast(`Added ${added.length} random photos (${need} needed) from 1-${MAX_PHOTOS}`);
-        }
-        
-        function randomFillPackage(itemId) {
-            const a = photoAssignments[itemId];
-            if (!a || !a.contentSlots) return;
-            const used = new Set();
-            for (const slot of Object.values(a.contentSlots)) slot.assigned.forEach(n => used.add(n));
-            
-            // Generate random numbers from 1 to MAX_PHOTOS (31)
-            const available = [];
-            for (let i = 1; i <= MAX_PHOTOS; i++) if (!used.has(i)) available.push(i);
-            for (let i = available.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [available[i], available[j]] = [available[j], available[i]];
-            }
-            
-            let availIdx = 0;
-            for (const [slotKey, slot] of Object.entries(a.contentSlots)) {
-                const need = slot.required - slot.assigned.length;
-                if (need > 0 && availIdx + need <= available.length) {
-                    const toAdd = available.slice(availIdx, availIdx + need);
-                    toAdd.forEach(n => slot.assigned.push(n));
-                    availIdx += need;
+        return false;
+    }
+    
+    // ----- product assignment logic (single, double, multi, package) -----
+    function setCover(productKey, num) {
+        const a = assignments[productKey];
+        if (!a) return false;
+        if (!validatePhoto(num)) return false;
+        if (isPhotoUsedInProduct(productKey, num)) { showToast(t('duplicate').replace('{num}', num)); return false; }
+        a.cover = num;
+        renderOrderUI();
+        return true;
+    }
+    
+    function setBack(productKey, num) {
+        const a = assignments[productKey];
+        if (!a) return false;
+        if (a.totalPhotos === 1) { showToast("No back cover for this item"); return false; }
+        if (!validatePhoto(num)) return false;
+        if (isPhotoUsedInProduct(productKey, num)) { showToast(t('duplicate').replace('{num}', num)); return false; }
+        a.back = num;
+        renderOrderUI();
+        return true;
+    }
+    
+    function addInterior(productKey, num) {
+        const a = assignments[productKey];
+        if (!a) return false;
+        if (a.totalPhotos < 3) { showToast("No interior pages needed"); return false; }
+        if (!validatePhoto(num)) return false;
+        if (isPhotoUsedInProduct(productKey, num)) { showToast(t('duplicate').replace('{num}', num)); return false; }
+        const interiorCapacity = a.totalPhotos - (a.totalPhotos === 2 ? 0 : 2);
+        if (a.interior.length >= interiorCapacity) { showToast(t('allFilled')); return false; }
+        a.interior.push(num);
+        renderOrderUI();
+        return true;
+    }
+    
+    function addPackageSlotPhoto(productKey, slotKey, num) {
+        const a = assignments[productKey];
+        if (!a || !a.packageSlots) return false;
+        const slot = a.packageSlots[slotKey];
+        if (!slot) return false;
+        if (!validatePhoto(num)) return false;
+        if (isPhotoUsedInProduct(productKey, num)) { showToast(t('duplicate').replace('{num}', num)); return false; }
+        if (slot.assigned.length >= slot.required) { showToast(`Slot ${slot.label} full`); return false; }
+        slot.assigned.push(num);
+        renderOrderUI();
+        return true;
+    }
+    
+    function removeItem(productKey, type, idx = null) {
+        const a = assignments[productKey];
+        if (type === 'cover') a.cover = null;
+        if (type === 'back') a.back = null;
+        if (type === 'interior' && idx !== null) a.interior.splice(idx, 1);
+        if (type === 'package' && idx !== null && a.packageSlots) {
+            for (let sk of Object.keys(a.packageSlots)) {
+                if (a.packageSlots[sk].assigned && a.packageSlots[sk].assigned[idx] !== undefined) {
+                    a.packageSlots[sk].assigned.splice(idx, 1);
+                    break;
                 }
             }
-            renderOrderInterface();
-            showToast('Random photos assigned to package slots');
         }
-        
-        function resetProduct(itemId) {
-            const a = photoAssignments[itemId];
-            if (a) {
-                a.cover = null;
-                a.back = null;
-                if (a.interior) a.interior = [];
-                if (a.contentSlots) {
-                    for (const slot of Object.values(a.contentSlots)) slot.assigned = [];
+        renderOrderUI();
+    }
+    
+    function randomFillInterior(productKey) {
+        const a = assignments[productKey];
+        if (!a || a.totalPhotos < 3) return;
+        const used = new Set();
+        if (a.cover) used.add(a.cover);
+        if (a.back) used.add(a.back);
+        a.interior.forEach(n => used.add(n));
+        const capacity = a.totalPhotos - 2;
+        const need = capacity - a.interior.length;
+        if (need <= 0) { showToast(t('allFilled')); return; }
+        let available = [];
+        for (let i = 1; i <= MAX_PHOTOS; i++) if (!used.has(i)) available.push(i);
+        for (let i = available.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [available[i], available[j]] = [available[j], available[i]]; }
+        const added = available.slice(0, need);
+        added.forEach(n => a.interior.push(n));
+        renderOrderUI();
+        showToast(`✨ +${added.length} random photos`);
+    }
+    
+    function randomFillPackage(productKey) {
+        const a = assignments[productKey];
+        if (!a || !a.packageSlots) return;
+        const used = new Set();
+        for (let slot of Object.values(a.packageSlots)) slot.assigned.forEach(n => used.add(n));
+        let available = [];
+        for (let i=1;i<=MAX_PHOTOS;i++) if (!used.has(i)) available.push(i);
+        for (let i = available.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [available[i], available[j]] = [available[j], available[i]]; }
+        let idxAvail = 0;
+        for (let slot of Object.values(a.packageSlots)) {
+            let need = slot.required - slot.assigned.length;
+            if (need > 0 && idxAvail+need <= available.length) {
+                let toAdd = available.slice(idxAvail, idxAvail+need);
+                toAdd.forEach(n => slot.assigned.push(n));
+                idxAvail += need;
+            }
+        }
+        renderOrderUI();
+        showToast('🎲 Random photos assigned to package');
+    }
+    
+    function resetProduct(productKey) {
+        const a = assignments[productKey];
+        if (a) {
+            a.cover = null;
+            a.back = null;
+            a.interior = [];
+            if (a.packageSlots) {
+                for (let slot of Object.values(a.packageSlots)) slot.assigned = [];
+            }
+            renderOrderUI();
+        }
+    }
+    
+    function confirmAllSelections() {
+        let summary = "📸 WHITE FOX SELECTION CONFIRMED\n\n";
+        for (let [key, a] of Object.entries(assignments)) {
+            summary += `📦 ${a.productName} (${a.sku})\n📏 ${a.size ? a.size : '—'}\n📷 Slots: ${a.totalPhotos} total\n`;
+            if (a.packageSlots && Object.keys(a.packageSlots).length) {
+                for (let slot of Object.values(a.packageSlots)) {
+                    summary += `   ▸ ${slot.label}: ${slot.assigned.length}/${slot.required} → [${slot.assigned.join(',') || '—'}]\n`;
+                }
+            } else if (a.totalPhotos === 1) {
+                summary += `   ▸ ${t('mainPhoto')}: ${a.cover || '❌'}\n`;
+            } else if (a.totalPhotos === 2) {
+                summary += `   ▸ ${t('cover')}: ${a.cover || '❌'}   ${t('backCover')}: ${a.back || '❌'}\n`;
+            } else {
+                let interiorCap = a.totalPhotos - 2;
+                summary += `   ▸ ${t('cover')}: ${a.cover || '❌'} | ${t('backCover')}: ${a.back || '❌'}\n   ▸ ${t('interior')} (${a.interior.length}/${interiorCap}): [${a.interior.join(',') || '—'}]\n`;
+            }
+        }
+        alert(summary);
+        showToast(t('saved'));
+    }
+    
+    // load random order from catalog
+    function loadDemoOrder() {
+        const shuffled = [...productCatalog];
+        for (let i=shuffled.length-1;i>0;i--) { const j = Math.floor(Math.random()*(i+1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
+        const selected = shuffled.slice(0, Math.min(5 + Math.floor(Math.random()*3), productCatalog.length));
+        currentOrderData = { orderNumber: "1111", products: selected };
+        assignments = {};
+        for (let prod of selected) {
+            const key = `prod_${prod.id}_${Date.now()}_${Math.random()}`;
+            let total = Math.min(prod.pose, MAX_PHOTOS);
+            let packageSlots = null;
+            if (prod.isPackage && prod.packageContents) {
+                packageSlots = {};
+                for (let cont of prod.packageContents) {
+                    let slotId = `slot_${cont.label_en || cont.label_th}`.replace(/[^a-z0-9]/gi,'_');
+                    let label = currentLang === 'en' ? cont.label_en : cont.label_th;
+                    packageSlots[slotId] = { label: label, required: cont.qty, assigned: [] };
                 }
             }
-            renderOrderInterface();
+            assignments[key] = {
+                productKey: key, sku: prod.sku, productName: (currentLang === 'en' ? prod.name_en : prod.name_th) || prod.name_en,
+                totalPhotos: total, size: prod.size || '—', isPackage: prod.isPackage || false,
+                cover: null, back: null, interior: [], packageSlots: packageSlots,
+                originalProd: prod
+            };
         }
-        
-        function confirmAll() {
-            const t = translations[currentLang];
-            let summary = '📸 PHOTO SELECTION CONFIRMED\n\n';
-            for (const [id, a] of Object.entries(photoAssignments)) {
-                summary += `━━━ ${a.name} (SKU: ${a.sku}) ━━━\n`;
-                if (a.size) summary += `📏 ${t.size}: ${a.size}\n`;
-                summary += `📦 Type: ${a.productType.label}\n`;
-                summary += `📷 Total photos: ${a.total}\n`;
-                
-                if (a.isPackage && a.contentSlots && Object.keys(a.contentSlots).length > 0) {
-                    for (const [key, slot] of Object.entries(a.contentSlots)) {
-                        summary += `📷 ${slot.label}: ${slot.assigned.length}/${slot.required} - [${slot.assigned.join(', ') || 'none'}]\n`;
-                    }
-                } else if (a.total === 1) {
-                    summary += `📷 ${t.mainPhoto}: ${a.cover || '❌ NOT SET'}\n`;
-                } else if (a.total === 2) {
-                    summary += `📘 ${t.cover}: ${a.cover || '❌ NOT SET'}\n`;
-                    summary += `📖 ${t.back}: ${a.back || '❌ NOT SET'}\n`;
-                } else {
-                    summary += `📘 ${t.cover}: ${a.cover || '❌ NOT SET'}\n`;
-                    summary += `📖 ${t.back}: ${a.back || '❌ NOT SET'}\n`;
-                    const interiorCapacity = a.total - 2;
-                    summary += `🖼️ ${t.interior}: ${a.interior.length}/${interiorCapacity} - [${a.interior.join(', ') || 'none'}]\n`;
-                }
-                summary += '\n';
-            }
-            alert(summary);
-            showToast(translations[currentLang].toastConfirm);
+        renderOrderUI();
+    }
+    
+    // render main interface after login
+    function renderOrderUI() {
+        const container = document.getElementById('mainAppContainer');
+        if (!currentOrderData || !assignments) return;
+        let totalFilled = 0, totalSlots = 0;
+        for (let a of Object.values(assignments)) {
+            let filled = 0;
+            if (a.cover) filled++;
+            if (a.back) filled++;
+            if (a.interior) filled += a.interior.length;
+            if (a.packageSlots) for (let s of Object.values(a.packageSlots)) filled += s.assigned.length;
+            totalFilled += filled;
+            totalSlots += a.totalPhotos;
         }
-        
-        function backToLogin() { 
-            currentOrder = null; 
-            document.getElementById('mainContent').innerHTML = `<div class="login-screen"><h1 id="title">${translations[currentLang].title}</h1><p class="subtitle">${translations[currentLang].subtitle}</p><input type="text" id="orderNumberInput" class="order-input" placeholder="${translations[currentLang].placeholder}" value="1111"><button class="btn-primary" id="loginBtn">${translations[currentLang].loginBtn}</button></div>`; 
-            document.getElementById('loginBtn').addEventListener('click', checkOrder); 
-            document.getElementById('orderNumberInput').addEventListener('keypress', e => { if (e.key === 'Enter') checkOrder(); }); 
-        }
-        
-        function renderOrderInterface() {
-            const t = translations[currentLang];
-            let totalSlots = 0, totalFilled = 0;
-            let productsHtml = '';
-            
-            for (const [id, a] of Object.entries(photoAssignments)) {
-                const safeId = id.replace(/[^a-zA-Z0-9]/g, '_');
-                let used = 0;
-                if (a.cover) used++;
-                if (a.back) used++;
-                if (a.interior) used += a.interior.length;
-                if (a.contentSlots) for (const slot of Object.values(a.contentSlots)) used += slot.assigned.length;
-                totalSlots += a.total;
-                totalFilled += used;
-                
-                let packageContentsHtml = '';
-                if (a.isPackage && a.contentSlots && Object.keys(a.contentSlots).length > 0) {
-                    packageContentsHtml = `<div class="package-contents"><span style="font-weight:600;">${t.packageContents}</span> ${Object.values(a.contentSlots).map(s => `${s.label}: ${s.required} photo(s)`).join(' • ')}</div>`;
-                }
-                
-                let variantSelectorHtml = '';
-                if (!a.isPackage && a.variants && a.variants.length > 1) {
-                    variantSelectorHtml = `
-                        <div style="padding: 0 1.5rem 0 1.5rem;">
-                            <select class="variant-selector" id="variant-select-${safeId}" 
-                                style="width:100%; padding:0.5rem; border:2px solid var(--border-color); border-radius:12px; margin-bottom:0.5rem;">
-                                ${a.variants.map((v, idx) => {
-                                    let variantText = '';
-                                    let variantParts = [];
-                                    if (v.size_label) variantParts.push(v.size_label);
-                                    if (v.pose) variantParts.push(v.pose);
-                                    if (v.color) variantParts.push(v.color);
-                                    variantText = variantParts.join(' / ');
-                                    if (!variantText) variantText = v.sku;
-                                    return `<option value="${v.sku}" data-sku="${v.sku}" data-size="${v.size_label || ''}" ${idx === 0 ? 'selected' : ''}>
-                                        ${variantText}
-                                    </option>`;
-                                }).join('')}
-                            </select>
-                        </div>
-                    `;
-                }
-                
-                let slotsHtml = '';
-                if (a.isPackage && a.contentSlots && Object.keys(a.contentSlots).length > 0) {
-                    slotsHtml = `<div class="assignment-grid">`;
-                    for (const [slotKey, slot] of Object.entries(a.contentSlots)) {
-                        const slotSafe = slotKey.replace(/[^a-zA-Z0-9]/g, '_');
-                        slotsHtml += `<div class="slot-card"><div class="slot-title"><span class="slot-icon">🖼️</span><span class="slot-name">${slot.label}</span><span class="size-badge">${slot.required} photo(s)</span></div>
-                            <div class="multiple-inputs">
-                                <div class="photo-input-wrapper"><input type="number" id="pkg-${safeId}-${slotSafe}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="addPackageFromInput('${id}', '${slotKey}')">${t.set}</button><button class="action-btn-outline" style="margin-left:0.3rem;" onclick="randomFillPackage('${id}')">${t.randomFill}</button></div>
-                                <div class="interior-list">${slot.assigned.map((num, idx) => `<div class="photo-tag">#${num}<button onclick="removePackagePhoto('${id}', '${slotKey}', ${idx})">✕</button></div>`).join('')}</div>
-                                ${slot.assigned.length < slot.required ? `<div class="status-message status-warning">⚠️ ${slot.required - slot.assigned.length} ${t.moreNeeded}</div>` : `<div class="status-message status-success">✓ ${t.filled}</div>`}
-                            </div></div>`;
-                    }
-                    slotsHtml += `</div>`;
-                } else if (a.total === 1) {
-                    slotsHtml = `<div class="assignment-grid"><div class="slot-card"><div class="slot-title"><span class="slot-icon">📷</span><span class="slot-name">${t.mainPhoto}</span><span class="slot-badge required">${t.required}</span></div>${a.cover ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.cover}</span><button class="remove-btn" onclick="removeCover('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="setCoverFromInput('${id}')">${t.set}</button></div>`}</div></div>`;
-                } else if (a.total === 2) {
-                    slotsHtml = `<div class="assignment-grid">
-                        <div class="slot-card"><div class="slot-title"><span class="slot-icon">📘</span><span class="slot-name">${t.cover}</span><span class="slot-badge required">${t.required}</span></div>${a.cover ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.cover}</span><button class="remove-btn" onclick="removeCover('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="setCoverFromInput('${id}')">${t.set}</button></div>`}</div>
-                        <div class="slot-card"><div class="slot-title"><span class="slot-icon">📖</span><span class="slot-name">${t.back}</span><span class="slot-badge required">${t.required}</span></div>${a.back ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.back}</span><button class="remove-btn" onclick="removeBack('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="back-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="setBackFromInput('${id}')">${t.set}</button></div>`}</div>
-                    </div>`;
-                } else {
-                    // For 3+ photos: total = cover + back + interior (interior = total - 2)
-                    const interiorCapacity = a.total - 2;
-                    slotsHtml = `<div class="assignment-grid">
-                        <div class="slot-card"><div class="slot-title"><span class="slot-icon">📘</span><span class="slot-name">${t.cover}</span><span class="slot-badge required">${t.required}</span></div>${a.cover ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.cover}</span><button class="remove-btn" onclick="removeCover('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="setCoverFromInput('${id}')">${t.set}</button></div>`}</div>
-                        <div class="slot-card"><div class="slot-title"><span class="slot-icon">📖</span><span class="slot-name">${t.back}</span><span class="slot-badge">${t.optional}</span></div>${a.back ? `<div class="assigned-photo-card"><span class="photo-number-large">#${a.back}</span><button class="remove-btn" onclick="removeBack('${id}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="back-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="setBackFromInput('${id}')">${t.set}</button></div>`}</div>
-                        <div class="slot-card"><div class="slot-title"><span class="slot-icon">🖼️</span><span class="slot-name">${t.interior}</span><span class="slot-badge">${a.interior?.length || 0}/${interiorCapacity}</span></div>
-                            <div class="photo-input-wrapper"><input type="number" id="int-${safeId}" class="photo-input" placeholder="#" min="1" max="${MAX_PHOTOS}"><button class="action-btn" onclick="addInteriorFromInput('${id}')">${t.set}</button><button class="action-btn-outline" onclick="randomFillInterior('${id}')">${t.randomFill}</button></div>
-                            <div class="interior-list">${(a.interior || []).map((num, idx) => `<div class="photo-tag">#${num}<button onclick="removeInterior('${id}', ${idx})">✕</button></div>`).join('')}</div>
-                            ${(a.interior?.length || 0) < interiorCapacity ? `<div class="status-message status-warning">⚠️ ${interiorCapacity - (a.interior?.length || 0)} ${t.moreNeeded}</div>` : `<div class="status-message status-success">✓ ${t.filled}</div>`}
-                        </div>
+        const percent = totalSlots ? Math.round((totalFilled/totalSlots)*100) : 0;
+        let productsHtml = `<div class="order-header"><div class="order-badge">📦 Order: ${currentOrderData.orderNumber}</div><div class="order-badge">🎯 ${totalFilled}/${totalSlots} photos (${percent}%)</div><button class="action-btn-outline" id="backToLoginBtn">${t('back')}</button></div>`;
+        for (let [key, a] of Object.entries(assignments)) {
+            const safeId = key.replace(/[^a-z0-9]/gi,'_');
+            let slotsHtml = '';
+            if (a.isPackage && a.packageSlots) {
+                slotsHtml = `<div class="assignment-grid">`;
+                for (let [slotId, slot] of Object.entries(a.packageSlots)) {
+                    slotsHtml += `<div class="slot-card"><div class="slot-title">📦 ${slot.label} <span style="margin-left:8px;">(${slot.required} photo)</span></div>
+                        <div class="photo-input-wrapper"><input type="number" id="pkg_${safeId}_${slotId}" class="photo-input" min="1" max="${MAX_PHOTOS}" placeholder="#"><button class="action-btn" onclick="window.addPackagePhotoFromUI('${key}','${slotId}')">${t('set')}</button></div>
+                        <div>${slot.assigned.map((num,idx)=>`<div class="photo-tag">#${num}<button onclick="window.removePackageItemUI('${key}','${slotId}',${idx})">✕</button></div>`).join('')}</div>
+                        ${slot.assigned.length < slot.required ? `<div class="status-warning">⚠️ ${slot.required - slot.assigned.length} ${t('moreNeeded')}</div>` : `<div class="status-success">✓ ${t('filled')}</div>`}
                     </div>`;
                 }
-                
-                let sizeHtml = '';
-                if (a.size) {
-                    sizeHtml = `<span class="product-size-badge">📏 ${t.size}: ${a.size}</span>`;
-                }
-                
-                productsHtml += `<div class="product-card">
-                    <div class="product-header">
-                        <div class="product-info">
-                            <span class="product-sku">${escapeHtml(a.sku)}</span>
-                            <span class="product-name">${escapeHtml(a.name)}</span>
-                            ${sizeHtml}
-                            <span class="product-type-badge">${a.productType.label}</span>
-                        </div>
-                        <div class="product-stats">
-                            <div class="photos-counter">${used}/${a.total}</div>
-                            <div class="photos-label">${t.totalPhotos}</div>
-                        </div>
-                    </div>
-                    ${packageContentsHtml}
-                    ${variantSelectorHtml}
-                    ${slotsHtml}
-                    <div class="product-footer">
-                        <button class="action-btn-outline" onclick="resetProduct('${id}')">🔄 ${t.reset}</button>
+                slotsHtml += `<div style="padding:0 1rem 1rem 1rem;"><button class="action-btn-outline" onclick="window.randomFillPackageUI('${key}')">${t('randomFill')}</button></div></div>`;
+            } 
+            else if (a.totalPhotos === 1) {
+                slotsHtml = `<div class="assignment-grid"><div class="slot-card"><div class="slot-title">📷 ${t('mainPhoto')}</div>${a.cover ? `<div class="photo-tag">#${a.cover}<button onclick="window.removeCoverUI('${key}')">✕</button></div>` : `<div class="photo-input-wrapper"><input type="number" id="cover_${safeId}" class="photo-input" placeholder="#"><button class="action-btn" onclick="window.setCoverFromUI('${key}')">${t('set')}</button></div>`}</div></div>`;
+            } 
+            else if (a.totalPhotos === 2) {
+                slotsHtml = `<div class="assignment-grid"><div class="slot-card"><div class="slot-title">📘 ${t('cover')}</div>${a.cover ? `<div class="photo-tag">#${a.cover}<button onclick="window.removeCoverUI('${key}')">✕</button></div>` : `<div><input type="number" id="cover_${safeId}" class="photo-input"><button class="action-btn" onclick="window.setCoverFromUI('${key}')">${t('set')}</button></div>`}</div><div class="slot-card"><div class="slot-title">📖 ${t('backCover')}</div>${a.back ? `<div class="photo-tag">#${a.back}<button onclick="window.removeBackUI('${key}')">✕</button></div>` : `<div><input type="number" id="back_${safeId}" class="photo-input"><button class="action-btn" onclick="window.setBackFromUI('${key}')">${t('set')}</button></div>`}</div></div>`;
+            } 
+            else {
+                const interiorCap = a.totalPhotos - 2;
+                slotsHtml = `<div class="assignment-grid">
+                    <div class="slot-card"><div class="slot-title">📘 ${t('cover')}</div>${a.cover ? `<div class="photo-tag">#${a.cover}<button onclick="window.removeCoverUI('${key}')">✕</button></div>` : `<div><input type="number" id="cover_${safeId}" class="photo-input"><button class="action-btn" onclick="window.setCoverFromUI('${key}')">${t('set')}</button></div>`}</div>
+                    <div class="slot-card"><div class="slot-title">📖 ${t('backCover')}</div>${a.back ? `<div class="photo-tag">#${a.back}<button onclick="window.removeBackUI('${key}')">✕</button></div>` : `<div><input type="number" id="back_${safeId}" class="photo-input"><button class="action-btn" onclick="window.setBackFromUI('${key}')">${t('set')}</button></div>`}</div>
+                    <div class="slot-card"><div class="slot-title">🖼️ ${t('interior')} (${a.interior.length}/${interiorCap})</div>
+                        <div class="photo-input-wrapper"><input type="number" id="int_${safeId}" class="photo-input"><button class="action-btn" onclick="window.addInteriorFromUI('${key}')">${t('set')}</button><button class="action-btn-outline" onclick="window.randomFillInteriorUI('${key}')">${t('randomFill')}</button></div>
+                        <div>${a.interior.map((num,idx)=>`<div class="photo-tag">#${num}<button onclick="window.removeInteriorUI('${key}',${idx})">✕</button></div>`).join('')}</div>
+                        ${a.interior.length < interiorCap ? `<div class="status-warning">⚠️ ${interiorCap - a.interior.length} ${t('moreNeeded')}</div>` : `<div class="status-success">✓ ${t('filled')}</div>`}
                     </div>
                 </div>`;
             }
-            
-            const percent = totalSlots > 0 ? Math.round((totalFilled / totalSlots) * 100) : 0;
-            document.getElementById('mainContent').innerHTML = `<div class="order-header"><div class="order-badge">📦 Order: <strong>${currentOrder.number}</strong></div><div class="order-badge">🎯 ${totalFilled}/${totalSlots} photos (${percent}%)</div><div class="order-badge">🔄 ${Object.keys(photoAssignments).length} products (max ${MAX_PHOTOS} photos)</div><button class="back-btn" id="backBtn">${t.backToLogin}</button></div>${productsHtml}<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width: auto; padding: 0.8rem 2rem;">${t.confirmAll}</button></div>`;
-            document.getElementById('backBtn')?.addEventListener('click', backToLogin);
-            document.getElementById('confirmBtn')?.addEventListener('click', confirmAll);
+            productsHtml += `<div class="product-card"><div class="product-header"><div><span class="product-sku">${a.sku}</span> <span class="product-name">${a.productName}</span> <span class="product-sku" style="background:#e9ecef;">📐 ${a.size}</span></div><div class="photos-counter">${totalFilledPerProduct(a)}/${a.totalPhotos}</div></div>${slotsHtml}<div class="product-footer"><button class="action-btn-outline" onclick="window.resetProductUI('${key}')">🔄 ${t('reset')}</button></div></div>`;
         }
-        
-        function escapeHtml(s) { if (!s) return ''; return String(s).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
-        
-        window.setCoverFromInput = function(id) { const input = document.getElementById(`cover-${id.replace(/[^a-zA-Z0-9]/g, '_')}`); if(input){ const num = parseInt(input.value); if(setCover(id, num)) input.value=''; } };
-        window.setBackFromInput = function(id) { const input = document.getElementById(`back-${id.replace(/[^a-zA-Z0-9]/g, '_')}`); if(input){ const num = parseInt(input.value); if(setBack(id, num)) input.value=''; } };
-        window.addInteriorFromInput = function(id) { const input = document.getElementById(`int-${id.replace(/[^a-zA-Z0-9]/g, '_')}`); if(input){ const num = parseInt(input.value); if(addInterior(id, num)) input.value=''; } };
-        window.addPackageFromInput = function(id, slotKey) { const input = document.getElementById(`pkg-${id.replace(/[^a-zA-Z0-9]/g, '_')}-${slotKey.replace(/[^a-zA-Z0-9]/g, '_')}`); if(input){ const num = parseInt(input.value); if(addPackagePhoto(id, slotKey, num)) input.value=''; } };
-        window.removeCover = removeCover; window.removeBack = removeBack; window.removeInterior = removeInterior; window.removePackagePhoto = removePackagePhoto;
-        window.randomFillInterior = randomFillInterior; window.randomFillPackage = randomFillPackage; window.resetProduct = resetProduct;
-        
-        document.getElementById('langToggle').addEventListener('click', () => { currentLang = currentLang === 'en' ? 'th' : 'en'; updateLanguage(); });
-        document.getElementById('checkOrderBtn').addEventListener('click', checkOrder);
-        document.getElementById('orderNumber').addEventListener('keypress', e => { if (e.key === 'Enter') checkOrder(); });
-        
-        updateLanguage();
-        initSupabase();
-    </script>
+        productsHtml += `<div class="global-actions"><button class="btn-primary" id="globalConfirmBtn" style="width:auto; padding:0.8rem 2rem;">${t('confirmAll')}</button></div>`;
+        container.innerHTML = productsHtml;
+        document.getElementById('backToLoginBtn')?.addEventListener('click', () => { currentOrderData = null; showLoginScreen(); });
+        document.getElementById('globalConfirmBtn')?.addEventListener('click', confirmAllSelections);
+    }
+    
+    function totalFilledPerProduct(a) {
+        let c=0;
+        if(a.cover) c++;
+        if(a.back) c++;
+        if(a.interior) c+=a.interior.length;
+        if(a.packageSlots) for(let s of Object.values(a.packageSlots)) c+=s.assigned.length;
+        return c;
+    }
+    
+    // UI bridge functions
+    window.setCoverFromUI = (key) => { let inp = document.querySelector(`input[id^="cover_${key.replace(/[^a-z0-9]/gi,'_')}"]`); if(inp) setCover(key, parseInt(inp.value)); };
+    window.setBackFromUI = (key) => { let inp = document.querySelector(`input[id^="back_${key.replace(/[^a-z0-9]/gi,'_')}"]`); if(inp) setBack(key, parseInt(inp.value)); };
+    window.addInteriorFromUI = (key) => { let inp = document.querySelector(`input[id^="int_${key.replace(/[^a-z0-9]/gi,'_')}"]`); if(inp) addInterior(key, parseInt(inp.value)); };
+    window.addPackagePhotoFromUI = (key, slotId) => { let inp = document.querySelector(`input[id^="pkg_${key.replace(/[^a-z0-9]/gi,'_')}_${slotId}"]`); if(inp) addPackageSlotPhoto(key, slotId, parseInt(inp.value)); };
+    window.removeCoverUI = (key) => { removeItem(key, 'cover'); };
+    window.removeBackUI = (key) => { removeItem(key, 'back'); };
+    window.removeInteriorUI = (key, idx) => { removeItem(key, 'interior', idx); };
+    window.removePackageItemUI = (key, slotId, idx) => { const a = assignments[key]; if(a?.packageSlots?.[slotId]) a.packageSlots[slotId].assigned.splice(idx,1); renderOrderUI(); };
+    window.randomFillInteriorUI = (key) => { randomFillInterior(key); };
+    window.randomFillPackageUI = (key) => { randomFillPackage(key); };
+    window.resetProductUI = (key) => { resetProduct(key); };
+    
+    function showLoginScreen() {
+        const container = document.getElementById('mainAppContainer');
+        container.innerHTML = `<div class="login-card"><h2>${t('enterTitle')}</h2><p>${t('enterSub')}</p><input type="text" id="orderLoginInput" class="order-input" placeholder="1111" value="1111"><button class="btn-primary" id="loginExecuteBtn">${t('loginBtn')}</button></div>`;
+        document.getElementById('loginExecuteBtn')?.addEventListener('click', () => { let code = document.getElementById('orderLoginInput').value.trim(); if(code === '1111') { loadDemoOrder(); } else { showToast(t('invalidCode')); } });
+        document.getElementById('orderLoginInput')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') document.getElementById('loginExecuteBtn')?.click(); });
+    }
+    
+    function updateGlobalLanguage() {
+        const iconSpan = document.getElementById('langIconMain');
+        const textSpan = document.getElementById('langTextMain');
+        if (iconSpan) iconSpan.textContent = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
+        if (textSpan) textSpan.textContent = currentLang === 'en' ? 'EN' : 'TH';
+        if (currentOrderData) renderOrderUI();
+        else showLoginScreen();
+    }
+    
+    document.getElementById('langToggleMain')?.addEventListener('click', () => { currentLang = currentLang === 'en' ? 'th' : 'en'; updateGlobalLanguage(); });
+    document.getElementById('checkOrderBtnMain')?.addEventListener('click', () => { let code = document.getElementById('orderNumberInputMain').value.trim(); if(code === '1111') { loadDemoOrder(); } else showToast(t('invalidCode')); });
+    document.getElementById('orderNumberInputMain')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') document.getElementById('checkOrderBtnMain')?.click(); });
+    
+    showLoginScreen();
+    updateGlobalLanguage();
+</script>
 </body>
 </html>
