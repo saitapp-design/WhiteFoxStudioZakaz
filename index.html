@@ -230,7 +230,6 @@
             font-weight: 500;
         }
 
-        /* slots row */
         .slots-row {
             padding: 1.2rem;
             display: flex;
@@ -247,7 +246,6 @@
             gap: 0.4rem;
         }
 
-        /* oval shape */
         .oval {
             border-radius: 60px;
             background: #ffffff;
@@ -384,9 +382,9 @@
     
     // Supabase configuration
     const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
     
-    let supabase = null;
+    let supabaseClient = null;
     let productsDB = [];
     let currentLang = 'en';
     let currentOrder = null;
@@ -452,19 +450,19 @@
     async function loadProductsFromSupabase() {
         try {
             isLoading = true;
-            render(); // show loading
+            render();
             
-            supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             
             // Load product cards
-            const { data: productCards, error: cardsError } = await supabase
+            const { data: productCards, error: cardsError } = await supabaseClient
                 .from('product_cards')
                 .select('*');
             
             if (cardsError) throw cardsError;
             
             // Load packages
-            const { data: packages, error: packagesError } = await supabase
+            const { data: packages, error: packagesError } = await supabaseClient
                 .from('packages_with_price')
                 .select('*');
             
@@ -473,7 +471,7 @@
             productsDB = [];
             
             // Process product cards
-            if (productCards) {
+            if (productCards && productCards.length > 0) {
                 for (const card of productCards) {
                     let pose = 0;
                     let selectable = true;
@@ -483,7 +481,7 @@
                     if (card.variants) {
                         try {
                             const variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
-                            if (variants.length > 0) {
+                            if (variants && variants.length > 0) {
                                 pose = variants[0].pose || 1;
                                 mess = variants[0].mess || '';
                             }
@@ -493,20 +491,23 @@
                     if (!pose && card.pose) pose = card.pose;
                     if (!pose && card.total_photos) pose = card.total_photos;
                     if (pose === 0) pose = 1;
+                    pose = Math.min(pose, 31);
                     
                     // Check if product is not selectable (group photos, brand photos, etc.)
                     const messLower = (mess || '').toLowerCase();
+                    const nameEnLower = (card.name_en || '').toLowerCase();
                     if (messLower.includes('group') || messLower.includes('brand') || 
-                        (card.name_en && (card.name_en.toLowerCase().includes('group') || card.name_en.toLowerCase().includes('logo')))) {
+                        nameEnLower.includes('group') || nameEnLower.includes('logo') ||
+                        (card.mess && card.mess.toLowerCase().includes('group'))) {
                         selectable = false;
                     }
                     
                     productsDB.push({
-                        article: card.sku || card.card_id,
-                        name_en: card.name_en || card.sku,
-                        name_th: card.name_th || card.name_en || card.sku,
+                        article: card.sku || card.card_id || `PROD_${Date.now()}`,
+                        name_en: card.name_en || card.sku || 'Product',
+                        name_th: card.name_th || card.name_en || card.sku || 'สินค้า',
                         size: card.size || '',
-                        pose: Math.min(pose, 31),
+                        pose: pose,
                         selectable: selectable,
                         mess: mess
                     });
@@ -514,26 +515,34 @@
             }
             
             // Process packages
-            if (packages) {
+            if (packages && packages.length > 0) {
                 for (const pkg of packages) {
                     let totalPhotos = pkg.total_photos || 1;
                     if (totalPhotos === 0) totalPhotos = 1;
+                    totalPhotos = Math.min(totalPhotos, 31);
                     
                     productsDB.push({
-                        article: pkg.sku || pkg.slug,
-                        name_en: pkg.name_en || pkg.sku,
-                        name_th: pkg.name_th || pkg.name_en || pkg.sku,
+                        article: pkg.sku || pkg.slug || `PKG_${Date.now()}`,
+                        name_en: pkg.name_en || pkg.sku || 'Package',
+                        name_th: pkg.name_th || pkg.name_en || pkg.sku || 'แพ็คเกจ',
                         size: '',
-                        pose: Math.min(totalPhotos, 31),
+                        pose: totalPhotos,
                         selectable: false,
                         mess: 'package'
                     });
                 }
             }
             
-            // Fallback if no data
+            // If still no data, use fallback
             if (productsDB.length === 0) {
-                throw new Error('No data loaded');
+                productsDB = [
+                    { article: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true },
+                    { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียน", size: "8x12", pose: 1, selectable: false, mess: "group" },
+                    { article: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true },
+                    { article: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false, mess: "group brand" },
+                    { article: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะ", size: "8x12", pose: 2, selectable: true },
+                    { article: "B11", name_en: "INSTABOOK", name_th: "อินสตาบุ๊ค", size: "5.5x5.5", pose: 16, selectable: true }
+                ];
             }
             
             isLoading = false;
@@ -543,12 +552,13 @@
             console.error('Error loading products:', error);
             toast(t('error'));
             isLoading = false;
-            // Fallback to demo data
+            // Fallback data
             productsDB = [
                 { article: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true },
                 { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียน", size: "8x12", pose: 1, selectable: false, mess: "group" },
                 { article: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true },
-                { article: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false, mess: "group brand" }
+                { article: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false, mess: "group brand" },
+                { article: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะ", size: "8x12", pose: 2, selectable: true }
             ];
         }
     }
@@ -556,7 +566,6 @@
     function loadRandomOrder() {
         if (productsDB.length === 0) return;
         
-        // Select random products
         const shuffled = [...productsDB];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -725,8 +734,10 @@
     window.handleOvalClick = handleOvalClick;
 
     function updateLang() {
-        document.getElementById('langIcon').innerText = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
-        document.getElementById('langText').innerText = currentLang === 'en' ? 'EN' : 'TH';
+        const iconSpan = document.getElementById('langIcon');
+        const textSpan = document.getElementById('langText');
+        if (iconSpan) iconSpan.innerText = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
+        if (textSpan) textSpan.innerText = currentLang === 'en' ? 'EN' : 'TH';
         if (currentOrder) render();
         else render();
     }
