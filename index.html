@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio · Photo Selection</title>
+    <title>White Fox Studio · Photo Selection System</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         * {
@@ -26,6 +26,7 @@
             --red: #dc2626;
             --red-light: #fee2e2;
             --slot-filled: #c8e6df;
+            --gray-bg: #f8fafc;
         }
 
         .header {
@@ -70,6 +71,7 @@
             display: flex;
             align-items: center;
             gap: 0.8rem;
+            flex-wrap: wrap;
         }
 
         .search-box {
@@ -85,7 +87,7 @@
         .search-box input {
             border: none;
             padding: 0 1rem;
-            width: 170px;
+            width: 200px;
             font-size: 0.9rem;
             outline: none;
         }
@@ -98,6 +100,11 @@
             height: 100%;
             font-weight: 600;
             cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-box button:hover {
+            background: var(--teal-dark);
         }
 
         .lang-toggle {
@@ -112,6 +119,11 @@
             align-items: center;
             gap: 5px;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-toggle:hover {
+            background: var(--teal-light);
         }
 
         .main-content {
@@ -128,6 +140,7 @@
             border-radius: 1.5rem;
             text-align: center;
             border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         .order-input {
@@ -139,6 +152,11 @@
             text-align: center;
             font-size: 1rem;
             outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .order-input:focus {
+            border-color: var(--teal);
         }
 
         .btn-primary {
@@ -150,6 +168,11 @@
             font-weight: 600;
             cursor: pointer;
             width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--teal-dark);
         }
 
         .order-header {
@@ -161,6 +184,8 @@
             justify-content: space-between;
             align-items: center;
             border: 1px solid var(--teal);
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .order-badge {
@@ -172,43 +197,52 @@
             color: var(--teal);
         }
 
+        .stats-badge {
+            background: var(--teal);
+            color: white;
+            padding: 0.35rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
         .product-card {
             background: white;
             border-radius: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             border: 1px solid var(--border);
             overflow: hidden;
             transition: box-shadow 0.2s;
         }
 
         .product-card:hover {
-            box-shadow: 0 4px 12px rgba(0,120,131,0.1);
+            box-shadow: 0 6px 16px rgba(0,120,131,0.12);
         }
 
         .product-header {
-            padding: 0.8rem 1rem;
-            background: #fafcfd;
+            padding: 1rem 1.2rem;
+            background: linear-gradient(135deg, #fafcfd 0%, #ffffff 100%);
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.8rem;
+            gap: 1rem;
         }
 
         .product-info {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.6rem;
             flex: 1;
         }
 
         .product-sku {
             background: var(--teal-light);
-            padding: 0.2rem 0.7rem;
+            padding: 0.3rem 0.8rem;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: var(--teal);
             font-family: monospace;
@@ -216,22 +250,23 @@
 
         .product-title {
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: var(--teal);
         }
 
         .product-size {
             font-size: 0.7rem;
-            color: #6c757d;
+            color: #2c3e50;
             background: #e9ecef;
-            padding: 0.2rem 0.5rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 20px;
+            font-weight: 500;
         }
 
         .product-pose {
             font-size: 0.7rem;
             background: var(--teal-light);
-            padding: 0.2rem 0.5rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 20px;
             color: var(--teal);
             font-weight: 600;
@@ -246,28 +281,39 @@
             font-weight: 500;
         }
 
+        .badge-selectable {
+            background: #e3f2e9;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            color: #2e7d5e;
+            font-weight: 500;
+        }
+
         .product-image {
-            width: 55px;
-            height: 55px;
+            width: 60px;
+            height: 60px;
             object-fit: cover;
             border-radius: 12px;
             border: 1px solid var(--border);
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
             background: #f5f5f5;
         }
 
         .product-image:hover {
             transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .slots-row {
-            padding: 1rem 1.2rem;
+            padding: 1.2rem;
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
             align-items: center;
             justify-content: flex-start;
+            background: var(--gray-bg);
         }
 
         .slot-wrapper {
@@ -289,13 +335,14 @@
             color: #1e2f3a;
             cursor: pointer;
             transition: all 0.15s;
-            height: 42px;
-            padding: 0 0.5rem;
+            height: 44px;
+            padding: 0 0.6rem;
         }
 
-        .oval:hover {
+        .oval:hover:not(.disabled) {
             border-color: var(--teal-dark);
             background: #f0f9fa;
+            transform: translateY(-2px);
         }
 
         .oval.filled {
@@ -306,12 +353,9 @@
 
         .oval.disabled {
             background: var(--red-light);
-            border-color: var(--red);
+            border-color: #e2a3a3;
             cursor: not-allowed;
-        }
-
-        .oval.disabled:hover {
-            background: var(--red-light);
+            opacity: 0.7;
         }
 
         .oval-input {
@@ -323,12 +367,12 @@
             font-size: 0.85rem;
             outline: none;
             font-family: monospace;
-            height: 42px;
-            padding: 0 0.5rem;
+            height: 44px;
+            padding: 0 0.6rem;
         }
 
         .slot-number {
-            font-size: 0.55rem;
+            font-size: 0.6rem;
             font-weight: 500;
             color: #8b9aab;
         }
@@ -343,9 +387,10 @@
         }
 
         .global-actions {
-            margin-top: 1.2rem;
+            margin-top: 1.5rem;
             display: flex;
             justify-content: flex-end;
+            gap: 1rem;
         }
 
         .toast {
@@ -355,11 +400,12 @@
             transform: translateX(-50%);
             background: var(--teal);
             color: white;
-            padding: 0.6rem 1.4rem;
+            padding: 0.7rem 1.6rem;
             border-radius: 40px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             z-index: 2000;
             display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
         .image-modal {
@@ -368,7 +414,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.92);
             z-index: 3000;
             display: flex;
             align-items: center;
@@ -381,12 +427,63 @@
             max-height: 90vh;
             object-fit: contain;
             border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .filter-bar {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #f1f3f5;
+            border: 1px solid var(--border);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--teal);
+            color: white;
+            border-color: var(--teal);
+        }
+
+        .filter-btn:hover:not(.active) {
+            background: var(--teal-light);
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 3rem;
+            color: var(--teal);
+            font-size: 1.1rem;
         }
 
         @media (max-width: 700px) {
             .slots-row { gap: 0.8rem; justify-content: center; }
-            .oval { height: 38px; font-size: 0.75rem; }
-            .product-image { width: 45px; height: 45px; }
+            .oval { height: 38px; font-size: 0.7rem; min-width: 55px; }
+            .product-image { width: 48px; height: 48px; }
+            .product-header { padding: 0.8rem; }
+            .product-info { gap: 0.4rem; }
+            .product-title { font-size: 0.85rem; }
+            .filter-bar { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
@@ -420,40 +517,18 @@
     const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
     
-    // Полная база товаров с SKU, размером, количеством pose и ссылками на фото
+    // Full product database with images
     const fullProductDatabase = [
-        { article: "A11", sku: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", size: "8x12", pose: 1, selectable: false, image: "https://disk.yandex.ru/i/9503hWa62mkPpA" },
-        { article: "A12", sku: "A12", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "12x12", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/JIlYMRAWxVAyqQ" },
-        { article: "A13", sku: "A13", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "5x5", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/GffwiC_zy77j-A" },
-        { article: "A14", sku: "A14", name_en: "ACRYLIC PHOTO class + logo", name_th: "คลาสเรียน+โลโก้ส่วนตัว", size: "12x12", pose: 2, selectable: false, image: "https://disk.yandex.ru/i/PDBHXuBjMUlgMw" },
-        { article: "W11", sku: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "10x10", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/b5x7p_7YAJfKaA" },
-        { article: "W12", sku: "W12", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "12x12", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/xqitJpAldpxCYw" },
-        { article: "W13", sku: "W13", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "16x16", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/Af4Q4ZTnnSw6vQ" },
-        { article: "W14", sku: "W14", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "8x12", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/WL5Omzy4agQU1w" },
-        { article: "W15", sku: "W15", name_en: "FLOAT FRAME individual logo", name_th: "ลอยกรอบโลโก้ส่วนบุคคล", size: "10x15", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/HfakRxWTe-NZLw" },
-        { article: "W16", sku: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true, image: "https://disk.yandex.ru/i/8LC6FtdF6uWnwA" },
-        { article: "W17", sku: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false, image: "https://disk.yandex.ru/i/UKu-E3d7_Xs-AQ" },
-        { article: "C11", sku: "C11", name_en: "CANVAS", name_th: "ผ้าใบ", size: "12x18", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/dA78-MGX92zTyA" },
-        { article: "C12", sku: "C12", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x24", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/kib-8y-EQv2kIQ" },
-        { article: "C13", sku: "C13", name_en: "CANVAS", name_th: "ผ้าใบ", size: "20x30", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/UjCzWiNSTkb15g" },
-        { article: "C14", sku: "C14", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x16", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/YZra9U03Nw_5mQ" },
-        { article: "C15", sku: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true, image: "https://disk.yandex.ru/i/bN0cLSztAzZbFw" },
-        { article: "F11", sku: "F11", name_en: "PHOTO BOX", name_th: "กล่องภาพถ่าย", size: "12x16", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/HFbZcyqCKuAkAg" },
-        { article: "F12", sku: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะกรอบอลูมิเนียม", size: "8x12", pose: 2, selectable: true, image: "https://disk.yandex.ru/i/nfPFhnpS-fdoxw" },
-        { article: "F13", sku: "F13", name_en: "GOLD FRAMES", name_th: "กรอบทอง", size: "6x9", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/nivQ26bamQdtSg" },
-        { article: "F14", sku: "F14", name_en: "GOLD FRAMES", name_th: "กรอบทอง", size: "4x6", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/6pTsqL_i7gV1Lg" },
-        { article: "F15", sku: "F15", name_en: "MAGNET INSTAX 2 psc", name_th: "แม่เหล็กอินสแตกซ์", size: "3x3.5", pose: 2, selectable: true, image: "https://disk.yandex.ru/i/PZN0CHilcNGGYA" },
-        { article: "B11", sku: "B11", name_en: "INSTABOOK 16 pages", name_th: "อินสตาบุ๊ค 16 หน้า", size: "5.5x5.5", pose: 16, selectable: true, image: "https://disk.yandex.ru/i/jmKYL66zOH-mSA" },
-        { article: "B13", sku: "B13", name_en: "ELITE SCHOOL BOOK 20 pages", name_th: "หนังสือเรียนชั้นสูง", size: "8x12", pose: 20, selectable: true, image: "https://disk.yandex.ru/i/trd6O2rV1cuHiA" },
-        { article: "K11", sku: "K11", name_en: "WALL CALENDAR 13 pages", name_th: "ปฏิทินติดผนัง", size: "30x42cm", pose: 13, selectable: true, image: "https://disk.yandex.ru/i/VzIl5BPiYWTa4w" },
-        { article: "K12", sku: "K12", name_en: "WALL CALENDAR poster", name_th: "ปฏิทินโปสเตอร์", size: "24x36", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/VzIl5BPiYWTa4w" },
-        { article: "K13", sku: "K13", name_en: "DESK CALENDAR FLIP WOODEN", name_th: "ปฏิทินตั้งโต๊ะไม้", size: "6x9", pose: 12, selectable: true, image: "https://disk.yandex.ru/i/0Z2LA466jPe98Q" },
-        { article: "K14", sku: "K14", name_en: "DESK CALENDAR FLIP", name_th: "ปฏิทินตั้งโต๊ะพลิก", size: "6x8", pose: 12, selectable: true, image: "https://disk.yandex.ru/i/s-TzMhvDkiZnkA" },
-        { article: "D12", sku: "D12", name_en: "MUG INDIVIDUAL", name_th: "แก้วมัคบุคคล", size: "350 ml", pose: 4, selectable: true, image: "https://disk.yandex.ru/i/p0q7AIjNomnVOw" },
-        { article: "D13", sku: "D13", name_en: "BOTTLE FOR WATER", name_th: "ขวดน้ำ", size: "600 ml", pose: 8, selectable: true, image: "https://disk.yandex.ru/i/Ry8Q04l8zFApNw" },
-        { article: "S11", sku: "S11", name_en: "SHAKING HEAD ACRYLIC STAND", name_th: "ขาตั้งอะคริลิคหัวสั่น", size: "10x10 cm", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/KpV6EogC2hGRLQ" },
-        { article: "E12", sku: "E12", name_en: "NOTEBOOK HARCOVER", name_th: "สมุดโน๊ตปกแข็ง", size: "6x8", pose: 6, selectable: true, image: "https://disk.yandex.ru/d/t35MmyRDNP50Hg" },
-        { article: "X11", sku: "X11", name_en: "POSTER DESIGN", name_th: "โปสเตอร์ดีไซน์", size: "13x20", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/d8S-geQGbJ_PiA" }
+        { article: "A11", sku: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", size: "8x12 inch", pose: 1, selectable: false, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+        { article: "A12", sku: "A12", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "12x12 inch", pose: 1, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+        { article: "W11", sku: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "10x10 inch", pose: 1, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+        { article: "W14", sku: "W14", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "8x12 inch", pose: 1, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+        { article: "C11", sku: "C11", name_en: "CANVAS", name_th: "ผ้าใบ", size: "12x18 inch", pose: 1, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+        { article: "C15", sku: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20 inch", pose: 9, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+        { article: "B11", sku: "B11", name_en: "INSTABOOK 16 pages", name_th: "อินสตาบุ๊ค 16 หน้า", size: "5.5x5.5 inch", pose: 16, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+        { article: "B13", sku: "B13", name_en: "ELITE SCHOOL BOOK", name_th: "หนังสือเรียนชั้นสูง", size: "8x12 inch", pose: 20, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+        { article: "K11", sku: "K11", name_en: "WALL CALENDAR", name_th: "ปฏิทินติดผนัง", size: "30x42 cm", pose: 13, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" },
+        { article: "D12", sku: "D12", name_en: "MUG INDIVIDUAL", name_th: "แก้วมัคบุคคล", size: "350 ml", pose: 4, selectable: true, image: "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" }
     ];
     
     let supabaseClient = null;
@@ -463,19 +538,25 @@
     let assignments = {};
     let editingSlot = null;
     let isLoading = true;
+    let filterType = 'all'; // all, selectable, fixed
 
     const trans = {
         en: { 
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
-            ok: "✓ Loaded", dup: "Photo already used", range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ Confirmed", back: "← Back", notSelectable: "Not selectable",
-            loading: "Loading...", error: "Error", viewPhoto: "View photo", size: "Size", pose: "Poses"
+            ok: "✓ Order loaded", dup: "⚠️ Photo number already used", 
+            range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Selection saved", back: "← Back", 
+            notSelectable: "Auto (not selectable)", selectable: "Selectable", loading: "Loading products...", 
+            error: "Error", viewPhoto: "View photo", size: "Size", pose: "Poses", 
+            all: "All Products", onlySelectable: "Selectable Only", onlyFixed: "Fixed Only",
+            total: "Total", filled: "Filled"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
-            ok: "✓ โหลดแล้ว", dup: "หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "ไม่สามารถเลือกได้",
-            loading: "กำลังโหลด...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูปสินค้า", size: "ขนาด", pose: "จำนวน"
+            ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "อัตโนมัติ (เลือกไม่ได้)", 
+            selectable: "เลือกได้", loading: "กำลังโหลดสินค้า...", error: "เกิดข้อผิดพลาด", 
+            viewPhoto: "ดูรูป", size: "ขนาด", pose: "จำนวนรูป", all: "สินค้าทั้งหมด", 
+            onlySelectable: "แบบเลือกได้", onlyFixed: "แบบกำหนดให้", total: "ทั้งหมด", filled: "กรอกแล้ว"
         }
     };
 
@@ -485,16 +566,16 @@
         const el = document.getElementById('toast');
         el.textContent = msg;
         el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 2000);
+        setTimeout(() => el.style.display = 'none', 2200);
     }
 
-    function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO; }
+    function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO && Number.isInteger(n); }
 
-    function isUsedInProduct(prodKey, num, excludeIdx) {
+    function isUsedInProduct(prodKey, idx, num) {
         const a = assignments[prodKey];
         if (!a) return false;
         for (let i = 0; i < a.values.length; i++) {
-            if (i !== excludeIdx && a.values[i] === num) return true;
+            if (i !== idx && a.values[i] === num) return true;
         }
         return false;
     }
@@ -503,47 +584,41 @@
         const a = assignments[prodKey];
         if (!a || !a.selectable) return false;
         if (!isValid(val)) { toast(t('range')); return false; }
-        if (isUsedInProduct(prodKey, val, idx)) { toast(t('dup')); return false; }
+        if (isUsedInProduct(prodKey, idx, val)) { toast(t('dup')); return false; }
         a.values[idx] = val;
         render();
         return true;
     }
 
     function getOvalWidth(poseCount) {
-        if (poseCount <= 2) return 95;
-        if (poseCount <= 3) return 88;
-        if (poseCount <= 4) return 82;
-        if (poseCount <= 6) return 76;
-        if (poseCount <= 10) return 70;
-        if (poseCount <= 16) return 64;
-        return 58;
+        if (poseCount <= 2) return 100;
+        if (poseCount <= 3) return 92;
+        if (poseCount <= 4) return 86;
+        if (poseCount <= 6) return 80;
+        if (poseCount <= 10) return 74;
+        if (poseCount <= 16) return 68;
+        return 62;
     }
 
-    function getYandexDirectUrl(diskUrl) {
-        if (!diskUrl) return null;
-        if (diskUrl.includes('disk.yandex.ru/i/')) {
-            return diskUrl;
+    function getDirectImageUrl(imgUrl) {
+        if (!imgUrl) return null;
+        if (imgUrl.includes('i.postimg.cc')) return imgUrl;
+        if (imgUrl.includes('disk.yandex.ru')) {
+            if (imgUrl.includes('/i/')) return imgUrl;
+            if (imgUrl.includes('/d/')) return imgUrl.replace('/d/', '/i/');
         }
-        if (diskUrl.includes('disk.yandex.ru/d/')) {
-            return diskUrl.replace('/d/', '/i/');
-        }
-        return diskUrl;
+        return imgUrl;
     }
 
     function showImageModal(imgUrl, productName) {
-        const directUrl = getYandexDirectUrl(imgUrl);
-        if (!directUrl) {
-            toast('No image available');
-            return;
-        }
+        const directUrl = getDirectImageUrl(imgUrl);
+        if (!directUrl) { toast('No image available'); return; }
         const modal = document.createElement('div');
         modal.className = 'image-modal';
         const img = document.createElement('img');
         img.src = directUrl;
         img.alt = productName;
-        img.onerror = () => {
-            modal.innerHTML = '<div style="color:white; text-align:center;">Image not available</div>';
-        };
+        img.onerror = () => { modal.innerHTML = '<div style="color:white; text-align:center; padding:2rem;">❌ Image not available</div>'; };
         modal.appendChild(img);
         modal.onclick = () => modal.remove();
         document.body.appendChild(modal);
@@ -560,72 +635,80 @@
                 .from('product_cards')
                 .select('*');
             
-            if (cardsError) {
-                console.warn('Error loading from Supabase, using fallback data');
+            if (cardsError || !productCards || productCards.length === 0) {
+                console.log('Using fallback product data');
                 productsDB = [...fullProductDatabase];
-            } else if (productCards && productCards.length > 0) {
+            } else {
                 productsDB = [];
                 for (const card of productCards) {
-                    let existingData = fullProductDatabase.find(p => p.article === card.article || p.sku === card.sku);
-                    let pose = existingData ? existingData.pose : 1;
-                    let selectable = existingData ? existingData.selectable : true;
+                    let pose = 1;
+                    let selectable = true;
+                    let size = card.size || '';
                     
+                    // Parse variants for pose count
                     if (card.variants) {
                         try {
                             const variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
                             if (variants && variants.length > 0 && variants[0].pose) {
-                                pose = Math.min(parseInt(variants[0].pose), 31);
+                                pose = Math.min(parseInt(variants[0].pose), 30);
                             }
                         } catch(e) {}
                     }
-                    if (card.pose) pose = Math.min(parseInt(card.pose), 31);
-                    if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 31);
+                    if (card.pose) pose = Math.min(parseInt(card.pose), 30);
+                    if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 30);
                     if (pose < 1) pose = 1;
                     
-                    const nameEn = card.name_en || (existingData ? existingData.name_en : 'Product');
-                    const nameTh = card.name_th || (existingData ? existingData.name_th : 'สินค้า');
-                    const size = card.size || (existingData ? existingData.size : '');
+                    const nameEn = card.name_en || (fullProductDatabase.find(p => p.sku === card.sku)?.name_en || 'Product');
+                    const nameTh = card.name_th || (fullProductDatabase.find(p => p.sku === card.sku)?.name_th || 'สินค้า');
                     
-                    if (nameEn.toLowerCase().includes('group') || nameEn.toLowerCase().includes('logo')) {
+                    if (nameEn?.toLowerCase().includes('group') || nameEn?.toLowerCase().includes('logo') || 
+                        card.mess?.toLowerCase().includes('group')) {
                         selectable = false;
                     }
                     
                     productsDB.push({
-                        article: card.article || card.sku || `PROD_${Date.now()}`,
+                        article: card.article || card.sku,
                         sku: card.sku || card.article,
                         name_en: nameEn,
                         name_th: nameTh,
-                        size: size,
+                        size: size || (fullProductDatabase.find(p => p.sku === card.sku)?.size || ''),
                         pose: pose,
                         selectable: selectable,
-                        image: existingData ? existingData.image : null
+                        image: card.cover_image || (fullProductDatabase.find(p => p.sku === card.sku)?.image || null)
                     });
                 }
-            } else {
-                productsDB = [...fullProductDatabase];
             }
             
+            if (productsDB.length === 0) productsDB = [...fullProductDatabase];
+            
             isLoading = false;
-            toast(`✅ Loaded ${productsDB.length} products`);
+            toast(`✅ ${productsDB.length} products loaded`);
             
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error loading:', error);
             productsDB = [...fullProductDatabase];
             isLoading = false;
-            toast(`✅ Loaded ${productsDB.length} products (fallback)`);
+            toast(`✅ ${productsDB.length} products loaded (offline mode)`);
         }
     }
 
     function loadRandomOrder() {
         if (productsDB.length === 0) return;
         
-        const shuffled = [...productsDB];
+        // Filter products based on current filter
+        let filtered = [...productsDB];
+        if (filterType === 'selectable') filtered = filtered.filter(p => p.selectable === true);
+        if (filterType === 'fixed') filtered = filtered.filter(p => p.selectable === false);
+        
+        if (filtered.length === 0) filtered = [...productsDB];
+        
+        const shuffled = [...filtered];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
         
-        const selected = shuffled.slice(0, Math.min(6, shuffled.length));
+        const selected = shuffled.slice(0, Math.min(8, shuffled.length));
         
         currentOrder = { number: "1111", products: selected };
         assignments = {};
@@ -665,7 +748,7 @@
         input.className = 'oval-input';
         input.min = MIN_PHOTO;
         input.max = MAX_PHOTO;
-        input.style.width = `${width}px`;
+        input.style.width = `${Math.max(width, 70)}px`;
         input.style.height = `${height}px`;
         
         ovalDiv.replaceWith(input);
@@ -683,27 +766,42 @@
         };
         
         input.addEventListener('blur', save);
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') save();
-        });
-        
+        input.addEventListener('keypress', (e) => { if (e.key === 'Enter') save(); });
         editingSlot = `${prodKey}_${idx}`;
+    }
+
+    function setFilter(type) {
+        filterType = type;
+        if (currentOrder) {
+            loadRandomOrder(); // Reload with new filter
+        } else {
+            render();
+        }
     }
 
     function render() {
         const container = document.getElementById('app');
         
         if (isLoading) {
-            container.innerHTML = `<div class="login-card"><div style="text-align:center; padding:1rem;">⏳ ${t('loading')}</div></div>`;
+            container.innerHTML = `<div class="login-card"><div class="loading-spinner">⏳ ${t('loading')}</div></div>`;
             return;
         }
         
         if (!currentOrder) {
-            container.innerHTML = `<div class="login-card">
-                <h3>${t('enter')}</h3>
-                <input type="text" id="loginCode" class="order-input" placeholder="1111" value="1111">
-                <button class="btn-primary" id="loginExec">${t('btn')}</button>
-            </div>`;
+            container.innerHTML = `
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <button class="filter-btn ${filterType === 'all' ? 'active' : ''}" onclick="setFilter('all')">📦 ${t('all')}</button>
+                        <button class="filter-btn ${filterType === 'selectable' ? 'active' : ''}" onclick="setFilter('selectable')">✅ ${t('onlySelectable')}</button>
+                        <button class="filter-btn ${filterType === 'fixed' ? 'active' : ''}" onclick="setFilter('fixed')">🔒 ${t('onlyFixed')}</button>
+                    </div>
+                </div>
+                <div class="login-card">
+                    <h3>🎓 ${t('enter')}</h3>
+                    <input type="text" id="loginCode" class="order-input" placeholder="1111" value="1111">
+                    <button class="btn-primary" id="loginExec">${t('btn')}</button>
+                </div>
+            `;
             document.getElementById('loginExec')?.addEventListener('click', () => {
                 const code = document.getElementById('loginCode').value.trim();
                 if (code === '1111') loadRandomOrder();
@@ -718,18 +816,27 @@
             totalFilled += a.values.filter(v => v !== null).length;
         }
         
-        let html = `<div class="order-header">
-            <div class="order-badge">📦 ${currentOrder.number}</div>
-            <div class="order-badge">${totalFilled}/${totalSlots}</div>
-            <button class="order-badge" id="backBtn" style="background:white; cursor:pointer;">${t('back')}</button>
-        </div>`;
+        let html = `
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <button class="filter-btn ${filterType === 'all' ? 'active' : ''}" onclick="setFilter('all')">📦 ${t('all')}</button>
+                    <button class="filter-btn ${filterType === 'selectable' ? 'active' : ''}" onclick="setFilter('selectable')">✅ ${t('onlySelectable')}</button>
+                    <button class="filter-btn ${filterType === 'fixed' ? 'active' : ''}" onclick="setFilter('fixed')">🔒 ${t('onlyFixed')}</button>
+                </div>
+            </div>
+            <div class="order-header">
+                <div class="order-badge">📦 Order: ${currentOrder.number}</div>
+                <div class="stats-badge">📸 ${t('filled')}: ${totalFilled}/${totalSlots}</div>
+                <button class="order-badge" id="backBtn" style="background:white; cursor:pointer;">${t('back')}</button>
+            </div>
+        `;
         
         for (let [key, asgn] of Object.entries(assignments)) {
             const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
             const poseCount = asgn.pose;
             const ovalWidth = getOvalWidth(poseCount);
-            const ovalHeight = 42;
-            const imageUrl = asgn.image ? getYandexDirectUrl(asgn.image) : null;
+            const ovalHeight = 44;
+            const imageUrl = getDirectImageUrl(asgn.image);
             
             html += `<div class="product-card">
                 <div class="product-header">
@@ -737,48 +844,50 @@
                         <span class="product-sku">${asgn.sku || asgn.article}</span>
                         <span class="product-title">${name || asgn.article}</span>
                         <span class="product-size">📏 ${t('size')}: ${asgn.size || '—'}</span>
-                        <span class="product-pose">📷 ${t('pose')}: ${poseCount}</span>
-                        ${!asgn.selectable ? `<span class="badge-auto">🔴 ${t('notSelectable')}</span>` : ''}
+                        <span class="product-pose">🎞️ ${t('pose')}: ${poseCount}</span>
+                        ${asgn.selectable ? 
+                            '<span class="badge-selectable">✅ ' + t('selectable') + '</span>' : 
+                            '<span class="badge-auto">🔒 ' + t('notSelectable') + '</span>'}
                     </div>
-                    ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onerror="this.style.display='none'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:55px; height:55px;"></div>'}
+                    ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onerror="this.style.opacity='0.5'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:60px;"></div>'}
                 </div>
                 <div class="slots-row">`;
             
             for (let i = 0; i < poseCount; i++) {
                 const val = asgn.values[i];
                 const isFilled = val !== null;
-                const ovalClass = `oval ${isFilled ? 'filled' : ''} ${asgn.selectable ? 'editable' : 'disabled'}`;
-                const displayText = isFilled ? val : '';
                 
                 if (asgn.selectable) {
                     html += `<div class="slot-wrapper">
-                        <div id="oval_${key}_${i}" class="${ovalClass}" 
+                        <div id="oval_${key}_${i}" class="oval ${isFilled ? 'filled' : ''}" 
                              style="width:${ovalWidth}px; height:${ovalHeight}px;"
-                             onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${displayText}</div>
-                        <span class="slot-number">${i+1}</span>
+                             onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : '📷'}</div>
+                        <span class="slot-number">#${i+1}</span>
                     </div>`;
                 } else {
                     html += `<div class="slot-wrapper">
-                        <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;"></div>
-                        <span class="slot-number">${i+1}</span>
-                        <span class="auto-note">🚫 ${t('notSelectable')}</span>
+                        <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;">🔒</div>
+                        <span class="slot-number">#${i+1}</span>
+                        <span class="auto-note">${t('notSelectable')}</span>
                     </div>`;
                 }
             }
             html += `</div></div>`;
         }
         
-        html += `<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.5rem 1.5rem;">✓ ${t('saved')}</button></div>`;
+        html += `<div class="global-actions">
+            <button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.6rem 1.8rem;">✓ ${t('saved')}</button>
+        </div>`;
         container.innerHTML = html;
         
         document.getElementById('backBtn')?.addEventListener('click', () => { currentOrder = null; render(); });
         document.getElementById('confirmBtn')?.addEventListener('click', () => {
-            let summary = "WHITE FOX STUDIO\n━━━━━━━━━━━━\n";
+            let summary = "═══════════════════════════\n   WHITE FOX STUDIO\n   PHOTO SELECTION REPORT\n═══════════════════════════\n";
             for (let [key, a] of Object.entries(assignments)) {
                 const name = currentLang === 'en' ? a.nameEn : a.nameTh;
-                summary += `\n${a.sku || a.article} — ${name}\n📏 Size: ${a.size || '—'}  |  📷 Poses: ${a.pose}\n`;
+                summary += `\n📦 ${a.sku || a.article} — ${name}\n📏 Size: ${a.size || '—'}  |  🎞️ Poses: ${a.pose}\n`;
                 for (let i = 0; i < a.values.length; i++) {
-                    summary += `  ${i+1}: ${a.values[i] || '—'}\n`;
+                    summary += `   ${String(i+1).padStart(2)}: ${a.values[i] || '❌'}\n`;
                 }
             }
             alert(summary);
@@ -788,6 +897,7 @@
 
     window.handleOvalClick = handleOvalClick;
     window.showImageModal = showImageModal;
+    window.setFilter = setFilter;
 
     function updateLang() {
         const iconSpan = document.getElementById('langIcon');
