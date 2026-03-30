@@ -206,7 +206,7 @@
             background: var(--teal-light);
             padding: 0.25rem 0.8rem;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: var(--teal);
             font-family: monospace;
@@ -551,6 +551,7 @@
             render();
             
             // ===================== LOAD FROM product_cards TABLE =====================
+            // IMPORTANT: SKU values like A12, C13, D13, F12 come from the 'sku' column
             console.log('📥 Fetching products from product_cards table...');
             const { data: productCardsData, error: productCardsError } = await supabaseClient
                 .from('product_cards')
@@ -563,6 +564,12 @@
             
             console.log(`✅ Fetched ${productCardsData?.length || 0} products from product_cards`);
             
+            // Log the SKUs we found
+            if (productCardsData && productCardsData.length > 0) {
+                const skus = productCardsData.map(card => card.sku).filter(sku => sku);
+                console.log('📋 SKUs found in database:', skus);
+            }
+            
             // ===================== LOAD PACKAGES =====================
             console.log('📦 Fetching packages from packages_with_price...');
             const { data: packagesData, error: packagesError } = await supabaseClient
@@ -571,14 +578,15 @@
             
             if (packagesError) {
                 console.warn('⚠️ Error fetching packages:', packagesError.message);
-            } else {
-                console.log(`✅ Fetched ${packagesData?.length || 0} packages`);
+            } else if (packagesData && packagesData.length > 0) {
+                console.log(`✅ Fetched ${packagesData.length} packages`);
+                console.log('📋 Package SKUs:', packagesData.map(p => p.sku));
             }
             
             productsDB = [];
             
             // ===================== PROCESS PRODUCT CARDS =====================
-            // SKU comes from card.sku (like Q3, C13, F12, etc.)
+            // CRITICAL: SKU is taken directly from card.sku column (A12, C13, D13, F12, etc.)
             if (productCardsData && productCardsData.length > 0) {
                 for (const card of productCardsData) {
                     let pose = 1;
@@ -586,18 +594,18 @@
                     let size = card.size || '';
                     let imageUrl = card.cover_image || null;
                     
-                    // CRITICAL: SKU is taken from card.sku (Q3, C13, F12, etc.)
+                    // ========== SKU IS TAKEN FROM card.sku ==========
+                    // This is where A12, C13, D13, F12 values come from
                     let cardSku = card.sku;
                     
-                    // If no SKU, try article or generate
-                    if (!cardSku) {
+                    if (!cardSku && card.article) {
                         cardSku = card.article;
                     }
                     if (!cardSku) {
-                        cardSku = `PROD_${Date.now()}`;
+                        cardSku = `UNKNOWN_${Date.now()}`;
                     }
                     
-                    console.log(`📦 Processing product: SKU=${cardSku}, Name=${card.name_en}`);
+                    console.log(`📦 Processing product: SKU=${cardSku}, Name=${card.name_en || card.name_th}`);
                     
                     // Parse variants for pose and size
                     if (card.variants) {
@@ -628,7 +636,7 @@
                     productsDB.push({
                         id: card.card_id || `card_${cardSku}`,
                         type: 'product',
-                        sku: cardSku,  // ← SKU from card.sku (Q3, C13, F12, etc.)
+                        sku: cardSku,  // ← SKU from database (A12, C13, D13, F12, etc.)
                         name_en: nameEn,
                         name_th: nameTh,
                         size: size,
@@ -637,7 +645,7 @@
                         image: imageUrl
                     });
                     
-                    console.log(`   → Added: ${cardSku} - ${nameEn}, Pose: ${pose}, Selectable: ${selectable}`);
+                    console.log(`   → Added product: ${cardSku} - ${nameEn}, Pose: ${pose}, Selectable: ${selectable}`);
                 }
             }
             
@@ -681,18 +689,18 @@
                         isPackage: true
                     });
                     
-                    console.log(`   → Package added: ${skuValue} - ${nameEn}, Total photos: ${pose}`);
+                    console.log(`   → Added package: ${skuValue} - ${nameEn}, Total photos: ${pose}`);
                 }
             }
             
             // If no products loaded, show demo data
             if (productsDB.length === 0) {
-                console.warn('⚠️ No products loaded, using demo data');
+                console.warn('⚠️ No products loaded from Supabase, using demo data');
                 productsDB = getDemoProducts();
             }
             
             console.log(`✅ Total products loaded: ${productsDB.length}`);
-            console.log('📊 Product SKUs:', productsDB.map(p => ({ sku: p.sku, type: p.type, name: p.name_en, pose: p.pose })));
+            console.log('📊 Product SKUs loaded:', productsDB.map(p => ({ sku: p.sku, type: p.type, name: p.name_en, pose: p.pose })));
             
             isLoading = false;
             toast(`✅ ${productsDB.length} products loaded`);
@@ -708,13 +716,12 @@
     function getDemoProducts() {
         console.log('📦 Using demo product data with SKUs');
         return [
-            { id: "product_Q3", type: "product", sku: "Q3", name_en: "Package L - Deluxe Set", name_th: "แพ็คเกจ L - ชุดดีลักซ์", size: "8x12 inch", pose: 5, selectable: true, image: null },
+            { id: "product_A12", type: "product", sku: "A12", name_en: "Acrylic Photo 12x12", name_th: "ภาพถ่ายอะคริลิค 12x12", size: "12x12 inch", pose: 1, selectable: true, image: null },
             { id: "product_C13", type: "product", sku: "C13", name_en: "Canvas 20x30", name_th: "ผ้าใบ 20x30", size: "20x30 inch", pose: 1, selectable: true, image: null },
+            { id: "product_D13", type: "product", sku: "D13", name_en: "Water Bottle 600ml", name_th: "ขวดน้ำ 600ml", size: "600 ml", pose: 8, selectable: true, image: null },
             { id: "product_F12", type: "product", sku: "F12", name_en: "Photo Collage", name_th: "ภาพตัดปะ", size: "8x12 inch", pose: 2, selectable: true, image: null },
-            { id: "product_A11", type: "product", sku: "A11", name_en: "Acrylic Photo Class Logo", name_th: "โลโก้ชั้นเรียนอะคริลิค", size: "8x12 inch", pose: 1, selectable: false, image: null },
-            { id: "product_B11", type: "product", sku: "B11", name_en: "Instabook 16 pages", name_th: "อินสตาบุ๊ค 16 หน้า", size: "5.5x5.5 inch", pose: 16, selectable: true, image: null },
-            { id: "package_Q1", type: "package", sku: "Q1", name_en: "Package S - Starter", name_th: "แพ็คเกจ S - ชุดเริ่มต้น", size: "Mixed", pose: 6, selectable: true, image: null, isPackage: true },
-            { id: "package_Q2", type: "package", sku: "Q2", name_en: "Package M - Medium", name_th: "แพ็คเกจ M - ชุดกลาง", size: "Mixed", pose: 10, selectable: true, image: null, isPackage: true }
+            { id: "product_Q3", type: "product", sku: "Q3", name_en: "Package L - Deluxe Set", name_th: "แพ็คเกจ L - ชุดดีลักซ์", size: "Mixed", pose: 5, selectable: true, image: null },
+            { id: "package_Q1", type: "package", sku: "Q1", name_en: "Package S - Starter", name_th: "แพ็คเกจ S - ชุดเริ่มต้น", size: "Mixed", pose: 6, selectable: true, image: null, isPackage: true }
         ];
     }
 
@@ -730,7 +737,7 @@
         }
         
         const selected = shuffled.slice(0, Math.min(10, shuffled.length));
-        console.log(`📋 Selected ${selected.length} products:`, selected.map(p => p.sku));
+        console.log(`📋 Selected ${selected.length} products for order:`, selected.map(p => p.sku));
         
         currentOrder = { number: "1111", products: selected };
         assignments = {};
