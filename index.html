@@ -178,6 +178,11 @@
             margin-bottom: 1rem;
             border: 1px solid var(--border);
             overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 4px 12px rgba(0,120,131,0.1);
         }
 
         .product-header {
@@ -191,25 +196,35 @@
             gap: 0.5rem;
         }
 
+        .product-info {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .product-sku {
+            background: var(--teal-light);
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--teal);
+            font-family: monospace;
+        }
+
         .product-title {
             font-weight: 700;
             font-size: 0.9rem;
             color: var(--teal);
         }
 
-        .product-sku {
-            background: var(--teal-light);
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-left: 0.5rem;
-        }
-
         .product-size {
             font-size: 0.7rem;
             color: #6c757d;
-            margin-left: 0.3rem;
+            background: #e9ecef;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
         }
 
         .badge-auto {
@@ -221,7 +236,21 @@
             font-weight: 500;
         }
 
-        /* slots row - компактные овалы */
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+
+        /* slots row */
         .slots-row {
             padding: 1rem 1.2rem;
             display: flex;
@@ -238,7 +267,6 @@
             gap: 0.3rem;
         }
 
-        /* овальные слоты - низкие */
         .oval {
             border-radius: 40px;
             background: white;
@@ -247,11 +275,12 @@
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #1e2f3a;
             cursor: pointer;
             transition: all 0.15s;
-            height: 44px;
+            height: 42px;
+            padding: 0 0.5rem;
         }
 
         .oval:hover {
@@ -281,10 +310,11 @@
             background: white;
             text-align: center;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             outline: none;
             font-family: monospace;
-            height: 44px;
+            height: 42px;
+            padding: 0 0.5rem;
         }
 
         .slot-number {
@@ -322,9 +352,31 @@
             display: none;
         }
 
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .image-modal img {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+
         @media (max-width: 700px) {
             .slots-row { gap: 0.8rem; justify-content: center; }
-            .oval { height: 38px; }
+            .oval { height: 38px; font-size: 0.75rem; }
+            .product-image { width: 50px; height: 50px; }
         }
     </style>
 </head>
@@ -358,6 +410,60 @@
     const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
     
+    // Яндекс.Диск ссылки на фото товаров (из таблицы)
+    const productImages = {
+        "A11": "https://disk.yandex.ru/i/9503hWa62mkPpA",
+        "A12": "https://disk.yandex.ru/i/JIlYMRAWxVAyqQ",
+        "A13": "https://disk.yandex.ru/i/GffwiC_zy77j-A",
+        "A14": "https://disk.yandex.ru/i/PDBHXuBjMUlgMw",
+        "W11": "https://disk.yandex.ru/i/b5x7p_7YAJfKaA",
+        "W12": "https://disk.yandex.ru/i/xqitJpAldpxCYw",
+        "W13": "https://disk.yandex.ru/i/Af4Q4ZTnnSw6vQ",
+        "W14": "https://disk.yandex.ru/i/WL5Omzy4agQU1w",
+        "W15": "https://disk.yandex.ru/i/HfakRxWTe-NZLw",
+        "W16": "https://disk.yandex.ru/i/8LC6FtdF6uWnwA",
+        "W17": "https://disk.yandex.ru/i/UKu-E3d7_Xs-AQ",
+        "C11": "https://disk.yandex.ru/i/dA78-MGX92zTyA",
+        "C12": "https://disk.yandex.ru/i/kib-8y-EQv2kIQ",
+        "C13": "https://disk.yandex.ru/i/UjCzWiNSTkb15g",
+        "C14": "https://disk.yandex.ru/i/YZra9U03Nw_5mQ",
+        "C15": "https://disk.yandex.ru/i/bN0cLSztAzZbFw",
+        "F11": "https://disk.yandex.ru/i/HFbZcyqCKuAkAg",
+        "F12": "https://disk.yandex.ru/i/nfPFhnpS-fdoxw",
+        "F13": "https://disk.yandex.ru/i/nivQ26bamQdtSg",
+        "F14": "https://disk.yandex.ru/i/6pTsqL_i7gV1Lg",
+        "F15": "https://disk.yandex.ru/i/PZN0CHilcNGGYA",
+        "B11": "https://disk.yandex.ru/i/jmKYL66zOH-mSA",
+        "B13": "https://disk.yandex.ru/i/trd6O2rV1cuHiA",
+        "K11": "https://disk.yandex.ru/i/VzIl5BPiYWTa4w",
+        "K12": "https://disk.yandex.ru/i/VzIl5BPiYWTa4w",
+        "K13": "https://disk.yandex.ru/i/0Z2LA466jPe98Q",
+        "K14": "https://disk.yandex.ru/i/s-TzMhvDkiZnkA",
+        "D11": "https://disk.yandex.ru/i/RpWHI2-BIVwxgw",
+        "D12": "https://disk.yandex.ru/i/p0q7AIjNomnVOw",
+        "D13": "https://disk.yandex.ru/i/Ry8Q04l8zFApNw",
+        "D14": "https://disk.yandex.ru/i/jIlPPFs5X0zwaw",
+        "S11": "https://disk.yandex.ru/i/KpV6EogC2hGRLQ",
+        "S12": "https://disk.yandex.ru/i/KpV6EogC2hGRLQ",
+        "S13": "https://disk.yandex.ru/i/cxB1A4aOZ6JqHg",
+        "S14": "https://drive.google.com/file/d/18qyExGvlnXBNpUviGXnLAIt_zdreOG2J/view?usp=sharing",
+        "S15": "https://drive.google.com/file/d/1Hrq1fmWlWEup4IC0GoUqpkbTZrnls-Ec/view?usp=sharing",
+        "S16": "https://disk.yandex.ru/i/IbIU_Wyz9JEFgA",
+        "S17": "https://disk.yandex.ru/i/Oqisp62LofWS3Q",
+        "E11": "https://disk.yandex.ru/i/FU_2GuSP1cqRxQ",
+        "E12": "https://disk.yandex.ru/d/t35MmyRDNP50Hg",
+        "E13": "https://disk.yandex.ru/i/Wv4TEGrzcOKQVA",
+        "E14": "https://disk.yandex.ru/i/VcNtNpDM3OZYwg",
+        "E15": "https://disk.yandex.ru/i/WkXPF5YMzH6rfA",
+        "E16": "https://disk.yandex.ru/i/TlhwfLE3iwV90A",
+        "X11": "https://disk.yandex.ru/i/d8S-geQGbJ_PiA",
+        "X12": "https://disk.yandex.ru/i/4Qdsax63N-u_DA",
+        "X13": "https://disk.yandex.ru/i/E5f2gBfdlP8ZQw",
+        "Q1": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
+        "Q2": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
+        "Q3": "https://disk.yandex.ru/i/dVjjX6wW7PC-9A"
+    };
+    
     let supabaseClient = null;
     let productsDB = [];
     let currentLang = 'en';
@@ -371,13 +477,13 @@
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
             ok: "✓ Loaded", dup: "Photo already used", range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, 
             saved: "✓ Confirmed", back: "← Back", notSelectable: "Not selectable",
-            loading: "Loading...", error: "Error"
+            loading: "Loading...", error: "Error", viewPhoto: "View photo"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
             ok: "✓ โหลดแล้ว", dup: "หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
             saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "ไม่สามารถเลือกได้",
-            loading: "กำลังโหลด...", error: "เกิดข้อผิดพลาด"
+            loading: "กำลังโหลด...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูปสินค้า"
         }
     };
 
@@ -421,6 +527,28 @@
         return 58;
     }
 
+    function showImageModal(imgUrl, productName) {
+        const modal = document.createElement('div');
+        modal.className = 'image-modal';
+        const img = document.createElement('img');
+        img.src = imgUrl;
+        img.alt = productName;
+        modal.appendChild(img);
+        modal.onclick = () => modal.remove();
+        document.body.appendChild(modal);
+    }
+
+    function getYandexImageUrl(link) {
+        if (!link) return null;
+        if (link.includes('disk.yandex.ru/i/')) {
+            return link;
+        }
+        if (link.includes('disk.yandex.ru/d/')) {
+            return link.replace('/d/', '/i/');
+        }
+        return link;
+    }
+
     async function loadProductsFromSupabase() {
         try {
             isLoading = true;
@@ -451,6 +579,7 @@
                     let pose = 1;
                     let selectable = true;
                     let mess = '';
+                    let sku = card.sku || card.card_id || `PROD_${Date.now()}`;
                     
                     if (card.variants) {
                         try {
@@ -458,6 +587,7 @@
                             if (variants && variants.length > 0) {
                                 if (variants[0].pose) pose = Math.min(parseInt(variants[0].pose), 31);
                                 if (variants[0].mess) mess = variants[0].mess;
+                                if (variants[0].sku) sku = variants[0].sku;
                             }
                         } catch(e) {}
                     }
@@ -477,12 +607,14 @@
                     }
                     
                     productsDB.push({
-                        article: card.sku || card.card_id || `PROD_${Date.now()}`,
+                        article: card.article || sku,
+                        sku: sku,
                         name_en: card.name_en || card.sku || 'Product',
                         name_th: card.name_th || card.name_en || 'สินค้า',
                         size: card.size || '',
                         pose: pose,
-                        selectable: selectable
+                        selectable: selectable,
+                        image: productImages[card.article] || productImages[sku] || null
                     });
                 }
             }
@@ -495,22 +627,22 @@
                     
                     productsDB.push({
                         article: pkg.sku || pkg.slug || `PKG_${Date.now()}`,
+                        sku: pkg.sku || pkg.slug,
                         name_en: pkg.name_en || pkg.sku || 'Package',
                         name_th: pkg.name_th || pkg.name_en || 'แพ็คเกจ',
                         size: '',
                         pose: totalPhotos,
-                        selectable: false
+                        selectable: false,
+                        image: productImages[pkg.sku] || null
                     });
                 }
             }
             
             if (productsDB.length === 0) {
                 productsDB = [
-                    { article: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true },
-                    { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียน", size: "8x12", pose: 1, selectable: false },
-                    { article: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true },
-                    { article: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false },
-                    { article: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะ", size: "8x12", pose: 2, selectable: true }
+                    { article: "W16", sku: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true, image: productImages["W16"] },
+                    { article: "A11", sku: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียน", size: "8x12", pose: 1, selectable: false, image: productImages["A11"] },
+                    { article: "C15", sku: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true, image: productImages["C15"] }
                 ];
             }
             
@@ -521,11 +653,6 @@
             console.error('Error:', error);
             toast(t('error'));
             isLoading = false;
-            productsDB = [
-                { article: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true },
-                { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียน", size: "8x12", pose: 1, selectable: false },
-                { article: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true }
-            ];
         }
     }
 
@@ -548,11 +675,13 @@
             assignments[key] = {
                 key: key,
                 article: prod.article,
+                sku: prod.sku,
                 nameEn: prod.name_en,
                 nameTh: prod.name_th,
                 size: prod.size,
                 pose: prod.pose,
                 selectable: prod.selectable,
+                image: prod.image,
                 values: new Array(prod.pose).fill(null)
             };
         }
@@ -578,7 +707,6 @@
         input.max = MAX_PHOTO;
         input.style.width = `${width}px`;
         input.style.height = `${height}px`;
-        input.style.fontSize = '0.9rem';
         
         ovalDiv.replaceWith(input);
         input.focus();
@@ -640,16 +768,18 @@
             const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
             const poseCount = asgn.pose;
             const ovalWidth = getOvalWidth(poseCount);
-            const ovalHeight = 44;
+            const ovalHeight = 42;
+            const imageUrl = asgn.image ? getYandexImageUrl(asgn.image) : null;
             
             html += `<div class="product-card">
                 <div class="product-header">
-                    <div>
+                    <div class="product-info">
+                        <span class="product-sku">${asgn.sku || asgn.article}</span>
                         <span class="product-title">${name || asgn.article}</span>
-                        <span class="product-sku">${asgn.article}</span>
                         <span class="product-size">${asgn.size}</span>
                         ${!asgn.selectable ? `<span class="badge-auto">🔴 ${t('notSelectable')}</span>` : `<span class="badge-auto">📷 ${poseCount}</span>`}
                     </div>
+                    ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : ''}
                 </div>
                 <div class="slots-row">`;
             
@@ -685,7 +815,7 @@
             let summary = "WHITE FOX STUDIO\n━━━━━━━━━━━━\n";
             for (let [key, a] of Object.entries(assignments)) {
                 const name = currentLang === 'en' ? a.nameEn : a.nameTh;
-                summary += `\n${a.article} — ${name}\n`;
+                summary += `\n${a.sku || a.article} — ${name}\n`;
                 for (let i = 0; i < a.values.length; i++) {
                     summary += `  ${i+1}: ${a.values[i] || '—'}\n`;
                 }
@@ -696,6 +826,7 @@
     }
 
     window.handleOvalClick = handleOvalClick;
+    window.showImageModal = showImageModal;
 
     function updateLang() {
         const iconSpan = document.getElementById('langIcon');
