@@ -193,7 +193,7 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.8rem;
         }
 
         .product-info {
@@ -201,6 +201,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 0.5rem;
+            flex: 1;
         }
 
         .product-sku {
@@ -227,6 +228,15 @@
             border-radius: 20px;
         }
 
+        .product-pose {
+            font-size: 0.7rem;
+            background: var(--teal-light);
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            color: var(--teal);
+            font-weight: 600;
+        }
+
         .badge-auto {
             background: var(--red-light);
             padding: 0.2rem 0.6rem;
@@ -237,20 +247,20 @@
         }
 
         .product-image {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             object-fit: cover;
             border-radius: 12px;
             border: 1px solid var(--border);
             cursor: pointer;
             transition: transform 0.2s;
+            background: #f5f5f5;
         }
 
         .product-image:hover {
             transform: scale(1.05);
         }
 
-        /* slots row */
         .slots-row {
             padding: 1rem 1.2rem;
             display: flex;
@@ -376,7 +386,7 @@
         @media (max-width: 700px) {
             .slots-row { gap: 0.8rem; justify-content: center; }
             .oval { height: 38px; font-size: 0.75rem; }
-            .product-image { width: 50px; height: 50px; }
+            .product-image { width: 45px; height: 45px; }
         }
     </style>
 </head>
@@ -410,59 +420,41 @@
     const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
     
-    // Яндекс.Диск ссылки на фото товаров (из таблицы)
-    const productImages = {
-        "A11": "https://disk.yandex.ru/i/9503hWa62mkPpA",
-        "A12": "https://disk.yandex.ru/i/JIlYMRAWxVAyqQ",
-        "A13": "https://disk.yandex.ru/i/GffwiC_zy77j-A",
-        "A14": "https://disk.yandex.ru/i/PDBHXuBjMUlgMw",
-        "W11": "https://disk.yandex.ru/i/b5x7p_7YAJfKaA",
-        "W12": "https://disk.yandex.ru/i/xqitJpAldpxCYw",
-        "W13": "https://disk.yandex.ru/i/Af4Q4ZTnnSw6vQ",
-        "W14": "https://disk.yandex.ru/i/WL5Omzy4agQU1w",
-        "W15": "https://disk.yandex.ru/i/HfakRxWTe-NZLw",
-        "W16": "https://disk.yandex.ru/i/8LC6FtdF6uWnwA",
-        "W17": "https://disk.yandex.ru/i/UKu-E3d7_Xs-AQ",
-        "C11": "https://disk.yandex.ru/i/dA78-MGX92zTyA",
-        "C12": "https://disk.yandex.ru/i/kib-8y-EQv2kIQ",
-        "C13": "https://disk.yandex.ru/i/UjCzWiNSTkb15g",
-        "C14": "https://disk.yandex.ru/i/YZra9U03Nw_5mQ",
-        "C15": "https://disk.yandex.ru/i/bN0cLSztAzZbFw",
-        "F11": "https://disk.yandex.ru/i/HFbZcyqCKuAkAg",
-        "F12": "https://disk.yandex.ru/i/nfPFhnpS-fdoxw",
-        "F13": "https://disk.yandex.ru/i/nivQ26bamQdtSg",
-        "F14": "https://disk.yandex.ru/i/6pTsqL_i7gV1Lg",
-        "F15": "https://disk.yandex.ru/i/PZN0CHilcNGGYA",
-        "B11": "https://disk.yandex.ru/i/jmKYL66zOH-mSA",
-        "B13": "https://disk.yandex.ru/i/trd6O2rV1cuHiA",
-        "K11": "https://disk.yandex.ru/i/VzIl5BPiYWTa4w",
-        "K12": "https://disk.yandex.ru/i/VzIl5BPiYWTa4w",
-        "K13": "https://disk.yandex.ru/i/0Z2LA466jPe98Q",
-        "K14": "https://disk.yandex.ru/i/s-TzMhvDkiZnkA",
-        "D11": "https://disk.yandex.ru/i/RpWHI2-BIVwxgw",
-        "D12": "https://disk.yandex.ru/i/p0q7AIjNomnVOw",
-        "D13": "https://disk.yandex.ru/i/Ry8Q04l8zFApNw",
-        "D14": "https://disk.yandex.ru/i/jIlPPFs5X0zwaw",
-        "S11": "https://disk.yandex.ru/i/KpV6EogC2hGRLQ",
-        "S12": "https://disk.yandex.ru/i/KpV6EogC2hGRLQ",
-        "S13": "https://disk.yandex.ru/i/cxB1A4aOZ6JqHg",
-        "S14": "https://drive.google.com/file/d/18qyExGvlnXBNpUviGXnLAIt_zdreOG2J/view?usp=sharing",
-        "S15": "https://drive.google.com/file/d/1Hrq1fmWlWEup4IC0GoUqpkbTZrnls-Ec/view?usp=sharing",
-        "S16": "https://disk.yandex.ru/i/IbIU_Wyz9JEFgA",
-        "S17": "https://disk.yandex.ru/i/Oqisp62LofWS3Q",
-        "E11": "https://disk.yandex.ru/i/FU_2GuSP1cqRxQ",
-        "E12": "https://disk.yandex.ru/d/t35MmyRDNP50Hg",
-        "E13": "https://disk.yandex.ru/i/Wv4TEGrzcOKQVA",
-        "E14": "https://disk.yandex.ru/i/VcNtNpDM3OZYwg",
-        "E15": "https://disk.yandex.ru/i/WkXPF5YMzH6rfA",
-        "E16": "https://disk.yandex.ru/i/TlhwfLE3iwV90A",
-        "X11": "https://disk.yandex.ru/i/d8S-geQGbJ_PiA",
-        "X12": "https://disk.yandex.ru/i/4Qdsax63N-u_DA",
-        "X13": "https://disk.yandex.ru/i/E5f2gBfdlP8ZQw",
-        "Q1": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
-        "Q2": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
-        "Q3": "https://disk.yandex.ru/i/dVjjX6wW7PC-9A"
-    };
+    // Полная база товаров с SKU, размером, количеством pose и ссылками на фото
+    const fullProductDatabase = [
+        { article: "A11", sku: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", size: "8x12", pose: 1, selectable: false, image: "https://disk.yandex.ru/i/9503hWa62mkPpA" },
+        { article: "A12", sku: "A12", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "12x12", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/JIlYMRAWxVAyqQ" },
+        { article: "A13", sku: "A13", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "5x5", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/GffwiC_zy77j-A" },
+        { article: "A14", sku: "A14", name_en: "ACRYLIC PHOTO class + logo", name_th: "คลาสเรียน+โลโก้ส่วนตัว", size: "12x12", pose: 2, selectable: false, image: "https://disk.yandex.ru/i/PDBHXuBjMUlgMw" },
+        { article: "W11", sku: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "10x10", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/b5x7p_7YAJfKaA" },
+        { article: "W12", sku: "W12", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "12x12", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/xqitJpAldpxCYw" },
+        { article: "W13", sku: "W13", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "16x16", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/Af4Q4ZTnnSw6vQ" },
+        { article: "W14", sku: "W14", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "8x12", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/WL5Omzy4agQU1w" },
+        { article: "W15", sku: "W15", name_en: "FLOAT FRAME individual logo", name_th: "ลอยกรอบโลโก้ส่วนบุคคล", size: "10x15", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/HfakRxWTe-NZLw" },
+        { article: "W16", sku: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true, image: "https://disk.yandex.ru/i/8LC6FtdF6uWnwA" },
+        { article: "W17", sku: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false, image: "https://disk.yandex.ru/i/UKu-E3d7_Xs-AQ" },
+        { article: "C11", sku: "C11", name_en: "CANVAS", name_th: "ผ้าใบ", size: "12x18", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/dA78-MGX92zTyA" },
+        { article: "C12", sku: "C12", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x24", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/kib-8y-EQv2kIQ" },
+        { article: "C13", sku: "C13", name_en: "CANVAS", name_th: "ผ้าใบ", size: "20x30", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/UjCzWiNSTkb15g" },
+        { article: "C14", sku: "C14", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x16", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/YZra9U03Nw_5mQ" },
+        { article: "C15", sku: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true, image: "https://disk.yandex.ru/i/bN0cLSztAzZbFw" },
+        { article: "F11", sku: "F11", name_en: "PHOTO BOX", name_th: "กล่องภาพถ่าย", size: "12x16", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/HFbZcyqCKuAkAg" },
+        { article: "F12", sku: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะกรอบอลูมิเนียม", size: "8x12", pose: 2, selectable: true, image: "https://disk.yandex.ru/i/nfPFhnpS-fdoxw" },
+        { article: "F13", sku: "F13", name_en: "GOLD FRAMES", name_th: "กรอบทอง", size: "6x9", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/nivQ26bamQdtSg" },
+        { article: "F14", sku: "F14", name_en: "GOLD FRAMES", name_th: "กรอบทอง", size: "4x6", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/6pTsqL_i7gV1Lg" },
+        { article: "F15", sku: "F15", name_en: "MAGNET INSTAX 2 psc", name_th: "แม่เหล็กอินสแตกซ์", size: "3x3.5", pose: 2, selectable: true, image: "https://disk.yandex.ru/i/PZN0CHilcNGGYA" },
+        { article: "B11", sku: "B11", name_en: "INSTABOOK 16 pages", name_th: "อินสตาบุ๊ค 16 หน้า", size: "5.5x5.5", pose: 16, selectable: true, image: "https://disk.yandex.ru/i/jmKYL66zOH-mSA" },
+        { article: "B13", sku: "B13", name_en: "ELITE SCHOOL BOOK 20 pages", name_th: "หนังสือเรียนชั้นสูง", size: "8x12", pose: 20, selectable: true, image: "https://disk.yandex.ru/i/trd6O2rV1cuHiA" },
+        { article: "K11", sku: "K11", name_en: "WALL CALENDAR 13 pages", name_th: "ปฏิทินติดผนัง", size: "30x42cm", pose: 13, selectable: true, image: "https://disk.yandex.ru/i/VzIl5BPiYWTa4w" },
+        { article: "K12", sku: "K12", name_en: "WALL CALENDAR poster", name_th: "ปฏิทินโปสเตอร์", size: "24x36", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/VzIl5BPiYWTa4w" },
+        { article: "K13", sku: "K13", name_en: "DESK CALENDAR FLIP WOODEN", name_th: "ปฏิทินตั้งโต๊ะไม้", size: "6x9", pose: 12, selectable: true, image: "https://disk.yandex.ru/i/0Z2LA466jPe98Q" },
+        { article: "K14", sku: "K14", name_en: "DESK CALENDAR FLIP", name_th: "ปฏิทินตั้งโต๊ะพลิก", size: "6x8", pose: 12, selectable: true, image: "https://disk.yandex.ru/i/s-TzMhvDkiZnkA" },
+        { article: "D12", sku: "D12", name_en: "MUG INDIVIDUAL", name_th: "แก้วมัคบุคคล", size: "350 ml", pose: 4, selectable: true, image: "https://disk.yandex.ru/i/p0q7AIjNomnVOw" },
+        { article: "D13", sku: "D13", name_en: "BOTTLE FOR WATER", name_th: "ขวดน้ำ", size: "600 ml", pose: 8, selectable: true, image: "https://disk.yandex.ru/i/Ry8Q04l8zFApNw" },
+        { article: "S11", sku: "S11", name_en: "SHAKING HEAD ACRYLIC STAND", name_th: "ขาตั้งอะคริลิคหัวสั่น", size: "10x10 cm", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/KpV6EogC2hGRLQ" },
+        { article: "E12", sku: "E12", name_en: "NOTEBOOK HARCOVER", name_th: "สมุดโน๊ตปกแข็ง", size: "6x8", pose: 6, selectable: true, image: "https://disk.yandex.ru/d/t35MmyRDNP50Hg" },
+        { article: "X11", sku: "X11", name_en: "POSTER DESIGN", name_th: "โปสเตอร์ดีไซน์", size: "13x20", pose: 1, selectable: true, image: "https://disk.yandex.ru/i/d8S-geQGbJ_PiA" }
+    ];
     
     let supabaseClient = null;
     let productsDB = [];
@@ -477,13 +469,13 @@
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
             ok: "✓ Loaded", dup: "Photo already used", range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, 
             saved: "✓ Confirmed", back: "← Back", notSelectable: "Not selectable",
-            loading: "Loading...", error: "Error", viewPhoto: "View photo"
+            loading: "Loading...", error: "Error", viewPhoto: "View photo", size: "Size", pose: "Poses"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
             ok: "✓ โหลดแล้ว", dup: "หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
             saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "ไม่สามารถเลือกได้",
-            loading: "กำลังโหลด...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูปสินค้า"
+            loading: "กำลังโหลด...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูปสินค้า", size: "ขนาด", pose: "จำนวน"
         }
     };
 
@@ -527,26 +519,34 @@
         return 58;
     }
 
+    function getYandexDirectUrl(diskUrl) {
+        if (!diskUrl) return null;
+        if (diskUrl.includes('disk.yandex.ru/i/')) {
+            return diskUrl;
+        }
+        if (diskUrl.includes('disk.yandex.ru/d/')) {
+            return diskUrl.replace('/d/', '/i/');
+        }
+        return diskUrl;
+    }
+
     function showImageModal(imgUrl, productName) {
+        const directUrl = getYandexDirectUrl(imgUrl);
+        if (!directUrl) {
+            toast('No image available');
+            return;
+        }
         const modal = document.createElement('div');
         modal.className = 'image-modal';
         const img = document.createElement('img');
-        img.src = imgUrl;
+        img.src = directUrl;
         img.alt = productName;
+        img.onerror = () => {
+            modal.innerHTML = '<div style="color:white; text-align:center;">Image not available</div>';
+        };
         modal.appendChild(img);
         modal.onclick = () => modal.remove();
         document.body.appendChild(modal);
-    }
-
-    function getYandexImageUrl(link) {
-        if (!link) return null;
-        if (link.includes('disk.yandex.ru/i/')) {
-            return link;
-        }
-        if (link.includes('disk.yandex.ru/d/')) {
-            return link.replace('/d/', '/i/');
-        }
-        return link;
     }
 
     async function loadProductsFromSupabase() {
@@ -561,89 +561,48 @@
                 .select('*');
             
             if (cardsError) {
-                console.warn('Error loading product_cards:', cardsError);
-            }
-            
-            const { data: packages, error: packagesError } = await supabaseClient
-                .from('packages_with_price')
-                .select('*');
-            
-            if (packagesError) {
-                console.warn('Error loading packages:', packagesError);
-            }
-            
-            productsDB = [];
-            
-            if (productCards && productCards.length > 0) {
+                console.warn('Error loading from Supabase, using fallback data');
+                productsDB = [...fullProductDatabase];
+            } else if (productCards && productCards.length > 0) {
+                productsDB = [];
                 for (const card of productCards) {
-                    let pose = 1;
-                    let selectable = true;
-                    let mess = '';
-                    let sku = card.sku || card.card_id || `PROD_${Date.now()}`;
+                    let existingData = fullProductDatabase.find(p => p.article === card.article || p.sku === card.sku);
+                    let pose = existingData ? existingData.pose : 1;
+                    let selectable = existingData ? existingData.selectable : true;
                     
                     if (card.variants) {
                         try {
                             const variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
-                            if (variants && variants.length > 0) {
-                                if (variants[0].pose) pose = Math.min(parseInt(variants[0].pose), 31);
-                                if (variants[0].mess) mess = variants[0].mess;
-                                if (variants[0].sku) sku = variants[0].sku;
+                            if (variants && variants.length > 0 && variants[0].pose) {
+                                pose = Math.min(parseInt(variants[0].pose), 31);
                             }
                         } catch(e) {}
                     }
-                    
                     if (card.pose) pose = Math.min(parseInt(card.pose), 31);
                     if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 31);
                     if (pose < 1) pose = 1;
                     
-                    const messLower = (mess || '').toLowerCase();
-                    const nameEnLower = (card.name_en || '').toLowerCase();
-                    const nameThLower = (card.name_th || '').toLowerCase();
+                    const nameEn = card.name_en || (existingData ? existingData.name_en : 'Product');
+                    const nameTh = card.name_th || (existingData ? existingData.name_th : 'สินค้า');
+                    const size = card.size || (existingData ? existingData.size : '');
                     
-                    if (messLower.includes('group') || messLower.includes('brand') ||
-                        nameEnLower.includes('group') || nameEnLower.includes('logo') ||
-                        nameThLower.includes('กลุ่ม') || nameThLower.includes('โลโก้')) {
+                    if (nameEn.toLowerCase().includes('group') || nameEn.toLowerCase().includes('logo')) {
                         selectable = false;
                     }
                     
                     productsDB.push({
-                        article: card.article || sku,
-                        sku: sku,
-                        name_en: card.name_en || card.sku || 'Product',
-                        name_th: card.name_th || card.name_en || 'สินค้า',
-                        size: card.size || '',
+                        article: card.article || card.sku || `PROD_${Date.now()}`,
+                        sku: card.sku || card.article,
+                        name_en: nameEn,
+                        name_th: nameTh,
+                        size: size,
                         pose: pose,
                         selectable: selectable,
-                        image: productImages[card.article] || productImages[sku] || null
+                        image: existingData ? existingData.image : null
                     });
                 }
-            }
-            
-            if (packages && packages.length > 0) {
-                for (const pkg of packages) {
-                    let totalPhotos = pkg.total_photos || 1;
-                    if (totalPhotos < 1) totalPhotos = 1;
-                    totalPhotos = Math.min(totalPhotos, 31);
-                    
-                    productsDB.push({
-                        article: pkg.sku || pkg.slug || `PKG_${Date.now()}`,
-                        sku: pkg.sku || pkg.slug,
-                        name_en: pkg.name_en || pkg.sku || 'Package',
-                        name_th: pkg.name_th || pkg.name_en || 'แพ็คเกจ',
-                        size: '',
-                        pose: totalPhotos,
-                        selectable: false,
-                        image: productImages[pkg.sku] || null
-                    });
-                }
-            }
-            
-            if (productsDB.length === 0) {
-                productsDB = [
-                    { article: "W16", sku: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true, image: productImages["W16"] },
-                    { article: "A11", sku: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียน", size: "8x12", pose: 1, selectable: false, image: productImages["A11"] },
-                    { article: "C15", sku: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true, image: productImages["C15"] }
-                ];
+            } else {
+                productsDB = [...fullProductDatabase];
             }
             
             isLoading = false;
@@ -651,8 +610,9 @@
             
         } catch (error) {
             console.error('Error:', error);
-            toast(t('error'));
+            productsDB = [...fullProductDatabase];
             isLoading = false;
+            toast(`✅ Loaded ${productsDB.length} products (fallback)`);
         }
     }
 
@@ -769,17 +729,18 @@
             const poseCount = asgn.pose;
             const ovalWidth = getOvalWidth(poseCount);
             const ovalHeight = 42;
-            const imageUrl = asgn.image ? getYandexImageUrl(asgn.image) : null;
+            const imageUrl = asgn.image ? getYandexDirectUrl(asgn.image) : null;
             
             html += `<div class="product-card">
                 <div class="product-header">
                     <div class="product-info">
                         <span class="product-sku">${asgn.sku || asgn.article}</span>
                         <span class="product-title">${name || asgn.article}</span>
-                        <span class="product-size">${asgn.size}</span>
-                        ${!asgn.selectable ? `<span class="badge-auto">🔴 ${t('notSelectable')}</span>` : `<span class="badge-auto">📷 ${poseCount}</span>`}
+                        <span class="product-size">📏 ${t('size')}: ${asgn.size || '—'}</span>
+                        <span class="product-pose">📷 ${t('pose')}: ${poseCount}</span>
+                        ${!asgn.selectable ? `<span class="badge-auto">🔴 ${t('notSelectable')}</span>` : ''}
                     </div>
-                    ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : ''}
+                    ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onerror="this.style.display='none'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:55px; height:55px;"></div>'}
                 </div>
                 <div class="slots-row">`;
             
@@ -815,7 +776,7 @@
             let summary = "WHITE FOX STUDIO\n━━━━━━━━━━━━\n";
             for (let [key, a] of Object.entries(assignments)) {
                 const name = currentLang === 'en' ? a.nameEn : a.nameTh;
-                summary += `\n${a.sku || a.article} — ${name}\n`;
+                summary += `\n${a.sku || a.article} — ${name}\n📏 Size: ${a.size || '—'}  |  📷 Poses: ${a.pose}\n`;
                 for (let i = 0; i < a.values.length; i++) {
                     summary += `  ${i+1}: ${a.values[i] || '—'}\n`;
                 }
