@@ -23,7 +23,7 @@
             --teal-light: #d4e9ec;
             --border: #d9e1e6;
             --slot-bg: #ffffff;
-            --slot-border: #cbd5e1;
+            --slot-border: #007883;
             --slot-filled: #c8e6df;
             --slot-filled-border: #007883;
         }
@@ -240,11 +240,11 @@
             gap: 0.4rem;
         }
 
-        /* adaptive circle size */
-        .circle {
-            border-radius: 50%;
+        /* oval shape - width > height */
+        .oval {
+            border-radius: 60px;
             background: #ffffff;
-            border: 2px solid #cbd5e1;
+            border: 2px solid var(--teal);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -256,30 +256,32 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        .circle:hover {
-            border-color: var(--teal);
-            box-shadow: 0 2px 8px rgba(0,120,131,0.15);
+        .oval:hover {
+            border-color: var(--teal-dark);
+            background: #f0f9fa;
+            box-shadow: 0 2px 8px rgba(0,120,131,0.2);
         }
 
-        .circle.filled {
+        .oval.filled {
             background: #c8e6df;
             border-color: var(--teal);
-            color: var(--teal);
+            color: var(--teal-dark);
         }
 
-        .circle.disabled {
+        .oval.disabled {
             background: #f1f3f5;
-            border-color: #dee2e6;
+            border-color: #cbd5e1;
             cursor: default;
             opacity: 0.7;
         }
 
-        .circle.disabled:hover {
+        .oval.disabled:hover {
+            background: #f1f3f5;
             box-shadow: none;
         }
 
-        .circle-input {
-            border-radius: 50%;
+        .oval-input {
+            border-radius: 60px;
             border: 2px solid var(--teal);
             background: white;
             text-align: center;
@@ -287,11 +289,12 @@
             font-size: 0.9rem;
             outline: none;
             font-family: monospace;
-            box-shadow: 0 0 0 2px var(--teal-light);
+            box-shadow: 0 0 0 2px rgba(0,120,131,0.1);
         }
 
-        .circle-input:focus {
+        .oval-input:focus {
             border-color: var(--teal-dark);
+            box-shadow: 0 0 0 3px rgba(0,120,131,0.2);
         }
 
         .slot-number {
@@ -420,15 +423,15 @@
         return true;
     }
 
-    // размер кружка зависит от количества pose
-    function getCircleSize(poseCount) {
-        if (poseCount <= 2) return 85;
-        if (poseCount <= 3) return 78;
-        if (poseCount <= 4) return 72;
-        if (poseCount <= 6) return 66;
-        if (poseCount <= 10) return 60;
-        if (poseCount <= 16) return 54;
-        return 48;
+    // размер овала зависит от количества pose: width > height
+    function getOvalSize(poseCount) {
+        if (poseCount <= 2) return { width: 100, height: 70 };
+        if (poseCount <= 3) return { width: 92, height: 66 };
+        if (poseCount <= 4) return { width: 86, height: 62 };
+        if (poseCount <= 6) return { width: 80, height: 58 };
+        if (poseCount <= 10) return { width: 74, height: 54 };
+        if (poseCount <= 16) return { width: 68, height: 50 };
+        return { width: 62, height: 46 };
     }
 
     function loadOrder() {
@@ -467,32 +470,33 @@
         toast(t('ok'));
     }
 
-    function handleCircleClick(prodKey, idx, currentVal) {
+    function handleOvalClick(prodKey, idx, currentVal) {
         const a = assignments[prodKey];
         if (!a || !a.selectable) return;
         
-        const circleDiv = document.getElementById(`circle_${prodKey}_${idx}`);
-        if (!circleDiv) return;
+        const ovalDiv = document.getElementById(`oval_${prodKey}_${idx}`);
+        if (!ovalDiv) return;
         
         if (editingSlot === `${prodKey}_${idx}`) return;
         
-        const size = circleDiv.offsetWidth;
+        const width = ovalDiv.offsetWidth;
+        const height = ovalDiv.offsetHeight;
         const input = document.createElement('input');
         input.type = 'number';
         input.value = currentVal !== null ? currentVal : '';
-        input.className = 'circle-input';
+        input.className = 'oval-input';
         input.min = MIN_PHOTO;
         input.max = MAX_PHOTO;
-        input.style.width = `${size}px`;
-        input.style.height = `${size}px`;
-        input.style.fontSize = `${Math.max(14, size * 0.18)}px`;
+        input.style.width = `${width}px`;
+        input.style.height = `${height}px`;
+        input.style.fontSize = `${Math.max(14, height * 0.28)}px`;
         
-        circleDiv.replaceWith(input);
+        ovalDiv.replaceWith(input);
         input.focus();
         
         const save = () => {
             const newVal = parseInt(input.value);
-            input.replaceWith(circleDiv);
+            input.replaceWith(ovalDiv);
             editingSlot = null;
             if (!isNaN(newVal) && newVal !== currentVal) {
                 setValue(prodKey, idx, newVal);
@@ -540,8 +544,8 @@
         for (let [key, asgn] of Object.entries(assignments)) {
             const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
             const poseCount = asgn.pose;
-            const circleSize = getCircleSize(poseCount);
-            const fontSize = Math.max(14, circleSize * 0.22);
+            const { width, height } = getOvalSize(poseCount);
+            const fontSize = Math.max(14, height * 0.28);
             
             html += `<div class="product-card">
                 <div class="product-header">
@@ -557,19 +561,19 @@
             for (let i = 0; i < poseCount; i++) {
                 const val = asgn.values[i];
                 const isFilled = val !== null;
-                const circleClass = `circle ${isFilled ? 'filled' : ''} ${asgn.selectable ? 'editable' : 'disabled'}`;
+                const ovalClass = `oval ${isFilled ? 'filled' : ''} ${asgn.selectable ? 'editable' : 'disabled'}`;
                 const displayText = isFilled ? val : '';
                 
                 if (asgn.selectable) {
                     html += `<div class="slot-wrapper">
-                        <div id="circle_${key}_${i}" class="${circleClass}" 
-                             style="width:${circleSize}px; height:${circleSize}px; font-size:${fontSize}px;"
-                             onclick="handleCircleClick('${key}', ${i}, ${val !== null ? val : 'null'})">${displayText}</div>
+                        <div id="oval_${key}_${i}" class="${ovalClass}" 
+                             style="width:${width}px; height:${height}px; font-size:${fontSize}px;"
+                             onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${displayText}</div>
                         <span class="slot-number">${i+1}</span>
                     </div>`;
                 } else {
                     html += `<div class="slot-wrapper">
-                        <div class="circle disabled" style="width:${circleSize}px; height:${circleSize}px;"></div>
+                        <div class="oval disabled" style="width:${width}px; height:${height}px;"></div>
                         <span class="slot-number">${i+1}</span>
                         <span class="auto-note">auto</span>
                     </div>`;
@@ -596,7 +600,7 @@
         });
     }
 
-    window.handleCircleClick = handleCircleClick;
+    window.handleOvalClick = handleOvalClick;
 
     function updateLang() {
         document.getElementById('langIcon').innerText = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
