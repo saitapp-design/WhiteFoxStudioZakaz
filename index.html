@@ -1,21 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio · Photo Selection</title>
-    <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
+    <title>White Fox Studio · Photo Selection Catalog</title>
+    
+    <link rel="preconnect" href="https://afgzicjirrdzrotgooea.supabase.co">
+    <link rel="dns-prefetch" href="https://afgzicjirrdzrotgooea.supabase.co">
+    
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        body {
-            background: #f5f7fa;
-            min-height: 100vh;
         }
 
         :root {
@@ -25,9 +23,18 @@
             --border: #e2e8f0;
             --red: #dc2626;
             --red-light: #fee2e2;
-            --slot-filled: #c8e6df;
+            --bg-primary: #f5f7fa;
+            --text-primary: #1e293b;
+            --text-secondary: #334155;
         }
 
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
         .header {
             position: sticky;
             top: 0;
@@ -66,12 +73,6 @@
             color: var(--teal);
         }
 
-        .right-actions {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
         .search-box {
             display: flex;
             align-items: center;
@@ -85,7 +86,7 @@
         .search-box input {
             border: none;
             padding: 0 1rem;
-            width: 170px;
+            width: 200px;
             font-size: 0.9rem;
             outline: none;
         }
@@ -114,94 +115,51 @@
             cursor: pointer;
         }
 
+        /* Main content */
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
             padding: 1.5rem;
         }
 
-        .login-card {
-            background: white;
-            max-width: 400px;
-            margin: 2rem auto;
-            padding: 2rem;
-            border-radius: 1.5rem;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-
-        .order-input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid var(--border);
-            border-radius: 40px;
-            margin: 1rem 0;
-            text-align: center;
-            font-size: 1rem;
-            outline: none;
-        }
-
-        .btn-primary {
-            background: var(--teal);
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .order-header {
-            background: white;
-            border-radius: 1rem;
-            padding: 0.75rem 1.2rem;
-            margin-bottom: 1.2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid var(--teal);
-        }
-
-        .order-badge {
-            background: var(--teal-light);
-            padding: 0.35rem 1rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--teal);
+        /* Product grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
         }
 
         .product-card {
             background: white;
             border-radius: 1rem;
-            margin-bottom: 1rem;
             border: 1px solid var(--border);
             overflow: hidden;
-            transition: box-shadow 0.2s;
+            transition: all 0.2s;
         }
 
         .product-card:hover {
             box-shadow: 0 4px 12px rgba(0,120,131,0.1);
+            transform: translateY(-2px);
         }
 
-        .product-header {
-            padding: 0.8rem 1rem;
-            background: #fafcfd;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.8rem;
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            cursor: pointer;
+            background: #f5f5f5;
         }
 
         .product-info {
+            padding: 1rem;
+        }
+
+        .product-header {
             display: flex;
-            align-items: center;
-            flex-wrap: wrap;
+            align-items: baseline;
             gap: 0.5rem;
-            flex: 1;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
         }
 
         .product-sku {
@@ -216,89 +174,54 @@
 
         .product-title {
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: var(--teal);
         }
 
-        .product-size {
-            font-size: 0.7rem;
-            color: #6c757d;
-            background: #e9ecef;
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-        }
-
-        .badge-auto {
-            background: var(--red-light);
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            color: var(--red);
-            font-weight: 500;
-        }
-
-        .product-image {
-            width: 55px;
-            height: 55px;
-            object-fit: cover;
+        /* Variant selector - compact */
+        .variant-selector {
+            width: 100%;
+            padding: 0.6rem;
+            border: 2px solid var(--border);
             border-radius: 12px;
-            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            margin: 0.5rem 0;
+            background: white;
             cursor: pointer;
-            transition: transform 0.2s;
-            background: #f5f5f5;
         }
 
-        .product-image:hover {
-            transform: scale(1.05);
+        .variant-selector:focus {
+            outline: none;
+            border-color: var(--teal);
         }
 
-        .slots-row {
-            padding: 1rem 1.2rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: flex-start;
-            justify-content: flex-start;
-        }
-
-        .slot-group {
-            background: #fafcff;
-            border-radius: 1rem;
-            padding: 0.8rem;
-            border: 1px solid var(--border);
-            min-width: 180px;
+        /* Photo slots - compact design */
+        .photo-slots-section {
+            margin: 0.75rem 0;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border);
         }
 
         .slot-group-title {
+            font-size: 0.7rem;
             font-weight: 700;
-            font-size: 0.75rem;
             color: var(--teal);
-            margin-bottom: 0.6rem;
-            padding-bottom: 0.3rem;
-            border-bottom: 1px solid var(--teal-light);
+            margin-bottom: 0.5rem;
             display: flex;
             justify-content: space-between;
-        }
-
-        .slot-group-badge {
-            font-size: 0.6rem;
-            background: var(--teal-light);
-            padding: 0.1rem 0.4rem;
-            border-radius: 20px;
         }
 
         .slot-items {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.8rem;
-            align-items: center;
+            gap: 0.5rem;
         }
 
         .slot-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.2rem;
         }
 
         .oval {
@@ -309,22 +232,16 @@
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            font-size: 0.85rem;
-            color: #1e2f3a;
+            font-size: 0.75rem;
             cursor: pointer;
-            transition: all 0.15s;
-            height: 42px;
+            height: 36px;
             padding: 0 0.5rem;
-            min-width: 70px;
-        }
-
-        .oval:hover {
-            border-color: var(--teal-dark);
-            background: #f0f9fa;
+            min-width: 60px;
+            transition: all 0.1s;
         }
 
         .oval.filled {
-            background: var(--slot-filled);
+            background: var(--teal-light);
             border-color: var(--teal);
             color: var(--teal-dark);
         }
@@ -333,45 +250,160 @@
             background: var(--red-light);
             border-color: var(--red);
             cursor: not-allowed;
-        }
-
-        .oval.disabled:hover {
-            background: var(--red-light);
+            opacity: 0.6;
         }
 
         .oval-input {
             border-radius: 40px;
             border: 2px solid var(--teal);
-            background: white;
             text-align: center;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             outline: none;
-            font-family: monospace;
-            height: 42px;
+            height: 36px;
             padding: 0 0.5rem;
-            min-width: 70px;
+            min-width: 60px;
         }
 
         .slot-number {
-            font-size: 0.55rem;
+            font-size: 0.5rem;
             font-weight: 500;
             color: #8b9aab;
         }
 
         .auto-note {
-            font-size: 0.55rem;
-            font-weight: 500;
+            font-size: 0.5rem;
             color: var(--red);
             background: var(--red-light);
-            padding: 0.15rem 0.4rem;
-            border-radius: 20px;
+            padding: 0.1rem 0.3rem;
+            border-radius: 12px;
         }
 
-        .global-actions {
-            margin-top: 1.2rem;
+        .price-area {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .price {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--teal);
+        }
+
+        .add-to-cart-btn {
+            background: var(--teal);
+            color: white;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .add-to-cart-btn:hover {
+            background: var(--teal-dark);
+            transform: scale(1.05);
+        }
+
+        /* Cart panel */
+        .cart-panel {
+            position: fixed;
+            right: 20px;
+            top: 100px;
+            width: 320px;
+            background: white;
+            border-radius: 1rem;
+            border: 2px solid var(--teal);
+            padding: 1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            z-index: 50;
+        }
+
+        .cart-header {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--teal);
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--teal);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cart-items {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 0.5rem 0;
+        }
+
+        .cart-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.8rem;
+        }
+
+        .cart-item-sku {
+            font-weight: 600;
+            color: var(--teal);
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .cart-item-controls button {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid var(--teal);
+            background: white;
+            cursor: pointer;
+        }
+
+        .cart-total {
+            font-weight: 800;
+            font-size: 1.1rem;
+            padding-top: 0.5rem;
+            border-top: 2px solid var(--teal);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: var(--teal);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 40px;
+            font-weight: 700;
+            margin-top: 0.75rem;
+            cursor: pointer;
+        }
+
+        .mobile-cart-button {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--teal);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.8rem 1.2rem;
+            font-weight: 700;
+            z-index: 100;
+            cursor: pointer;
         }
 
         .toast {
@@ -406,14 +438,28 @@
             max-width: 90vw;
             max-height: 90vh;
             object-fit: contain;
-            border-radius: 12px;
         }
 
-        @media (max-width: 700px) {
-            .slots-row { gap: 0.8rem; justify-content: center; }
-            .oval { height: 38px; font-size: 0.75rem; min-width: 60px; }
-            .product-image { width: 45px; height: 45px; }
-            .slot-group { min-width: 100%; }
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--teal);
+        }
+
+        @media (max-width: 900px) {
+            .cart-panel {
+                display: none;
+            }
+            .mobile-cart-button {
+                display: flex;
+            }
+            .main-content {
+                padding: 1rem;
+                margin-bottom: 80px;
+            }
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -424,65 +470,65 @@
             <img class="logo-img" src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" alt="White Fox">
             <span class="logo-text">WHITE FOX STUDIO</span>
         </div>
-        <div class="right-actions">
-            <div class="search-box">
-                <input type="text" id="orderInput" placeholder="Order number" value="1111">
-                <button id="checkBtn">OK</button>
-            </div>
-            <button class="lang-toggle" id="langBtn">
-                <span id="langIcon">🇬🇧</span>
-                <span id="langText">EN</span>
-            </button>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search by SKU or name">
+            <button id="searchBtn">🔍</button>
         </div>
+        <button class="lang-toggle" id="langBtn">🌐 EN/TH</button>
     </div>
 </header>
 <main class="main-content" id="app"></main>
 <div id="toast" class="toast"></div>
+<button class="mobile-cart-button" id="mobileCartBtn">🛒 <span id="mobileCartCount">0</span></button>
+<div id="cartPanel" class="cart-panel"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    const MIN_PHOTO = 1000;
-    const MAX_PHOTO = 9999;
-    
+    // Supabase config
     const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
-    
-    // Картинки товаров
-    const productImages = {
-        "Q1": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
-        "Q2": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
-        "Q3": "https://disk.yandex.ru/i/dVjjX6wW7PC-9A",
-        "individual_logo_4x6": "https://disk.yandex.ru/i/3D5xeSTEbfPNnQ",
-        "individual_4x6": "https://disk.yandex.ru/i/VgSC9iejFJjQ0g",
-        "individual_6x9": "https://disk.yandex.ru/i/hJ6wp8pmLdMrGw",
-        "individual_logo_6x9": "https://disk.yandex.ru/i/R5-f_PglDSVPXQ",
-        "class_sabai_6x9": "https://disk.yandex.ru/i/pR07jYALAaReFg",
-        "class_serious_6x9": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
-        "class_serious_8x12": "https://disk.yandex.ru/i/dVjjX6wW7PC-9A"
-    };
-    
-    let supabaseClient = null;
-    let productsDB = [];
+
+    let supabase;
+    let products = [];
+    let cart = JSON.parse(localStorage.getItem('wf_cart')) || [];
     let currentLang = 'en';
-    let currentOrder = null;
-    let assignments = {};
     let editingSlot = null;
-    let isLoading = true;
+
+    const MIN_PHOTO = 1000;
+    const MAX_PHOTO = 9999;
 
     const trans = {
-        en: { 
-            enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
-            ok: "✓ Order loaded", dup: "⚠️ Photo already used", 
-            range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Confirmed", back: "← Back", 
-            notSelectable: "Not selectable", loading: "Loading...", error: "Error",
-            viewPhoto: "View photo", size: "Size", photos: "photos"
+        en: {
+            loading: "Loading products...",
+            error: "Error loading data",
+            add: "Add",
+            inCart: "In cart",
+            total: "Total",
+            checkout: "Checkout",
+            empty: "Cart is empty",
+            photoNum: "Photo #",
+            selectable: "Selectable",
+            notSelectable: "Fixed",
+            dup: "Photo number already used",
+            range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`,
+            saved: "Photo saved",
+            viewPhoto: "View image"
         },
-        th: { 
-            enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
-            ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "ไม่สามารถเลือกได้",
-            loading: "กำลังโหลด...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูปสินค้า",
-            size: "ขนาด", photos: "รูป"
+        th: {
+            loading: "กำลังโหลดสินค้า...",
+            error: "เกิดข้อผิดพลาด",
+            add: "เพิ่ม",
+            inCart: "ในตะกร้า",
+            total: "รวม",
+            checkout: "ยืนยัน",
+            empty: "ตะกร้าว่าง",
+            photoNum: "รูปที่ #",
+            selectable: "เลือกได้",
+            notSelectable: "กำหนดแล้ว",
+            dup: "หมายเลขรูปซ้ำ",
+            range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`,
+            saved: "บันทึกรูปแล้ว",
+            viewPhoto: "ดูรูป"
         }
     };
 
@@ -492,393 +538,468 @@
         const el = document.getElementById('toast');
         el.textContent = msg;
         el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 2500);
+        setTimeout(() => el.style.display = 'none', 2000);
     }
 
     function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO; }
 
-    function isUsedInProduct(prodKey, slotKey, idx, num) {
-        const a = assignments[prodKey];
-        if (!a) return false;
-        if (!a.slots) return false;
-        const slot = a.slots[slotKey];
-        if (!slot) return false;
-        for (let i = 0; i < slot.values.length; i++) {
-            if (i !== idx && slot.values[i] === num) return true;
+    // Load products from Supabase
+    async function loadProducts() {
+        const container = document.getElementById('app');
+        container.innerHTML = `<div class="loading">⏳ ${t('loading')}</div>`;
+        
+        try {
+            supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            // Load product_cards with all fields
+            const { data: cards, error: cardsError } = await supabase
+                .from('product_cards')
+                .select('*')
+                .order('sort_product', { ascending: true, nullsFirst: false });
+            
+            if (cardsError) throw cardsError;
+            
+            console.log('Loaded products:', cards?.length);
+            
+            // Process each product with variants
+            products = [];
+            for (const card of cards || []) {
+                let variants = [];
+                try {
+                    if (card.variants) {
+                        variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
+                    }
+                } catch(e) { console.warn('Parse variants error:', e); }
+                
+                // Create photo slots for each product based on pose count
+                const poseCount = card.pose || 1;
+                const isSelectable = !(card.name_en?.toLowerCase().includes('group') || 
+                                        card.name_th?.toLowerCase().includes('กลุ่ม') ||
+                                        card.mess?.toLowerCase().includes('group'));
+                
+                // Generate slots array
+                const slots = [];
+                for (let i = 0; i < poseCount; i++) {
+                    slots.push({
+                        id: i,
+                        value: null,
+                        selectable: isSelectable
+                    });
+                }
+                
+                products.push({
+                    id: card.card_id || card.sku || `prod_${Date.now()}_${Math.random()}`,
+                    sku: card.sku || card.article,
+                    name_en: card.name_en || '',
+                    name_th: card.name_th || '',
+                    description_en: card.descriptions || '',
+                    description_th: card.descriptions_th || '',
+                    size: card.size || '',
+                    pose: poseCount,
+                    selectable: isSelectable,
+                    image_url: card.cover_image || null,
+                    variants: variants,
+                    base_price: variants.length > 0 ? Math.min(...variants.map(v => v.price || 0)) : (card.price || 0),
+                    slots: slots.map(s => ({ ...s })) // Copy slots
+                });
+            }
+            
+            // Load packages as well if needed
+            const { data: packages, error: pkgError } = await supabase
+                .from('packages_with_price')
+                .select('*');
+            
+            if (!pkgError && packages) {
+                for (const pkg of packages) {
+                    let contents = [];
+                    try {
+                        if (pkg.contents) {
+                            contents = typeof pkg.contents === 'string' ? JSON.parse(pkg.contents) : pkg.contents;
+                        }
+                    } catch(e) {}
+                    
+                    // Build slots from package contents
+                    const slots = [];
+                    for (const item of contents) {
+                        for (let i = 0; i < (item.qty || 1); i++) {
+                            slots.push({
+                                id: `${item.sku}_${i}`,
+                                name_en: item.name_en,
+                                name_th: item.name_th,
+                                size: item.size,
+                                value: null,
+                                selectable: item.selectable !== false
+                            });
+                        }
+                    }
+                    
+                    products.push({
+                        id: `pkg_${pkg.sku}`,
+                        sku: pkg.sku,
+                        name_en: pkg.name_en,
+                        name_th: pkg.name_th,
+                        description_en: pkg.description_en || '',
+                        description_th: pkg.description_th || '',
+                        size: '',
+                        pose: slots.length,
+                        selectable: false,
+                        image_url: pkg.image_url || null,
+                        variants: [{ price: pkg.price, sku: pkg.sku }],
+                        base_price: pkg.price || 0,
+                        isPackage: true,
+                        slots: slots
+                    });
+                }
+            }
+            
+            console.log('Total products loaded:', products.length);
+            renderProducts();
+            
+        } catch (error) {
+            console.error('Load error:', error);
+            container.innerHTML = `<div class="loading">❌ ${t('error')}: ${error.message}</div>`;
+        }
+    }
+
+    // Check if photo is used in same product
+    function isPhotoUsed(product, slotIdx, photoNum) {
+        if (!product.slots) return false;
+        for (let i = 0; i < product.slots.length; i++) {
+            if (i !== slotIdx && product.slots[i].value === photoNum) return true;
         }
         return false;
     }
 
-    function setPackageSlotValue(prodKey, slotKey, idx, val) {
-        const a = assignments[prodKey];
-        if (!a || !a.isPackage) return false;
-        const slot = a.slots[slotKey];
-        if (!slot || slot.selectable === false) return false;
-        if (!isValid(val)) { toast(t('range')); return false; }
-        if (isUsedInProduct(prodKey, slotKey, idx, val)) { toast(t('dup')); return false; }
-        slot.values[idx] = val;
-        render();
+    function setPhotoValue(productId, slotIdx, value) {
+        const product = products.find(p => p.id === productId);
+        if (!product || !product.slots[slotIdx]?.selectable) return false;
+        if (!isValid(value)) { toast(t('range')); return false; }
+        if (isPhotoUsed(product, slotIdx, value)) { toast(t('dup')); return false; }
+        
+        product.slots[slotIdx].value = value;
+        renderProducts();
         return true;
     }
 
-    function getOvalWidth(poseCount) {
-        if (poseCount <= 2) return 85;
-        if (poseCount <= 3) return 80;
-        if (poseCount <= 4) return 75;
-        return 70;
-    }
-
-    function getYandexDirectUrl(diskUrl) {
-        if (!diskUrl) return null;
-        if (diskUrl.includes('disk.yandex.ru/i/')) return diskUrl;
-        if (diskUrl.includes('disk.yandex.ru/d/')) return diskUrl.replace('/d/', '/i/');
-        return diskUrl;
-    }
-
-    function showImageModal(imgUrl, productName) {
-        const directUrl = getYandexDirectUrl(imgUrl);
-        if (!directUrl) { toast('Image not available'); return; }
-        const modal = document.createElement('div');
-        modal.className = 'image-modal';
-        const img = document.createElement('img');
-        img.src = directUrl;
-        img.alt = productName;
-        img.onerror = () => { modal.innerHTML = '<div style="color:white; padding:2rem;">❌ Image not available</div>'; };
-        modal.appendChild(img);
-        modal.onclick = () => modal.remove();
-        document.body.appendChild(modal);
-    }
-
-    // Данные пакетов из таблицы
-    const packageData = {
-        "Q1": {
-            sku: "Q1", name_en: "Package S", name_th: "แพ็คเกจ S",
-            items: [
-                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false, imageKey: "class_serious_6x9" },
-                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "4x6 inch", qty: 1, selectable: true, imageKey: "individual_logo_4x6" },
-                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 4, selectable: true, imageKey: "individual_4x6" }
-            ]
-        },
-        "Q2": {
-            sku: "Q2", name_en: "Package M", name_th: "แพ็คเกจ M",
-            items: [
-                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false, imageKey: "class_serious_6x9" },
-                { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false, imageKey: "class_sabai_6x9" },
-                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true, imageKey: "individual_logo_6x9" },
-                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 8, selectable: true, imageKey: "individual_4x6" }
-            ]
-        },
-        "Q3": {
-            sku: "Q3", name_en: "Package L", name_th: "แพ็คเกจ L",
-            items: [
-                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "8x12 inch", qty: 1, selectable: false, imageKey: "class_serious_8x12" },
-                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true, imageKey: "individual_logo_6x9" },
-                { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false, imageKey: "class_sabai_6x9" },
-                { name_en: "Individual", name_th: "รายบุคคล", size: "6x9 inch", qty: 1, selectable: true, imageKey: "individual_6x9" },
-                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 10, selectable: true, imageKey: "individual_4x6" }
-            ]
-        }
-    };
-
-    async function loadProductsFromSupabase() {
-        try {
-            isLoading = true;
-            render();
-            
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            
-            const { data: productCards, error: cardsError } = await supabaseClient
-                .from('product_cards')
-                .select('*');
-            
-            productsDB = [];
-            
-            // Добавляем обычные товары
-            if (productCards && productCards.length > 0 && !cardsError) {
-                for (const card of productCards) {
-                    let pose = card.pose || 1;
-                    let selectable = true;
-                    const nameLower = (card.name_en || '').toLowerCase();
-                    
-                    if (nameLower.includes('group') || nameLower.includes('logo') || 
-                        (card.mess && card.mess.includes('group'))) {
-                        selectable = false;
-                    }
-                    
-                    productsDB.push({
-                        type: 'simple',
-                        article: card.article || card.sku,
-                        sku: card.sku,
-                        name_en: card.name_en,
-                        name_th: card.name_th,
-                        size: card.size,
-                        pose: Math.min(pose, 31),
-                        selectable: selectable,
-                        image: productImages[card.article] || productImages[card.sku] || null
-                    });
-                }
-            }
-            
-            // Добавляем пакеты
-            for (const [sku, pkg] of Object.entries(packageData)) {
-                productsDB.push({
-                    type: 'package',
-                    sku: sku,
-                    name_en: pkg.name_en,
-                    name_th: pkg.name_th,
-                    packageItems: pkg.items,
-                    selectable: false,
-                    image: productImages[sku] || null
-                });
-            }
-            
-            if (productsDB.length === 0) {
-                // Fallback
-                for (const [sku, pkg] of Object.entries(packageData)) {
-                    productsDB.push({
-                        type: 'package', sku: sku, name_en: pkg.name_en, name_th: pkg.name_th,
-                        packageItems: pkg.items, selectable: false, image: productImages[sku]
-                    });
-                }
-            }
-            
-            isLoading = false;
-            toast(`✅ Loaded ${productsDB.length} products`);
-            
-        } catch (error) {
-            console.error('Error:', error);
-            for (const [sku, pkg] of Object.entries(packageData)) {
-                productsDB.push({
-                    type: 'package', sku: sku, name_en: pkg.name_en, name_th: pkg.name_th,
-                    packageItems: pkg.items, selectable: false, image: productImages[sku]
-                });
-            }
-            isLoading = false;
-            toast(t('error'));
-        }
-    }
-
-    function loadRandomOrder() {
-        if (productsDB.length === 0) return;
+    function handleSlotClick(productId, slotIdx, currentVal) {
+        const product = products.find(p => p.id === productId);
+        if (!product?.slots[slotIdx]?.selectable) return;
         
-        const packages = productsDB.filter(p => p.type === 'package');
-        const selected = packages.slice(0, Math.min(3, packages.length));
+        const slotDiv = document.getElementById(`slot_${productId}_${slotIdx}`);
+        if (!slotDiv || editingSlot) return;
         
-        currentOrder = { number: "1111", products: selected };
-        assignments = {};
-        
-        for (let prod of selected) {
-            const key = `pkg_${prod.sku}_${Date.now()}`;
-            const slots = {};
-            
-            for (let item of prod.packageItems) {
-                const slotKey = `slot_${item.name_en.replace(/\s/g, '_')}`;
-                slots[slotKey] = {
-                    name_en: item.name_en,
-                    name_th: item.name_th,
-                    size: item.size,
-                    qty: item.qty,
-                    selectable: item.selectable,
-                    imageKey: item.imageKey,
-                    values: new Array(item.qty).fill(null)
-                };
-            }
-            
-            assignments[key] = {
-                key: key,
-                sku: prod.sku,
-                nameEn: prod.name_en,
-                nameTh: prod.name_th,
-                isPackage: true,
-                slots: slots,
-                image: prod.image
-            };
-        }
-        render();
-        toast(t('ok'));
-    }
-
-    function handleOvalClick(prodKey, slotKey, idx, currentVal) {
-        const a = assignments[prodKey];
-        if (!a || !a.isPackage) return;
-        const slot = a.slots[slotKey];
-        if (!slot || !slot.selectable) return;
-        
-        const ovalDiv = document.getElementById(`oval_${prodKey}_${slotKey}_${idx}`);
-        if (!ovalDiv) return;
-        if (editingSlot === `${prodKey}_${slotKey}_${idx}`) return;
-        
-        const width = ovalDiv.offsetWidth;
-        const height = ovalDiv.offsetHeight;
         const input = document.createElement('input');
         input.type = 'number';
-        input.value = currentVal !== null ? currentVal : '';
+        input.value = currentVal || '';
         input.className = 'oval-input';
         input.min = MIN_PHOTO;
         input.max = MAX_PHOTO;
-        input.style.width = `${width}px`;
-        input.style.height = `${height}px`;
+        input.style.width = `${slotDiv.offsetWidth}px`;
+        input.style.height = `${slotDiv.offsetHeight}px`;
         
-        ovalDiv.replaceWith(input);
+        slotDiv.replaceWith(input);
         input.focus();
         
         const save = () => {
             const newVal = parseInt(input.value);
-            input.replaceWith(ovalDiv);
+            input.replaceWith(slotDiv);
             editingSlot = null;
             if (!isNaN(newVal) && newVal !== currentVal) {
-                setPackageSlotValue(prodKey, slotKey, idx, newVal);
+                setPhotoValue(productId, slotIdx, newVal);
             }
         };
         
         input.addEventListener('blur', save);
         input.addEventListener('keypress', (e) => { if (e.key === 'Enter') save(); });
-        editingSlot = `${prodKey}_${slotKey}_${idx}`;
+        editingSlot = `${productId}_${slotIdx}`;
     }
 
-    function render() {
-        const container = document.getElementById('app');
-        
-        if (isLoading) {
-            container.innerHTML = `<div class="login-card"><div style="text-align:center; padding:1rem;">⏳ ${t('loading')}</div></div>`;
-            return;
-        }
-        
-        if (!currentOrder) {
-            container.innerHTML = `<div class="login-card">
-                <h3>${t('enter')}</h3>
-                <input type="text" id="loginCode" class="order-input" placeholder="1111" value="1111">
-                <button class="btn-primary" id="loginExec">${t('btn')}</button>
-            </div>`;
-            document.getElementById('loginExec')?.addEventListener('click', () => {
-                const code = document.getElementById('loginCode').value.trim();
-                if (code === '1111') loadRandomOrder();
-                else toast(t('invalid'));
+    // Add to cart
+    function addToCart(product, variantPrice, variantSku) {
+        const existing = cart.find(item => item.id === product.id && item.variantSku === variantSku);
+        if (existing) {
+            existing.quantity++;
+        } else {
+            cart.push({
+                id: product.id,
+                sku: product.sku,
+                variantSku: variantSku,
+                name: currentLang === 'th' ? (product.name_th || product.name_en) : (product.name_en || product.sku),
+                price: variantPrice,
+                quantity: 1,
+                image: product.image_url
             });
+        }
+        localStorage.setItem('wf_cart', JSON.stringify(cart));
+        updateCartUI();
+        toast(`✓ ${product.sku} ${t('add')}`);
+    }
+
+    function updateQuantity(itemId, variantSku, delta) {
+        const index = cart.findIndex(i => i.id === itemId && i.variantSku === variantSku);
+        if (index === -1) return;
+        
+        const newQty = cart[index].quantity + delta;
+        if (newQty <= 0) {
+            cart.splice(index, 1);
+        } else {
+            cart[index].quantity = newQty;
+        }
+        localStorage.setItem('wf_cart', JSON.stringify(cart));
+        updateCartUI();
+    }
+
+    function updateCartUI() {
+        const totalItems = cart.reduce((sum, i) => sum + i.quantity, 0);
+        const totalPrice = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+        
+        document.getElementById('mobileCartCount').innerText = totalItems;
+        
+        const cartPanel = document.getElementById('cartPanel');
+        if (!cartPanel) return;
+        
+        if (cart.length === 0) {
+            cartPanel.innerHTML = `
+                <div class="cart-header"><span>🛒 ${t('total')}</span><span>0</span></div>
+                <div class="cart-items"><div style="text-align:center;padding:1rem;">${t('empty')}</div></div>
+                <div class="cart-total"><span>${t('total')}</span><span>0 THB</span></div>
+            `;
             return;
         }
         
-        let totalSlots = 0, totalFilled = 0;
-        for (let a of Object.values(assignments)) {
-            if (a.isPackage) {
-                for (let slot of Object.values(a.slots)) {
-                    totalSlots += slot.values.length;
-                    totalFilled += slot.values.filter(v => v !== null).length;
-                }
-            }
+        let itemsHtml = '<div class="cart-items">';
+        cart.forEach(item => {
+            itemsHtml += `
+                <div class="cart-item">
+                    <div><span class="cart-item-sku">${item.sku}</span> ${item.name}</div>
+                    <div>${item.price.toLocaleString()} THB × ${item.quantity}</div>
+                    <div class="cart-item-controls">
+                        <button onclick="updateQuantity('${item.id}', '${item.variantSku}', -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="updateQuantity('${item.id}', '${item.variantSku}', 1)">+</button>
+                    </div>
+                </div>
+            `;
+        });
+        itemsHtml += '</div>';
+        
+        cartPanel.innerHTML = `
+            <div class="cart-header"><span>🛒 Cart</span><span>${totalItems} items</span></div>
+            ${itemsHtml}
+            <div class="cart-total"><span>${t('total')}</span><span>${totalPrice.toLocaleString()} THB</span></div>
+            <button class="checkout-btn" onclick="checkout()">${t('checkout')}</button>
+        `;
+    }
+
+    function checkout() {
+        const summary = cart.map(item => `${item.sku} x${item.quantity} = ${item.price * item.quantity} THB`).join('\n');
+        const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+        alert(`Order Summary:\n${summary}\n\nTotal: ${total} THB`);
+        toast('Order placed! (Demo)');
+    }
+
+    function showImageModal(url, name) {
+        if (!url) { toast('No image'); return; }
+        const modal = document.createElement('div');
+        modal.className = 'image-modal';
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = name;
+        img.onerror = () => { modal.innerHTML = '<div style="color:white;padding:2rem;">❌ Image not available</div>'; };
+        modal.appendChild(img);
+        modal.onclick = () => modal.remove();
+        document.body.appendChild(modal);
+    }
+
+    function renderProducts() {
+        const container = document.getElementById('app');
+        let filtered = [...products];
+        
+        const searchTerm = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
+        if (searchTerm) {
+            filtered = filtered.filter(p => 
+                p.sku?.toLowerCase().includes(searchTerm) || 
+                p.name_en?.toLowerCase().includes(searchTerm) ||
+                p.name_th?.toLowerCase().includes(searchTerm)
+            );
         }
         
-        let html = `<div class="order-header">
-            <div class="order-badge">📦 ${currentOrder.number}</div>
-            <div class="order-badge">${totalFilled}/${totalSlots}</div>
-            <button class="order-badge" id="backBtn" style="background:white; cursor:pointer;">${t('back')}</button>
-        </div>`;
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="loading">No products found</div>';
+            return;
+        }
         
-        for (let [key, asgn] of Object.entries(assignments)) {
-            const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
-            const imageUrl = asgn.image ? getYandexDirectUrl(asgn.image) : null;
+        let html = '<div class="product-grid">';
+        
+        filtered.forEach(product => {
+            const displayName = currentLang === 'th' ? (product.name_th || product.name_en) : (product.name_en || product.sku);
+            const displayDesc = currentLang === 'th' ? (product.description_th || product.description_en) : (product.description_en || '');
+            const imageUrl = product.image_url || 'https://via.placeholder.com/300x200?text=No+Image';
             
-            html += `<div class="product-card">
-                <div class="product-header">
-                    <div class="product-info">
-                        <span class="product-sku">${asgn.sku}</span>
-                        <span class="product-title">${name}</span>
-                        <span class="badge-auto">📦 Package</span>
-                    </div>
-                    ${imageUrl ? `<img class="product-image" src="${imageUrl}" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : ''}
-                </div>
-                <div class="slots-row">`;
+            // Get variant options
+            let variantSelectHtml = '';
+            let currentPrice = product.base_price;
+            let currentVariantSku = product.sku;
             
-            for (let [slotKey, slot] of Object.entries(asgn.slots)) {
-                const slotName = currentLang === 'en' ? slot.name_en : slot.name_th;
-                const slotSize = slot.size;
-                const isSelectable = slot.selectable;
-                const ovalWidth = getOvalWidth(slot.qty);
-                const ovalHeight = 42;
-                
-                html += `<div class="slot-group">
+            if (product.variants && product.variants.length > 1) {
+                variantSelectHtml = `
+                    <select class="variant-selector" id="variant_${product.id}" onchange="updateVariantPrice('${product.id}')">
+                        ${product.variants.map((v, idx) => {
+                            let label = '';
+                            if (v.size_label) label += v.size_label;
+                            if (v.pose) label += (label ? ' / ' : '') + v.pose;
+                            if (v.color) label += (label ? ' / ' : '') + v.color;
+                            if (!label) label = v.sku;
+                            return `<option value="${v.price}|${v.sku}" ${idx === 0 ? 'selected' : ''}>${label} - ${v.price} THB</option>`;
+                        }).join('')}
+                    </select>
+                `;
+                const firstVariant = product.variants[0];
+                if (firstVariant) {
+                    currentPrice = firstVariant.price;
+                    currentVariantSku = firstVariant.sku;
+                }
+            } else if (product.variants && product.variants.length === 1) {
+                currentPrice = product.variants[0].price;
+                currentVariantSku = product.variants[0].sku;
+            }
+            
+            // Photo slots section
+            let slotsHtml = '';
+            if (product.slots && product.slots.length > 0) {
+                slotsHtml = `<div class="photo-slots-section">
                     <div class="slot-group-title">
-                        <span>📷 ${slotName}</span>
-                        <span class="slot-group-badge">${slotSize} • ${slot.qty} ${t('photos')}</span>
+                        <span>📸 ${t('photoNum')} (${product.pose || product.slots.length} ${t('photos')})</span>
+                        <span class="slot-group-badge">${product.selectable ? '✅ ' + t('selectable') : '🔒 ' + t('notSelectable')}</span>
                     </div>
                     <div class="slot-items">`;
                 
-                for (let i = 0; i < slot.qty; i++) {
-                    const val = slot.values[i];
-                    const isFilled = val !== null;
+                product.slots.forEach((slot, idx) => {
+                    const isSelectable = slot.selectable !== false;
+                    const isFilled = slot.value !== null;
                     
                     if (isSelectable) {
-                        html += `<div class="slot-wrapper">
-                            <div id="oval_${key}_${slotKey}_${i}" class="oval ${isFilled ? 'filled' : ''}" 
-                                 style="width:${ovalWidth}px; height:${ovalHeight}px;"
-                                 onclick="handleOvalClick('${key}', '${slotKey}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : ''}</div>
-                            <span class="slot-number">${i+1}</span>
+                        slotsHtml += `<div class="slot-wrapper">
+                            <div id="slot_${product.id}_${idx}" class="oval ${isFilled ? 'filled' : ''}" 
+                                 onclick="handleSlotClick('${product.id}', ${idx}, ${slot.value !== null ? slot.value : 'null'})"
+                                 style="min-width:55px;">${slot.value !== null ? slot.value : '📷'}</div>
+                            <span class="slot-number">${idx+1}</span>
                         </div>`;
                     } else {
-                        html += `<div class="slot-wrapper">
-                            <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;"></div>
-                            <span class="slot-number">${i+1}</span>
-                            <span class="auto-note">🚫 ${t('notSelectable')}</span>
+                        slotsHtml += `<div class="slot-wrapper">
+                            <div class="oval disabled" style="min-width:55px;">🔒</div>
+                            <span class="slot-number">${idx+1}</span>
+                            <span class="auto-note">${t('notSelectable')}</span>
                         </div>`;
                     }
-                }
-                html += `</div></div>`;
+                });
+                slotsHtml += `</div></div>`;
             }
-            html += `</div></div>`;
+            
+            html += `
+                <div class="product-card">
+                    <img class="product-image" src="${imageUrl}" onclick="showImageModal('${imageUrl}', '${displayName.replace(/'/g, "\\'")}')" loading="lazy" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                    <div class="product-info">
+                        <div class="product-header">
+                            <span class="product-sku">${product.sku || 'N/A'}</span>
+                            <span class="product-title">${displayName}</span>
+                        </div>
+                        ${product.size ? `<div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:0.3rem;">📏 ${product.size}</div>` : ''}
+                        ${displayDesc ? `<div style="font-size:0.7rem;color:var(--text-secondary);margin-bottom:0.5rem;">${displayDesc.substring(0,80)}</div>` : ''}
+                        ${variantSelectHtml}
+                        ${slotsHtml}
+                        <div class="price-area">
+                            <span class="price" id="price_${product.id}">${currentPrice.toLocaleString()} THB</span>
+                            <button class="add-to-cart-btn" onclick="addToCartWithVariant('${product.id}', '${currentVariantSku}')">+</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    window.updateVariantPrice = function(productId) {
+        const select = document.getElementById(`variant_${productId}`);
+        if (!select) return;
+        const [price, sku] = select.value.split('|');
+        const priceEl = document.getElementById(`price_${productId}`);
+        if (priceEl) priceEl.textContent = `${parseInt(price).toLocaleString()} THB`;
+        
+        // Store current variant SKU for add to cart
+        const product = products.find(p => p.id === productId);
+        if (product) {
+            product._currentVariantSku = sku;
+            product._currentPrice = parseInt(price);
+        }
+    };
+
+    window.addToCartWithVariant = function(productId, defaultSku) {
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+        
+        let price = product.base_price;
+        let variantSku = product.sku;
+        
+        const select = document.getElementById(`variant_${product.id}`);
+        if (select) {
+            const [selPrice, selSku] = select.value.split('|');
+            price = parseInt(selPrice);
+            variantSku = selSku;
+        } else if (product.variants && product.variants.length === 1) {
+            price = product.variants[0].price;
+            variantSku = product.variants[0].sku;
         }
         
-        html += `<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.5rem 1.5rem;">✓ ${t('saved')}</button></div>`;
-        container.innerHTML = html;
-        
-        document.getElementById('backBtn')?.addEventListener('click', () => { currentOrder = null; render(); });
-        document.getElementById('confirmBtn')?.addEventListener('click', () => {
-            let summary = "═══════════════════════\n   WHITE FOX STUDIO\n   PACKAGE SELECTION\n═══════════════════════\n";
-            for (let [key, a] of Object.entries(assignments)) {
-                const name = currentLang === 'en' ? a.nameEn : a.nameTh;
-                summary += `\n📦 ${a.sku} — ${name}\n`;
-                for (let [slotKey, slot] of Object.entries(a.slots)) {
-                    const slotName = currentLang === 'en' ? slot.name_en : slot.name_th;
-                    summary += `   📷 ${slotName} (${slot.size}):\n`;
-                    for (let i = 0; i < slot.values.length; i++) {
-                        summary += `      ${i+1}: ${slot.values[i] || '❌'}\n`;
-                    }
-                }
-            }
-            alert(summary);
-            toast(t('saved'));
-        });
-    }
+        addToCart(product, price, variantSku);
+    };
 
-    window.handleOvalClick = handleOvalClick;
-    window.showImageModal = showImageModal;
+    function searchProducts() {
+        renderProducts();
+    }
 
     function updateLang() {
-        const iconSpan = document.getElementById('langIcon');
-        const textSpan = document.getElementById('langText');
-        if (iconSpan) iconSpan.innerText = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
-        if (textSpan) textSpan.innerText = currentLang === 'en' ? 'EN' : 'TH';
-        if (currentOrder) render();
-        else render();
+        currentLang = currentLang === 'en' ? 'th' : 'en';
+        document.getElementById('langBtn').innerHTML = currentLang === 'en' ? '🇬🇧 EN' : '🇹🇭 TH';
+        renderProducts();
+        updateCartUI();
     }
 
-    document.getElementById('langBtn')?.addEventListener('click', () => {
-        currentLang = currentLang === 'en' ? 'th' : 'en';
-        updateLang();
-    });
-    document.getElementById('checkBtn')?.addEventListener('click', () => {
-        const code = document.getElementById('orderInput').value.trim();
-        if (code === '1111') loadRandomOrder();
-        else toast(t('invalid'));
-    });
-    document.getElementById('orderInput')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') document.getElementById('checkBtn')?.click();
+    // Mobile cart
+    function openMobileCart() {
+        const cartPanel = document.getElementById('cartPanel');
+        if (cartPanel) cartPanel.style.display = 'block';
+    }
+
+    // Expose globals
+    window.handleSlotClick = handleSlotClick;
+    window.showImageModal = showImageModal;
+    window.addToCartWithVariant = addToCartWithVariant;
+    window.updateQuantity = updateQuantity;
+    window.checkout = checkout;
+    window.searchProducts = searchProducts;
+    window.updateVariantPrice = updateVariantPrice;
+
+    // Event listeners
+    document.getElementById('langBtn')?.addEventListener('click', updateLang);
+    document.getElementById('searchBtn')?.addEventListener('click', searchProducts);
+    document.getElementById('searchInput')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') searchProducts(); });
+    document.getElementById('mobileCartBtn')?.addEventListener('click', openMobileCart);
+    
+    // Close cart on click outside (mobile)
+    document.addEventListener('click', (e) => {
+        const cartPanel = document.getElementById('cartPanel');
+        const mobileBtn = document.getElementById('mobileCartBtn');
+        if (window.innerWidth <= 900 && cartPanel && !cartPanel.contains(e.target) && e.target !== mobileBtn) {
+            cartPanel.style.display = 'none';
+        }
     });
 
-    (async () => {
-        await loadProductsFromSupabase();
-        render();
-        updateLang();
-    })();
+    // Initialize
+    loadProducts();
+    updateCartUI();
 </script>
 </body>
 </html>
