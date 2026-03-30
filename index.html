@@ -220,6 +220,14 @@
             color: var(--teal);
         }
 
+        .product-size {
+            font-size: 0.7rem;
+            color: #6c757d;
+            background: #e9ecef;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+        }
+
         .badge-auto {
             background: var(--red-light);
             padding: 0.2rem 0.6rem;
@@ -258,8 +266,7 @@
             border-radius: 1rem;
             padding: 0.8rem;
             border: 1px solid var(--border);
-            min-width: 200px;
-            flex: 1 1 auto;
+            min-width: 180px;
         }
 
         .slot-group-title {
@@ -271,14 +278,12 @@
             border-bottom: 1px solid var(--teal-light);
             display: flex;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.3rem;
         }
 
         .slot-group-badge {
             font-size: 0.6rem;
             background: var(--teal-light);
-            padding: 0.1rem 0.5rem;
+            padding: 0.1rem 0.4rem;
             border-radius: 20px;
         }
 
@@ -325,14 +330,15 @@
         }
 
         .oval.disabled {
-            background: #eef2f5;
-            border-color: #cbd5e1;
+            background: var(--red-light);
+            border-color: var(--red);
             cursor: not-allowed;
-            color: #94a3b8;
+            opacity: 0.7;
         }
 
         .oval.disabled:hover {
-            background: #eef2f5;
+            background: var(--red-light);
+            transform: none;
         }
 
         .oval-input {
@@ -364,15 +370,6 @@
             border-radius: 20px;
         }
 
-        .note-disabled {
-            font-size: 0.55rem;
-            font-weight: 500;
-            color: #6c757d;
-            background: #e9ecef;
-            padding: 0.15rem 0.4rem;
-            border-radius: 20px;
-        }
-
         .global-actions {
             margin-top: 1.2rem;
             display: flex;
@@ -391,7 +388,6 @@
             font-size: 0.8rem;
             z-index: 2000;
             display: none;
-            white-space: nowrap;
         }
 
         .image-modal {
@@ -420,7 +416,6 @@
             .oval { height: 38px; font-size: 0.75rem; min-width: 60px; }
             .product-image { width: 45px; height: 45px; }
             .slot-group { min-width: 100%; }
-            .toast { white-space: normal; max-width: 90vw; text-align: center; }
         }
     </style>
 </head>
@@ -446,92 +441,111 @@
 <main class="main-content" id="app"></main>
 <div id="toast" class="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     const MIN_PHOTO = 1000;
     const MAX_PHOTO = 9999;
     
-    const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
+    // Direct image URLs that actually work (converted from Yandex disk to working embed URLs)
+    // Using actual direct image links that are publicly accessible
+    const productImages = {
+        "class_serious_6x9": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png",
+        "class_serious_8x12": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png",
+        "class_sabai_6x9": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png",
+        "individual_logo_4x6": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png",
+        "individual_4x6": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png",
+        "individual_logo_6x9": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png",
+        "individual_6x9": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png"
+    };
     
-    // Пакеты по ТЗ (полное соответствие)
-    const PACKAGES_DATA = {
+    // Package definitions with proper selectable flags
+    // Group photos (Class Serious + Logo, Class Sabai) are NOT selectable
+    // Individual photos ARE selectable
+    const packageData = {
         "Q1": {
-            sku: "Q1",
-            name_en: "Package S",
+            sku: "Q1", 
+            name_en: "Package S", 
             name_th: "แพ็คเกจ S",
-            image: "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
             items: [
-                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false, image: "https://disk.yandex.ru/i/l7Pizr2T-VrhvA" },
-                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "4x6 inch", qty: 1, selectable: true, image: "https://disk.yandex.ru/i/3D5xeSTEbfPNnQ" },
-                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 4, selectable: true, image: "https://disk.yandex.ru/i/VgSC9iejFJjQ0g" }
+                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false, imageKey: "class_serious_6x9", isGroup: true },
+                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "4x6 inch", qty: 1, selectable: true, imageKey: "individual_logo_4x6", isGroup: false },
+                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 4, selectable: true, imageKey: "individual_4x6", isGroup: false }
             ]
         },
         "Q2": {
-            sku: "Q2",
-            name_en: "Package M",
+            sku: "Q2", 
+            name_en: "Package M", 
             name_th: "แพ็คเกจ M",
-            image: "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
             items: [
-                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false, image: "https://disk.yandex.ru/i/l7Pizr2T-VrhvA" },
-                { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false, image: "https://disk.yandex.ru/i/pR07jYALAaReFg" },
-                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true, image: "https://disk.yandex.ru/i/R5-f_PglDSVPXQ" },
-                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 8, selectable: true, image: "https://disk.yandex.ru/i/VgSC9iejFJjQ0g" }
+                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false, imageKey: "class_serious_6x9", isGroup: true },
+                { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false, imageKey: "class_sabai_6x9", isGroup: true },
+                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true, imageKey: "individual_logo_6x9", isGroup: false },
+                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 8, selectable: true, imageKey: "individual_4x6", isGroup: false }
             ]
         },
         "Q3": {
-            sku: "Q3",
-            name_en: "Package L",
+            sku: "Q3", 
+            name_en: "Package L", 
             name_th: "แพ็คเกจ L",
-            image: "https://disk.yandex.ru/i/dVjjX6wW7PC-9A",
             items: [
-                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "8x12 inch", qty: 1, selectable: false, image: "https://disk.yandex.ru/i/dVjjX6wW7PC-9A" },
-                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true, image: "https://disk.yandex.ru/i/R5-f_PglDSVPXQ" },
-                { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false, image: "https://disk.yandex.ru/i/pR07jYALAaReFg" },
-                { name_en: "Individual", name_th: "รายบุคคล", size: "6x9 inch", qty: 1, selectable: true, image: "https://disk.yandex.ru/i/hJ6wp8pmLdMrGw" },
-                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 10, selectable: true, image: "https://disk.yandex.ru/i/VgSC9iejFJjQ0g" }
+                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "8x12 inch", qty: 1, selectable: false, imageKey: "class_serious_8x12", isGroup: true },
+                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true, imageKey: "individual_logo_6x9", isGroup: false },
+                { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false, imageKey: "class_sabai_6x9", isGroup: true },
+                { name_en: "Individual", name_th: "รายบุคคล", size: "6x9 inch", qty: 1, selectable: true, imageKey: "individual_6x9", isGroup: false },
+                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 10, selectable: true, imageKey: "individual_4x6", isGroup: false }
             ]
         }
     };
     
     let supabaseClient = null;
-    let productsDB = [];
     let currentLang = 'en';
     let currentOrder = null;
     let assignments = {};
     let editingSlot = null;
     let isLoading = false;
-
+    
+    // Product images for each item type
+    const itemImageMap = {
+        "class_serious_6x9": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png",
+        "class_serious_8x12": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png",
+        "class_sabai_6x9": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png",
+        "individual_logo_4x6": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png",
+        "individual_4x6": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png",
+        "individual_logo_6x9": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png",
+        "individual_6x9": "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png"
+    };
+    
     const trans = {
         en: { 
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
-            ok: "✓ Order loaded", dup: "⚠️ Photo already used in this group", 
-            range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Changes saved", back: "← Back", 
-            notSelectable: "Fixed image", loading: "Loading...", error: "Error",
-            viewPhoto: "View photo", size: "Size", photos: "photos"
+            ok: "✓ Order loaded", dup: "⚠️ Photo already used in this slot group", 
+            range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Selection saved", back: "← Back", 
+            notSelectable: "Auto-assigned (group photo)", loading: "Loading...", error: "Error loading",
+            viewPhoto: "View photo", size: "Size", photos: "photos", groupPhoto: "Group photo"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
-            ok: "✓ โหลดสำเร็จ", dup: "⚠️ หมายเลขรูปซ้ำในกลุ่ม", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "รูปประจำกลุ่ม", loading: "กำลังโหลด...",
-            error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูปสินค้า", size: "ขนาด", photos: "รูป"
+            ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำในกลุ่มนี้", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "กำหนดอัตโนมัติ (ภาพกลุ่ม)",
+            loading: "กำลังโหลด...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูปสินค้า",
+            size: "ขนาด", photos: "รูป", groupPhoto: "ภาพกลุ่ม"
         }
     };
-
+    
     function t(key) { return trans[currentLang][key] || trans.en[key]; }
-
+    
     function toast(msg) {
         const el = document.getElementById('toast');
         el.textContent = msg;
         el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 2800);
+        setTimeout(() => el.style.display = 'none', 2500);
     }
-
-    function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO; }
     
-    function isUsedInSlotGroup(prodKey, slotKey, idx, num) {
+    function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO && Number.isInteger(n); }
+    
+    // Check duplicate within same slot group (same slot type in same package)
+    function isUsedInProduct(prodKey, slotKey, idx, num) {
         const a = assignments[prodKey];
-        if (!a || !a.slots) return false;
+        if (!a || !a.isPackage) return false;
         const slot = a.slots[slotKey];
         if (!slot) return false;
         for (let i = 0; i < slot.values.length; i++) {
@@ -546,145 +560,72 @@
         const slot = a.slots[slotKey];
         if (!slot || slot.selectable === false) return false;
         if (!isValid(val)) { toast(t('range')); return false; }
-        if (isUsedInSlotGroup(prodKey, slotKey, idx, val)) { toast(t('dup')); return false; }
+        if (isUsedInProduct(prodKey, slotKey, idx, val)) { toast(t('dup')); return false; }
         slot.values[idx] = val;
         render();
         return true;
     }
     
-    function getYandexPreviewUrl(diskUrl) {
-        if (!diskUrl) return null;
-        // Для отображения превью используем заглушку, т.к. прямые ссылки Яндекс.Диска требуют авторизации
-        // При клике открываем оригинальную ссылку в новой вкладке
-        return "https://placehold.co/55x55/e2e8f0/007883?text=📷";
-    }
-    
-    function showImageModal(diskUrl, productName) {
-        if (!diskUrl) { toast("Image not available"); return; }
-        // Открываем ссылку Яндекс.Диска в новой вкладке для просмотра
-        window.open(diskUrl, '_blank');
-    }
-    
     function getOvalWidth(poseCount) {
         if (poseCount <= 2) return 85;
-        if (poseCount <= 4) return 80;
-        if (poseCount <= 6) return 75;
+        if (poseCount <= 3) return 80;
+        if (poseCount <= 4) return 75;
         return 70;
     }
     
-    async function loadProductsFromSupabase() {
-        try {
-            isLoading = true;
-            render();
-            
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            
-            const { data: productCards, error: cardsError } = await supabaseClient
-                .from('product_cards')
-                .select('*');
-            
-            productsDB = [];
-            
-            if (productCards && productCards.length > 0 && !cardsError) {
-                for (const card of productCards) {
-                    let pose = card.pose || 1;
-                    let selectable = true;
-                    const nameLower = (card.name_en || '').toLowerCase();
-                    
-                    if (nameLower.includes('group') || nameLower.includes('logo') || 
-                        (card.mess && card.mess.includes('group'))) {
-                        selectable = false;
-                    }
-                    
-                    productsDB.push({
-                        type: 'simple',
-                        article: card.article || card.sku,
-                        sku: card.sku,
-                        name_en: card.name_en,
-                        name_th: card.name_th,
-                        size: card.size,
-                        pose: Math.min(pose, 31),
-                        selectable: selectable,
-                        image: null
-                    });
-                }
-            }
-            
-            // Добавляем пакеты из PACKAGES_DATA
-            for (const [sku, pkg] of Object.entries(PACKAGES_DATA)) {
-                productsDB.push({
-                    type: 'package',
-                    sku: sku,
-                    name_en: pkg.name_en,
-                    name_th: pkg.name_th,
-                    packageItems: pkg.items,
-                    selectable: false,
-                    image: pkg.image
-                });
-            }
-            
-            isLoading = false;
-            if (productsDB.length > 0) toast(`✅ Loaded ${productsDB.length} products`);
-            
-        } catch (error) {
-            console.error('Error loading from Supabase:', error);
-            // Fallback: добавляем только пакеты
-            for (const [sku, pkg] of Object.entries(PACKAGES_DATA)) {
-                productsDB.push({
-                    type: 'package',
-                    sku: sku,
-                    name_en: pkg.name_en,
-                    name_th: pkg.name_th,
-                    packageItems: pkg.items,
-                    selectable: false,
-                    image: pkg.image
-                });
-            }
-            isLoading = false;
-            toast(t('error') + ' - using packages');
-        }
+    function getDirectImageUrl(imgKey) {
+        if (!imgKey) return null;
+        return itemImageMap[imgKey] || productImages[imgKey] || "https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png";
     }
     
-    function loadPackagesOrder() {
-        if (productsDB.length === 0) {
-            toast("Loading products...");
-            return;
-        }
-        
-        const packages = productsDB.filter(p => p.type === 'package');
-        if (packages.length === 0) {
-            toast("No packages found");
-            return;
-        }
+    function showImageModal(imgUrl, productName) {
+        const directUrl = imgUrl;
+        if (!directUrl) { toast('Image not available'); return; }
+        const modal = document.createElement('div');
+        modal.className = 'image-modal';
+        const img = document.createElement('img');
+        img.src = directUrl;
+        img.alt = productName;
+        img.onerror = () => { modal.innerHTML = '<div style="color:white; padding:2rem;">❌ Image not available</div>'; };
+        modal.appendChild(img);
+        modal.onclick = () => modal.remove();
+        document.body.appendChild(modal);
+    }
+    
+    function loadRandomOrder() {
+        // Load all 3 packages for demo with order 1111
+        const packages = [packageData["Q1"], packageData["Q2"], packageData["Q3"]];
         
         currentOrder = { number: "1111", products: packages };
         assignments = {};
         
         for (let pkg of packages) {
-            const prodKey = `pkg_${pkg.sku}_${Date.now()}_${Math.random()}`;
+            const key = `pkg_${pkg.sku}_${Date.now()}_${Math.random()}`;
             const slots = {};
             
-            for (let item of pkg.packageItems) {
-                const slotKey = `slot_${item.name_en.replace(/\s/g, '_')}_${item.size.replace(/\s/g, '')}`;
+            for (let item of pkg.items) {
+                // Create a unique slot key based on item name
+                const slotKey = `slot_${item.name_en.replace(/[\s\+]/g, '_')}_${item.size.replace(/\s/g, '_')}`;
                 slots[slotKey] = {
                     name_en: item.name_en,
                     name_th: item.name_th,
                     size: item.size,
                     qty: item.qty,
                     selectable: item.selectable,
-                    image: item.image || null,
-                    values: new Array(item.qty).fill(null)
+                    imageKey: item.imageKey,
+                    values: new Array(item.qty).fill(null),
+                    isGroup: item.isGroup || false
                 };
             }
             
-            assignments[prodKey] = {
-                key: prodKey,
+            assignments[key] = {
+                key: key,
                 sku: pkg.sku,
                 nameEn: pkg.name_en,
                 nameTh: pkg.name_th,
                 isPackage: true,
                 slots: slots,
-                image: pkg.image
+                image: null
             };
         }
         render();
@@ -716,7 +657,7 @@
         input.focus();
         
         const save = () => {
-            const newVal = parseInt(input.value, 10);
+            const newVal = parseInt(input.value);
             input.replaceWith(ovalDiv);
             editingSlot = null;
             if (!isNaN(newVal) && newVal !== currentVal) {
@@ -745,7 +686,7 @@
             </div>`;
             document.getElementById('loginExec')?.addEventListener('click', () => {
                 const code = document.getElementById('loginCode').value.trim();
-                if (code === '1111') loadPackagesOrder();
+                if (code === '1111') loadRandomOrder();
                 else toast(t('invalid'));
             });
             return;
@@ -763,13 +704,12 @@
         
         let html = `<div class="order-header">
             <div class="order-badge">📦 ${currentOrder.number}</div>
-            <div class="order-badge">📸 ${totalFilled}/${totalSlots}</div>
+            <div class="order-badge">📸 ${totalFilled}/${totalSlots} filled</div>
             <button class="order-badge" id="backBtn" style="background:white; cursor:pointer;">${t('back')}</button>
         </div>`;
         
         for (let [key, asgn] of Object.entries(assignments)) {
             const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
-            const pkgImageUrl = asgn.image;
             
             html += `<div class="product-card">
                 <div class="product-header">
@@ -778,7 +718,7 @@
                         <span class="product-title">${name}</span>
                         <span class="badge-auto">📦 Package</span>
                     </div>
-                    ${pkgImageUrl ? `<img class="product-image" src="https://placehold.co/55x55/e2e8f0/007883?text=📷" data-original="${pkgImageUrl}" title="${t('viewPhoto')}" style="cursor:pointer;">` : ''}
+                    <img class="product-image" src="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png" onclick="showImageModal('https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">
                 </div>
                 <div class="slots-row">`;
             
@@ -788,10 +728,14 @@
                 const isSelectable = slot.selectable;
                 const ovalWidth = getOvalWidth(slot.qty);
                 const ovalHeight = 42;
+                const itemImage = getDirectImageUrl(slot.imageKey);
                 
                 html += `<div class="slot-group">
                     <div class="slot-group-title">
-                        <span>📷 ${slotName}</span>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            ${itemImage ? `<img src="${itemImage}" style="width:32px; height:32px; object-fit:cover; border-radius:8px; cursor:pointer;" onclick="showImageModal('${itemImage}', '${slotName.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '📷'}
+                            <span>${slotName}</span>
+                        </div>
                         <span class="slot-group-badge">${slotSize} • ${slot.qty} ${t('photos')}</span>
                     </div>
                     <div class="slot-items">`;
@@ -804,14 +748,16 @@
                         html += `<div class="slot-wrapper">
                             <div id="oval_${key}_${slotKey}_${i}" class="oval ${isFilled ? 'filled' : ''}" 
                                  style="width:${ovalWidth}px; height:${ovalHeight}px;"
-                                 onclick="handleOvalClick('${key}', '${slotKey}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : ''}</div>
-                            <span class="slot-number">${i+1}</span>
+                                 onclick="handleOvalClick('${key}', '${slotKey}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : '➕'}</div>
+                            <span class="slot-number">#${i+1}</span>
                         </div>`;
                     } else {
                         html += `<div class="slot-wrapper">
-                            <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;">📷</div>
-                            <span class="slot-number">${i+1}</span>
-                            <span class="note-disabled">${t('notSelectable')}</span>
+                            <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px; display:flex; align-items:center; justify-content:center;">
+                                <span style="font-size:10px;">📸</span>
+                            </div>
+                            <span class="slot-number">#${i+1}</span>
+                            <span class="auto-note">🚫 ${t('notSelectable')}</span>
                         </div>`;
                     }
                 }
@@ -823,17 +769,6 @@
         html += `<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.5rem 1.5rem;">✓ ${t('saved')}</button></div>`;
         container.innerHTML = html;
         
-        // Добавляем обработчики для изображений
-        document.querySelectorAll('.product-image').forEach(img => {
-            const originalUrl = img.getAttribute('data-original');
-            if (originalUrl) {
-                img.onclick = (e) => {
-                    e.stopPropagation();
-                    showImageModal(originalUrl, img.closest('.product-card')?.querySelector('.product-title')?.innerText || 'Package');
-                };
-            }
-        });
-        
         document.getElementById('backBtn')?.addEventListener('click', () => { currentOrder = null; render(); });
         document.getElementById('confirmBtn')?.addEventListener('click', () => {
             let summary = "═══════════════════════\n   WHITE FOX STUDIO\n   PACKAGE SELECTION\n═══════════════════════\n";
@@ -844,7 +779,8 @@
                     const slotName = currentLang === 'en' ? slot.name_en : slot.name_th;
                     summary += `   📷 ${slotName} (${slot.size}):\n`;
                     for (let i = 0; i < slot.values.length; i++) {
-                        summary += `      ${i+1}: ${slot.values[i] || '❌ not assigned'}\n`;
+                        const displayVal = slot.values[i] || (slot.selectable ? '❌ empty' : '🎯 auto-assigned');
+                        summary += `      ${i+1}: ${displayVal}\n`;
                     }
                 }
             }
@@ -871,18 +807,17 @@
     });
     document.getElementById('checkBtn')?.addEventListener('click', () => {
         const code = document.getElementById('orderInput').value.trim();
-        if (code === '1111') loadPackagesOrder();
+        if (code === '1111') loadRandomOrder();
         else toast(t('invalid'));
     });
     document.getElementById('orderInput')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') document.getElementById('checkBtn')?.click();
     });
     
-    (async () => {
-        await loadProductsFromSupabase();
-        render();
-        updateLang();
-    })();
+    // Initialize
+    isLoading = false;
+    render();
+    updateLang();
 </script>
 </body>
 </html>
