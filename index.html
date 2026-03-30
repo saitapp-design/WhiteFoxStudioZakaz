@@ -228,15 +228,6 @@
             border-radius: 20px;
         }
 
-        .product-pose {
-            font-size: 0.7rem;
-            background: var(--teal-light);
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            color: var(--teal);
-            font-weight: 600;
-        }
-
         .badge-auto {
             background: var(--red-light);
             padding: 0.2rem 0.6rem;
@@ -266,8 +257,41 @@
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
-            align-items: center;
+            align-items: flex-start;
             justify-content: flex-start;
+        }
+
+        .slot-group {
+            background: #fafcff;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            min-width: 180px;
+        }
+
+        .slot-group-title {
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: var(--teal);
+            margin-bottom: 0.6rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid var(--teal-light);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .slot-group-badge {
+            font-size: 0.6rem;
+            background: var(--teal-light);
+            padding: 0.1rem 0.4rem;
+            border-radius: 20px;
+        }
+
+        .slot-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: center;
         }
 
         .slot-wrapper {
@@ -291,6 +315,7 @@
             transition: all 0.15s;
             height: 42px;
             padding: 0 0.5rem;
+            min-width: 70px;
         }
 
         .oval:hover {
@@ -325,6 +350,7 @@
             font-family: monospace;
             height: 42px;
             padding: 0 0.5rem;
+            min-width: 70px;
         }
 
         .slot-number {
@@ -385,8 +411,9 @@
 
         @media (max-width: 700px) {
             .slots-row { gap: 0.8rem; justify-content: center; }
-            .oval { height: 38px; font-size: 0.75rem; }
+            .oval { height: 38px; font-size: 0.75rem; min-width: 60px; }
             .product-image { width: 45px; height: 45px; }
+            .slot-group { min-width: 100%; }
         }
     </style>
 </head>
@@ -420,58 +447,18 @@
     const SUPABASE_URL = 'https://afgzicjirrdzrotgooea.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmZ3ppY2ppcnJkenJvdGdvb2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjQxODYsImV4cCI6MjA4OTcwMDE4Nn0.yQMVkO6IUPsF2x2kOwzDELrlHNse-tQHYhl-rvRrc6o';
     
-    // Справочник картинок для товаров (Яндекс Диск)
+    // Картинки товаров
     const productImages = {
-        "A11": "https://disk.yandex.ru/i/9503hWa62mkPpA",
-        "A12": "https://disk.yandex.ru/i/JIlYMRAWxVAyqQ",
-        "A13": "https://disk.yandex.ru/i/GffwiC_zy77j-A",
-        "A14": "https://disk.yandex.ru/i/PDBHXuBjMUlgMw",
-        "W11": "https://disk.yandex.ru/i/b5x7p_7YAJfKaA",
-        "W12": "https://disk.yandex.ru/i/xqitJpAldpxCYw",
-        "W13": "https://disk.yandex.ru/i/Af4Q4ZTnnSw6vQ",
-        "W14": "https://disk.yandex.ru/i/WL5Omzy4agQU1w",
-        "W15": "https://disk.yandex.ru/i/HfakRxWTe-NZLw",
-        "W16": "https://disk.yandex.ru/i/8LC6FtdF6uWnwA",
-        "W17": "https://disk.yandex.ru/i/UKu-E3d7_Xs-AQ",
-        "C11": "https://disk.yandex.ru/i/dA78-MGX92zTyA",
-        "C12": "https://disk.yandex.ru/i/kib-8y-EQv2kIQ",
-        "C13": "https://disk.yandex.ru/i/UjCzWiNSTkb15g",
-        "C14": "https://disk.yandex.ru/i/YZra9U03Nw_5mQ",
-        "C15": "https://disk.yandex.ru/i/bN0cLSztAzZbFw",
-        "F11": "https://disk.yandex.ru/i/HFbZcyqCKuAkAg",
-        "F12": "https://disk.yandex.ru/i/nfPFhnpS-fdoxw",
-        "F13": "https://disk.yandex.ru/i/nivQ26bamQdtSg",
-        "F14": "https://disk.yandex.ru/i/6pTsqL_i7gV1Lg",
-        "F15": "https://disk.yandex.ru/i/PZN0CHilcNGGYA",
-        "B11": "https://disk.yandex.ru/i/jmKYL66zOH-mSA",
-        "B12": "https://disk.yandex.ru/i/83yp4K8IH9HdlQ",
-        "B13": "https://disk.yandex.ru/i/trd6O2rV1cuHiA",
-        "B14": "https://disk.yandex.ru/i/JjQ_8wY-JY44eQ",
-        "K11": "https://disk.yandex.ru/i/VzIl5BPiYWTa4w",
-        "K12": "https://disk.yandex.ru/i/VzIl5BPiYWTa4w",
-        "K13": "https://disk.yandex.ru/i/0Z2LA466jPe98Q",
-        "K14": "https://disk.yandex.ru/i/s-TzMhvDkiZnkA",
-        "D11": "https://disk.yandex.ru/i/RpWHI2-BIVwxgw",
-        "D12": "https://disk.yandex.ru/i/p0q7AIjNomnVOw",
-        "D13": "https://disk.yandex.ru/i/Ry8Q04l8zFApNw",
-        "D14": "https://disk.yandex.ru/i/jIlPPFs5X0zwaw",
-        "S11": "https://disk.yandex.ru/i/KpV6EogC2hGRLQ",
-        "S12": "https://disk.yandex.ru/i/KpV6EogC2hGRLQ",
-        "S13": "https://disk.yandex.ru/i/cxB1A4aOZ6JqHg",
-        "S16": "https://disk.yandex.ru/i/IbIU_Wyz9JEFgA",
-        "S17": "https://disk.yandex.ru/i/Oqisp62LofWS3Q",
-        "E11": "https://disk.yandex.ru/i/FU_2GuSP1cqRxQ",
-        "E12": "https://disk.yandex.ru/d/t35MmyRDNP50Hg",
-        "E13": "https://disk.yandex.ru/i/Wv4TEGrzcOKQVA",
-        "E14": "https://disk.yandex.ru/i/VcNtNpDM3OZYwg",
-        "E15": "https://disk.yandex.ru/i/WkXPF5YMzH6rfA",
-        "E16": "https://disk.yandex.ru/i/TlhwfLE3iwV90A",
-        "X11": "https://disk.yandex.ru/i/d8S-geQGbJ_PiA",
-        "X12": "https://disk.yandex.ru/i/4Qdsax63N-u_DA",
-        "X13": "https://disk.yandex.ru/i/E5f2gBfdlP8ZQw",
         "Q1": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
         "Q2": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
-        "Q3": "https://disk.yandex.ru/i/dVjjX6wW7PC-9A"
+        "Q3": "https://disk.yandex.ru/i/dVjjX6wW7PC-9A",
+        "individual_logo_4x6": "https://disk.yandex.ru/i/3D5xeSTEbfPNnQ",
+        "individual_4x6": "https://disk.yandex.ru/i/VgSC9iejFJjQ0g",
+        "individual_6x9": "https://disk.yandex.ru/i/hJ6wp8pmLdMrGw",
+        "individual_logo_6x9": "https://disk.yandex.ru/i/R5-f_PglDSVPXQ",
+        "class_sabai_6x9": "https://disk.yandex.ru/i/pR07jYALAaReFg",
+        "class_serious_6x9": "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
+        "class_serious_8x12": "https://disk.yandex.ru/i/dVjjX6wW7PC-9A"
     };
     
     let supabaseClient = null;
@@ -485,21 +472,17 @@
     const trans = {
         en: { 
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
-            ok: "✓ Order loaded", dup: "⚠️ Photo already used in this product", 
-            range: `Photo number must be ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ Selection confirmed", back: "← Back", 
-            notSelectable: "Not selectable (group/brand photo)",
-            loading: "Loading products from database...", error: "Connection error, using demo data",
-            viewPhoto: "View product photo", size: "Size", pose: "Poses"
+            ok: "✓ Order loaded", dup: "⚠️ Photo already used", 
+            range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Confirmed", back: "← Back", 
+            notSelectable: "Not selectable", loading: "Loading...", error: "Error",
+            viewPhoto: "View photo", size: "Size", photos: "photos"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
-            ok: "✓ โหลดออเดอร์เรียบร้อย", dup: "⚠️ หมายเลขรูปนี้ถูกใช้ในสินค้านี้แล้ว", 
-            range: `หมายเลขรูปต้องอยู่ระหว่าง ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ บันทึกการเลือกเรียบร้อย", back: "← กลับ", 
-            notSelectable: "ไม่สามารถเลือกได้ (รูปกลุ่ม/โลโก้)",
-            loading: "กำลังโหลดสินค้าจากฐานข้อมูล...", error: "เชื่อมต่อไม่ได้, ใช้ข้อมูลตัวอย่าง",
-            viewPhoto: "ดูรูปสินค้า", size: "ขนาด", pose: "จำนวนรูป"
+            ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "ไม่สามารถเลือกได้",
+            loading: "กำลังโหลด...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูปสินค้า",
+            size: "ขนาด", photos: "รูป"
         }
     };
 
@@ -514,61 +497,88 @@
 
     function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO; }
 
-    function isUsedInProduct(prodKey, num, excludeIdx) {
+    function isUsedInProduct(prodKey, slotKey, idx, num) {
         const a = assignments[prodKey];
         if (!a) return false;
-        for (let i = 0; i < a.values.length; i++) {
-            if (i !== excludeIdx && a.values[i] === num) return true;
+        if (!a.slots) return false;
+        const slot = a.slots[slotKey];
+        if (!slot) return false;
+        for (let i = 0; i < slot.values.length; i++) {
+            if (i !== idx && slot.values[i] === num) return true;
         }
         return false;
     }
 
-    function setValue(prodKey, idx, val) {
+    function setPackageSlotValue(prodKey, slotKey, idx, val) {
         const a = assignments[prodKey];
-        if (!a || !a.selectable) return false;
+        if (!a || !a.isPackage) return false;
+        const slot = a.slots[slotKey];
+        if (!slot || slot.selectable === false) return false;
         if (!isValid(val)) { toast(t('range')); return false; }
-        if (isUsedInProduct(prodKey, val, idx)) { toast(t('dup')); return false; }
-        a.values[idx] = val;
+        if (isUsedInProduct(prodKey, slotKey, idx, val)) { toast(t('dup')); return false; }
+        slot.values[idx] = val;
         render();
         return true;
     }
 
     function getOvalWidth(poseCount) {
-        if (poseCount <= 2) return 95;
-        if (poseCount <= 3) return 88;
-        if (poseCount <= 4) return 82;
-        if (poseCount <= 6) return 76;
-        if (poseCount <= 10) return 70;
-        if (poseCount <= 16) return 64;
-        return 58;
+        if (poseCount <= 2) return 85;
+        if (poseCount <= 3) return 80;
+        if (poseCount <= 4) return 75;
+        return 70;
     }
 
     function getYandexDirectUrl(diskUrl) {
         if (!diskUrl) return null;
         if (diskUrl.includes('disk.yandex.ru/i/')) return diskUrl;
         if (diskUrl.includes('disk.yandex.ru/d/')) return diskUrl.replace('/d/', '/i/');
-        if (diskUrl.includes('drive.google.com')) return diskUrl;
         return diskUrl;
     }
 
     function showImageModal(imgUrl, productName) {
         const directUrl = getYandexDirectUrl(imgUrl);
-        if (!directUrl) {
-            toast('Image not available');
-            return;
-        }
+        if (!directUrl) { toast('Image not available'); return; }
         const modal = document.createElement('div');
         modal.className = 'image-modal';
         const img = document.createElement('img');
         img.src = directUrl;
         img.alt = productName;
-        img.onerror = () => {
-            modal.innerHTML = '<div style="color:white; text-align:center; padding:2rem;">❌ Image not available</div>';
-        };
+        img.onerror = () => { modal.innerHTML = '<div style="color:white; padding:2rem;">❌ Image not available</div>'; };
         modal.appendChild(img);
         modal.onclick = () => modal.remove();
         document.body.appendChild(modal);
     }
+
+    // Данные пакетов из таблицы
+    const packageData = {
+        "Q1": {
+            sku: "Q1", name_en: "Package S", name_th: "แพ็คเกจ S",
+            items: [
+                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false, imageKey: "class_serious_6x9" },
+                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "4x6 inch", qty: 1, selectable: true, imageKey: "individual_logo_4x6" },
+                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 4, selectable: true, imageKey: "individual_4x6" }
+            ]
+        },
+        "Q2": {
+            sku: "Q2", name_en: "Package M", name_th: "แพ็คเกจ M",
+            items: [
+                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false, imageKey: "class_serious_6x9" },
+                { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false, imageKey: "class_sabai_6x9" },
+                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true, imageKey: "individual_logo_6x9" },
+                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 8, selectable: true, imageKey: "individual_4x6" }
+            ]
+        },
+        "Q3": {
+            sku: "Q3", name_en: "Package L", name_th: "แพ็คเกจ L",
+            items: [
+                { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "8x12 inch", qty: 1, selectable: false, imageKey: "class_serious_8x12" },
+                { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true, imageKey: "individual_logo_6x9" },
+                { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false, imageKey: "class_sabai_6x9" },
+                { name_en: "Individual", name_th: "รายบุคคล", size: "6x9 inch", qty: 1, selectable: true, imageKey: "individual_6x9" },
+                { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 10, selectable: true, imageKey: "individual_4x6" }
+            ]
+        }
+    };
 
     async function loadProductsFromSupabase() {
         try {
@@ -577,157 +587,126 @@
             
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             
-            // Загружаем товары из таблицы product_cards
             const { data: productCards, error: cardsError } = await supabaseClient
                 .from('product_cards')
                 .select('*');
             
-            if (cardsError) {
-                console.warn('Supabase error, using fallback data:', cardsError);
-                throw new Error(cardsError.message);
-            }
-            
             productsDB = [];
             
-            if (productCards && productCards.length > 0) {
+            // Добавляем обычные товары
+            if (productCards && productCards.length > 0 && !cardsError) {
                 for (const card of productCards) {
-                    let pose = 1;
+                    let pose = card.pose || 1;
                     let selectable = true;
-                    let sku = card.sku || card.card_id;
-                    let article = card.article || card.sku;
-                    let size = card.size || '';
-                    let name_en = card.name_en || card.sku;
-                    let name_th = card.name_th || card.name_en;
+                    const nameLower = (card.name_en || '').toLowerCase();
                     
-                    // Определяем количество pose из variants или полей
-                    if (card.variants) {
-                        try {
-                            const variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
-                            if (variants && variants.length > 0) {
-                                if (variants[0].pose) pose = Math.min(parseInt(variants[0].pose), 31);
-                                if (variants[0].sku) sku = variants[0].sku;
-                                if (variants[0].size_label) size = variants[0].size_label;
-                            }
-                        } catch(e) {}
-                    }
-                    if (card.pose) pose = Math.min(parseInt(card.pose), 31);
-                    if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 31);
-                    if (pose < 1) pose = 1;
-                    
-                    // Определяем, можно ли выбирать фото (групповые/логотипы нельзя)
-                    const messField = card.mess || '';
-                    const nameLower = (name_en + ' ' + name_th).toLowerCase();
-                    if (messField.includes('group') || messField.includes('brand') ||
-                        nameLower.includes('group') || nameLower.includes('logo') ||
-                        nameLower.includes('класс') || nameLower.includes('лого')) {
+                    if (nameLower.includes('group') || nameLower.includes('logo') || 
+                        (card.mess && card.mess.includes('group'))) {
                         selectable = false;
                     }
                     
                     productsDB.push({
-                        article: article,
-                        sku: sku,
-                        name_en: name_en,
-                        name_th: name_th,
-                        size: size,
-                        pose: pose,
+                        type: 'simple',
+                        article: card.article || card.sku,
+                        sku: card.sku,
+                        name_en: card.name_en,
+                        name_th: card.name_th,
+                        size: card.size,
+                        pose: Math.min(pose, 31),
                         selectable: selectable,
-                        image: productImages[article] || productImages[sku] || null
+                        image: productImages[card.article] || productImages[card.sku] || null
                     });
                 }
             }
             
-            // Загружаем пакеты
-            const { data: packages, error: packagesError } = await supabaseClient
-                .from('packages_with_price')
-                .select('*');
-            
-            if (packages && packages.length > 0 && !packagesError) {
-                for (const pkg of packages) {
-                    let totalPhotos = pkg.total_photos || 1;
-                    if (totalPhotos < 1) totalPhotos = 1;
-                    totalPhotos = Math.min(totalPhotos, 31);
-                    
-                    productsDB.push({
-                        article: pkg.sku || pkg.slug,
-                        sku: pkg.sku || pkg.slug,
-                        name_en: pkg.name_en || 'Package',
-                        name_th: pkg.name_th || 'แพ็คเกจ',
-                        size: '',
-                        pose: totalPhotos,
-                        selectable: false,
-                        image: productImages[pkg.sku] || null
-                    });
-                }
+            // Добавляем пакеты
+            for (const [sku, pkg] of Object.entries(packageData)) {
+                productsDB.push({
+                    type: 'package',
+                    sku: sku,
+                    name_en: pkg.name_en,
+                    name_th: pkg.name_th,
+                    packageItems: pkg.items,
+                    selectable: false,
+                    image: productImages[sku] || null
+                });
             }
             
-            // Если данных нет, используем fallback
             if (productsDB.length === 0) {
-                productsDB = getFallbackData();
+                // Fallback
+                for (const [sku, pkg] of Object.entries(packageData)) {
+                    productsDB.push({
+                        type: 'package', sku: sku, name_en: pkg.name_en, name_th: pkg.name_th,
+                        packageItems: pkg.items, selectable: false, image: productImages[sku]
+                    });
+                }
             }
             
             isLoading = false;
-            toast(`✅ Loaded ${productsDB.length} products from database`);
+            toast(`✅ Loaded ${productsDB.length} products`);
             
         } catch (error) {
-            console.error('Error loading from Supabase:', error);
-            productsDB = getFallbackData();
+            console.error('Error:', error);
+            for (const [sku, pkg] of Object.entries(packageData)) {
+                productsDB.push({
+                    type: 'package', sku: sku, name_en: pkg.name_en, name_th: pkg.name_th,
+                    packageItems: pkg.items, selectable: false, image: productImages[sku]
+                });
+            }
             isLoading = false;
             toast(t('error'));
         }
-    }
-    
-    function getFallbackData() {
-        return [
-            { article: "W16", sku: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true, image: productImages["W16"] },
-            { article: "A11", sku: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", size: "8x12", pose: 1, selectable: false, image: productImages["A11"] },
-            { article: "C15", sku: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true, image: productImages["C15"] },
-            { article: "W17", sku: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false, image: productImages["W17"] },
-            { article: "F12", sku: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะกรอบอลูมิเนียม", size: "8x12", pose: 2, selectable: true, image: productImages["F12"] },
-            { article: "B11", sku: "B11", name_en: "INSTABOOK 16 pages", name_th: "อินสตาบุ๊ค 16 หน้า", size: "5.5x5.5", pose: 16, selectable: true, image: productImages["B11"] },
-            { article: "K11", sku: "K11", name_en: "WALL CALENDAR 13 pages", name_th: "ปฏิทินติดผนัง 13 หน้า", size: "30x42cm", pose: 13, selectable: true, image: productImages["K11"] }
-        ];
     }
 
     function loadRandomOrder() {
         if (productsDB.length === 0) return;
         
-        const shuffled = [...productsDB];
-        for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-        }
-        
-        const selected = shuffled.slice(0, Math.min(6, shuffled.length));
+        const packages = productsDB.filter(p => p.type === 'package');
+        const selected = packages.slice(0, Math.min(3, packages.length));
         
         currentOrder = { number: "1111", products: selected };
         assignments = {};
         
         for (let prod of selected) {
-            const key = `p_${prod.article}_${Date.now()}_${Math.random()}`;
+            const key = `pkg_${prod.sku}_${Date.now()}`;
+            const slots = {};
+            
+            for (let item of prod.packageItems) {
+                const slotKey = `slot_${item.name_en.replace(/\s/g, '_')}`;
+                slots[slotKey] = {
+                    name_en: item.name_en,
+                    name_th: item.name_th,
+                    size: item.size,
+                    qty: item.qty,
+                    selectable: item.selectable,
+                    imageKey: item.imageKey,
+                    values: new Array(item.qty).fill(null)
+                };
+            }
+            
             assignments[key] = {
                 key: key,
-                article: prod.article,
                 sku: prod.sku,
                 nameEn: prod.name_en,
                 nameTh: prod.name_th,
-                size: prod.size,
-                pose: prod.pose,
-                selectable: prod.selectable,
-                image: prod.image,
-                values: new Array(prod.pose).fill(null)
+                isPackage: true,
+                slots: slots,
+                image: prod.image
             };
         }
         render();
         toast(t('ok'));
     }
 
-    function handleOvalClick(prodKey, idx, currentVal) {
+    function handleOvalClick(prodKey, slotKey, idx, currentVal) {
         const a = assignments[prodKey];
-        if (!a || !a.selectable) return;
+        if (!a || !a.isPackage) return;
+        const slot = a.slots[slotKey];
+        if (!slot || !slot.selectable) return;
         
-        const ovalDiv = document.getElementById(`oval_${prodKey}_${idx}`);
+        const ovalDiv = document.getElementById(`oval_${prodKey}_${slotKey}_${idx}`);
         if (!ovalDiv) return;
-        if (editingSlot === `${prodKey}_${idx}`) return;
+        if (editingSlot === `${prodKey}_${slotKey}_${idx}`) return;
         
         const width = ovalDiv.offsetWidth;
         const height = ovalDiv.offsetHeight;
@@ -748,18 +727,13 @@
             input.replaceWith(ovalDiv);
             editingSlot = null;
             if (!isNaN(newVal) && newVal !== currentVal) {
-                setValue(prodKey, idx, newVal);
-            } else if (isNaN(newVal) && currentVal !== null) {
-                setValue(prodKey, idx, null);
+                setPackageSlotValue(prodKey, slotKey, idx, newVal);
             }
         };
         
         input.addEventListener('blur', save);
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') save();
-        });
-        
-        editingSlot = `${prodKey}_${idx}`;
+        input.addEventListener('keypress', (e) => { if (e.key === 'Enter') save(); });
+        editingSlot = `${prodKey}_${slotKey}_${idx}`;
     }
 
     function render() {
@@ -786,8 +760,12 @@
         
         let totalSlots = 0, totalFilled = 0;
         for (let a of Object.values(assignments)) {
-            totalSlots += a.values.length;
-            totalFilled += a.values.filter(v => v !== null).length;
+            if (a.isPackage) {
+                for (let slot of Object.values(a.slots)) {
+                    totalSlots += slot.values.length;
+                    totalFilled += slot.values.filter(v => v !== null).length;
+                }
+            }
         }
         
         let html = `<div class="order-header">
@@ -798,44 +776,53 @@
         
         for (let [key, asgn] of Object.entries(assignments)) {
             const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
-            const poseCount = asgn.pose;
-            const ovalWidth = getOvalWidth(poseCount);
-            const ovalHeight = 42;
             const imageUrl = asgn.image ? getYandexDirectUrl(asgn.image) : null;
             
             html += `<div class="product-card">
                 <div class="product-header">
                     <div class="product-info">
-                        <span class="product-sku">${asgn.sku || asgn.article}</span>
-                        <span class="product-title">${name || asgn.article}</span>
-                        <span class="product-size">📏 ${t('size')}: ${asgn.size || '—'}</span>
-                        <span class="product-pose">📷 ${t('pose')}: ${poseCount}</span>
-                        ${!asgn.selectable ? `<span class="badge-auto">🔴 ${t('notSelectable')}</span>` : ''}
+                        <span class="product-sku">${asgn.sku}</span>
+                        <span class="product-title">${name}</span>
+                        <span class="badge-auto">📦 Package</span>
                     </div>
-                    ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onerror="this.style.display='none'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:55px;"></div>'}
+                    ${imageUrl ? `<img class="product-image" src="${imageUrl}" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : ''}
                 </div>
                 <div class="slots-row">`;
             
-            for (let i = 0; i < poseCount; i++) {
-                const val = asgn.values[i];
-                const isFilled = val !== null;
-                const ovalClass = `oval ${isFilled ? 'filled' : ''} ${asgn.selectable ? 'editable' : 'disabled'}`;
-                const displayText = isFilled ? val : '';
+            for (let [slotKey, slot] of Object.entries(asgn.slots)) {
+                const slotName = currentLang === 'en' ? slot.name_en : slot.name_th;
+                const slotSize = slot.size;
+                const isSelectable = slot.selectable;
+                const ovalWidth = getOvalWidth(slot.qty);
+                const ovalHeight = 42;
                 
-                if (asgn.selectable) {
-                    html += `<div class="slot-wrapper">
-                        <div id="oval_${key}_${i}" class="${ovalClass}" 
-                             style="width:${ovalWidth}px; height:${ovalHeight}px;"
-                             onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${displayText}</div>
-                        <span class="slot-number">${i+1}</span>
-                    </div>`;
-                } else {
-                    html += `<div class="slot-wrapper">
-                        <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;"></div>
-                        <span class="slot-number">${i+1}</span>
-                        <span class="auto-note">🚫 ${t('notSelectable')}</span>
-                    </div>`;
+                html += `<div class="slot-group">
+                    <div class="slot-group-title">
+                        <span>📷 ${slotName}</span>
+                        <span class="slot-group-badge">${slotSize} • ${slot.qty} ${t('photos')}</span>
+                    </div>
+                    <div class="slot-items">`;
+                
+                for (let i = 0; i < slot.qty; i++) {
+                    const val = slot.values[i];
+                    const isFilled = val !== null;
+                    
+                    if (isSelectable) {
+                        html += `<div class="slot-wrapper">
+                            <div id="oval_${key}_${slotKey}_${i}" class="oval ${isFilled ? 'filled' : ''}" 
+                                 style="width:${ovalWidth}px; height:${ovalHeight}px;"
+                                 onclick="handleOvalClick('${key}', '${slotKey}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : ''}</div>
+                            <span class="slot-number">${i+1}</span>
+                        </div>`;
+                    } else {
+                        html += `<div class="slot-wrapper">
+                            <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;"></div>
+                            <span class="slot-number">${i+1}</span>
+                            <span class="auto-note">🚫 ${t('notSelectable')}</span>
+                        </div>`;
+                    }
                 }
+                html += `</div></div>`;
             }
             html += `</div></div>`;
         }
@@ -845,12 +832,16 @@
         
         document.getElementById('backBtn')?.addEventListener('click', () => { currentOrder = null; render(); });
         document.getElementById('confirmBtn')?.addEventListener('click', () => {
-            let summary = "═══════════════════════════\n   WHITE FOX STUDIO\n   PHOTO SELECTION CONFIRMED\n═══════════════════════════\n";
+            let summary = "═══════════════════════\n   WHITE FOX STUDIO\n   PACKAGE SELECTION\n═══════════════════════\n";
             for (let [key, a] of Object.entries(assignments)) {
                 const name = currentLang === 'en' ? a.nameEn : a.nameTh;
-                summary += `\n📌 ${a.sku || a.article} — ${name}\n   📐 Size: ${a.size || '—'}  |  🖼️ Poses: ${a.pose}\n`;
-                for (let i = 0; i < a.values.length; i++) {
-                    summary += `   Photo ${i+1}: ${a.values[i] || '❌ NOT SET'}\n`;
+                summary += `\n📦 ${a.sku} — ${name}\n`;
+                for (let [slotKey, slot] of Object.entries(a.slots)) {
+                    const slotName = currentLang === 'en' ? slot.name_en : slot.name_th;
+                    summary += `   📷 ${slotName} (${slot.size}):\n`;
+                    for (let i = 0; i < slot.values.length; i++) {
+                        summary += `      ${i+1}: ${slot.values[i] || '❌'}\n`;
+                    }
                 }
             }
             alert(summary);
@@ -883,7 +874,6 @@
         if (e.key === 'Enter') document.getElementById('checkBtn')?.click();
     });
 
-    // Запуск
     (async () => {
         await loadProductsFromSupabase();
         render();
