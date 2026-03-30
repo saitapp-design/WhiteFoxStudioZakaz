@@ -206,7 +206,7 @@
             background: var(--teal-light);
             padding: 0.25rem 0.8rem;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: var(--teal);
             font-family: monospace;
@@ -252,6 +252,16 @@
             font-size: 0.65rem;
             color: var(--red);
             font-weight: 500;
+            display: inline-block;
+        }
+
+        .badge-package {
+            background: #ffd966;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            color: #856404;
+            font-weight: 600;
             display: inline-block;
         }
 
@@ -306,7 +316,7 @@
             min-width: 70px;
         }
 
-        .oval:hover {
+        .oval:hover:not(.disabled) {
             border-color: var(--teal-dark);
             background: #f0f9fa;
         }
@@ -321,10 +331,7 @@
             background: var(--red-light);
             border-color: var(--red);
             cursor: not-allowed;
-        }
-
-        .oval.disabled:hover {
-            background: var(--red-light);
+            opacity: 0.7;
         }
 
         .oval-input {
@@ -457,14 +464,14 @@
             range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, 
             saved: "✓ Selection saved", back: "← Back", notSelectable: "Auto-assigned",
             loading: "Loading products...", error: "Error", viewPhoto: "View photo", 
-            size: "Size", pose: "Photos", noImage: "No image"
+            size: "Size", pose: "Photos", noImage: "No image", package: "Package"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
             ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
             saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "กำหนดอัตโนมัติ",
             loading: "กำลังโหลดสินค้า...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูป",
-            size: "ขนาด", pose: "จำนวนรูป", noImage: "ไม่มีรูป"
+            size: "ขนาด", pose: "จำนวนรูป", noImage: "ไม่มีรูป", package: "แพ็คเกจ"
         }
     };
 
@@ -538,35 +545,50 @@
         try {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             console.log('✅ Supabase client initialized successfully');
-            console.log('📡 Supabase URL:', SUPABASE_URL);
             
             isLoading = true;
             render();
             
-            console.log('📥 Fetching products from product_cards table...');
+            // Load product cards
+            console.log('📥 Fetching product cards from Supabase...');
             const { data: productCards, error: cardsError } = await supabaseClient
                 .from('product_cards')
                 .select('*');
             
             if (cardsError) {
-                console.error('❌ Error fetching from Supabase:', cardsError);
+                console.error('❌ Error fetching product cards:', cardsError);
                 throw cardsError;
             }
             
-            console.log(`✅ Fetched ${productCards?.length || 0} products from Supabase`);
+            console.log(`✅ Fetched ${productCards?.length || 0} product cards`);
             
+            // Load packages
+            console.log('📦 Fetching packages from Supabase...');
+            const { data: packagesData, error: packagesError } = await supabaseClient
+                .from('packages_with_price')
+                .select('*');
+            
+            if (packagesError) {
+                console.warn('⚠️ Error fetching packages:', packagesError.message);
+            } else {
+                console.log(`✅ Fetched ${packagesData?.length || 0} packages`);
+            }
+            
+            productsDB = [];
+            
+            // Process product cards
             if (productCards && productCards.length > 0) {
-                productsDB = [];
-                
                 for (const card of productCards) {
-                    console.log(`📦 Processing product: ${card.sku || card.article} - ${card.name_en}`);
-                    
                     let pose = 1;
                     let selectable = true;
                     let size = card.size || '';
                     let imageUrl = card.cover_image || null;
+                    let skuValue = card.sku || card.article;
                     
-                    // Parse variants for pose and size
+                    if (!skuValue) {
+                        skuValue = `PROD_${Date.now()}_${Math.random()}`;
+                    }
+                    
                     if (card.variants) {
                         try {
                             const variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
@@ -574,6 +596,7 @@
                                 if (variants[0].pose) pose = Math.min(parseInt(variants[0].pose), 30);
                                 if (variants[0].size_label) size = variants[0].size_label;
                                 if (variants[0].image_url && !imageUrl) imageUrl = variants[0].image_url;
+                                if (!skuValue && variants[0].sku) skuValue = variants[0].sku;
                             }
                         } catch(e) { console.warn('Parse variants error:', e); }
                     }
@@ -585,7 +608,6 @@
                     const nameEn = card.name_en || 'Product';
                     const nameTh = card.name_th || 'สินค้า';
                     
-                    // Determine if product is selectable (group photos are not selectable)
                     if (nameEn.toLowerCase().includes('group') || 
                         nameEn.toLowerCase().includes('logo') || 
                         (card.mess && card.mess.toLowerCase().includes('group'))) {
@@ -593,8 +615,9 @@
                     }
                     
                     productsDB.push({
-                        article: card.article || card.sku,
-                        sku: card.sku || card.article,
+                        id: `product_${skuValue}`,
+                        type: 'product',
+                        sku: skuValue,
                         name_en: nameEn,
                         name_th: nameTh,
                         size: size,
@@ -603,25 +626,65 @@
                         image: imageUrl
                     });
                     
-                    console.log(`   → SKU: ${card.sku}, Pose: ${pose}, Selectable: ${selectable}, Size: ${size}`);
+                    console.log(`   → Product: ${skuValue} - ${nameEn}, Pose: ${pose}, Selectable: ${selectable}`);
                 }
-            } else {
-                console.warn('⚠️ No products found in Supabase, using demo data');
-                productsDB = getDemoProducts();
+            }
+            
+            // Process packages
+            if (packagesData && packagesData.length > 0) {
+                for (const pkg of packagesData) {
+                    let pose = 0;
+                    let packageItems = [];
+                    let skuValue = pkg.sku || pkg.slug;
+                    
+                    if (!skuValue) {
+                        skuValue = `PKG_${Date.now()}_${Math.random()}`;
+                    }
+                    
+                    try {
+                        if (pkg.contents) {
+                            packageItems = typeof pkg.contents === 'string' ? JSON.parse(pkg.contents) : pkg.contents;
+                            pose = packageItems.reduce((total, item) => total + (item.qty || 1), 0);
+                        }
+                    } catch(e) { console.warn('Parse package contents error:', e); }
+                    
+                    if (pkg.total_photos) pose = Math.min(parseInt(pkg.total_photos), 100);
+                    if (pose < 1) pose = 1;
+                    
+                    const nameEn = pkg.name_en || `Package ${skuValue}`;
+                    const nameTh = pkg.name_th || `แพ็คเกจ ${skuValue}`;
+                    
+                    productsDB.push({
+                        id: `package_${skuValue}`,
+                        type: 'package',
+                        sku: skuValue,
+                        name_en: nameEn,
+                        name_th: nameTh,
+                        size: pkg.size || '',
+                        pose: pose,
+                        selectable: true,
+                        image: pkg.image_url || null,
+                        packageItems: packageItems,
+                        isPackage: true
+                    });
+                    
+                    console.log(`   → Package: ${skuValue} - ${nameEn}, Total photos: ${pose}`);
+                }
             }
             
             if (productsDB.length === 0) {
+                console.warn('⚠️ No products loaded, using demo data');
                 productsDB = getDemoProducts();
             }
             
             console.log(`✅ Total products loaded: ${productsDB.length}`);
-            console.log('📊 Product list:', productsDB.map(p => ({ sku: p.sku, name: p.name_en, pose: p.pose, selectable: p.selectable })));
+            console.log('📊 Product types:', productsDB.map(p => ({ sku: p.sku, type: p.type, pose: p.pose })));
             
             isLoading = false;
             toast(`✅ ${productsDB.length} products loaded`);
             
         } catch (error) {
-            console.error('❌ Supabase initialization/loading error:', error);
+            console.error('❌ Supabase initialization error:', error);
             productsDB = getDemoProducts();
             isLoading = false;
             toast(`⚠️ Using demo data (${productsDB.length} products)`);
@@ -631,9 +694,9 @@
     function getDemoProducts() {
         console.log('📦 Using demo product data');
         return [
-            { article: "DEMO01", sku: "DEMO01", name_en: "Demo Product 1", name_th: "สินค้าตัวอย่าง 1", size: "8x12 inch", pose: 2, selectable: true, image: null },
-            { article: "DEMO02", sku: "DEMO02", name_en: "Demo Product 2", name_th: "สินค้าตัวอย่าง 2", size: "10x10 inch", pose: 1, selectable: true, image: null },
-            { article: "DEMO03", sku: "DEMO03", name_en: "Group Photo", name_th: "ภาพกลุ่ม", size: "12x12 inch", pose: 1, selectable: false, image: null }
+            { id: "DEMO01", type: "product", sku: "DEMO01", name_en: "Acrylic Photo Frame", name_th: "กรอบอะคริลิค", size: "8x12 inch", pose: 2, selectable: true, image: null },
+            { id: "PKG_DEMO", type: "package", sku: "PACKAGE-S", name_en: "Package S - Starter Set", name_th: "แพ็คเกจ S - ชุดเริ่มต้น", size: "Mixed", pose: 6, selectable: true, image: null, isPackage: true },
+            { id: "DEMO02", type: "product", sku: "DEMO02", name_en: "Group Photo Canvas", name_th: "ภาพกลุ่มผ้าใบ", size: "12x12 inch", pose: 1, selectable: false, image: null }
         ];
     }
 
@@ -649,16 +712,16 @@
         }
         
         const selected = shuffled.slice(0, Math.min(8, shuffled.length));
-        console.log(`📋 Selected ${selected.length} products for order`);
+        console.log(`📋 Selected ${selected.length} products for order:`, selected.map(p => p.sku));
         
         currentOrder = { number: "1111", products: selected };
         assignments = {};
         
         for (let prod of selected) {
-            const key = `p_${prod.article}_${Date.now()}_${Math.random()}`;
+            const key = `${prod.type}_${prod.sku}_${Date.now()}_${Math.random()}`;
             assignments[key] = {
                 key: key,
-                article: prod.article,
+                id: prod.id,
                 sku: prod.sku,
                 nameEn: prod.name_en,
                 nameTh: prod.name_th,
@@ -666,6 +729,8 @@
                 pose: prod.pose,
                 selectable: prod.selectable,
                 image: prod.image,
+                type: prod.type,
+                isPackage: prod.isPackage || false,
                 values: new Array(prod.pose).fill(null)
             };
         }
@@ -754,15 +819,17 @@
             const ovalWidth = getOvalWidth(poseCount);
             const ovalHeight = 42;
             const imageUrl = getDirectImageUrl(asgn.image);
+            const isPackage = asgn.isPackage || asgn.type === 'package';
             
             html += `<div class="product-card">
                 <div class="product-content">
                     <div class="product-header">
                         <div class="product-info">
                             <div>
-                                <span class="product-sku">${asgn.sku || asgn.article}</span>
+                                <span class="product-sku">${asgn.sku || 'N/A'}</span>
+                                ${isPackage ? `<span class="badge-package">📦 ${t('package')}</span>` : ''}
                             </div>
-                            <div class="product-title">${name || asgn.article}</div>
+                            <div class="product-title">${name || asgn.sku}</div>
                             <div class="product-details">
                                 ${asgn.size ? `<span class="product-size">📏 ${t('size')}: ${asgn.size}</span>` : ''}
                                 <span class="product-pose">📷 ${t('pose')}: ${poseCount}</span>
@@ -781,12 +848,12 @@
                     html += `<div class="slot-wrapper">
                         <div id="oval_${key}_${i}" class="oval ${isFilled ? 'filled' : ''}" 
                              style="width:${ovalWidth}px; height:${ovalHeight}px;"
-                             onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : '➕'}</div>
+                             onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : ''}</div>
                         <span class="slot-number">${i+1}</span>
                     </div>`;
                 } else {
                     html += `<div class="slot-wrapper">
-                        <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;">🔒</div>
+                        <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;"></div>
                         <span class="slot-number">${i+1}</span>
                         <span class="auto-note">${t('notSelectable')}</span>
                     </div>`;
@@ -803,7 +870,7 @@
             let summary = "═══════════════════════════\n   WHITE FOX STUDIO\n   PHOTO SELECTION\n═══════════════════════════\n";
             for (let [key, a] of Object.entries(assignments)) {
                 const name = currentLang === 'en' ? a.nameEn : a.nameTh;
-                summary += `\n📦 ${a.sku || a.article} — ${name}\n📏 ${t('size')}: ${a.size || '—'}  |  📷 ${t('pose')}: ${a.pose}\n`;
+                summary += `\n📦 ${a.sku} — ${name}\n📏 ${t('size')}: ${a.size || '—'}  |  📷 ${t('pose')}: ${a.pose}\n`;
                 for (let i = 0; i < a.values.length; i++) {
                     summary += `   ${String(i+1).padStart(2)}: ${a.values[i] || '❌'}\n`;
                 }
