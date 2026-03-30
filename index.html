@@ -10,23 +10,19 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
             background: #f5f7fb;
-            min-height: 100vh;
         }
 
         :root {
             --teal: #007883;
-            --teal-dark: #0a6570;
             --teal-light: #e0f2f4;
             --border: #e2edf2;
-            --gray-bg: #f8fafc;
             --slot-empty: #ffffff;
             --slot-filled: #d4f0e8;
-            --disabled-bg: #f1f3f5;
         }
 
         .header {
@@ -34,12 +30,12 @@
             top: 0;
             z-index: 100;
             background: white;
-            box-shadow: 0 2px 12px rgba(0,120,131,0.08);
+            box-shadow: 0 2px 8px rgba(0,120,131,0.1);
             border-bottom: 2px solid var(--teal);
         }
 
         .top-bar {
-            max-width: 1400px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 0.6rem 1.5rem;
             display: flex;
@@ -52,17 +48,17 @@
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .logo-img {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             object-fit: contain;
         }
 
         .logo-text {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 800;
             color: var(--teal);
         }
@@ -79,28 +75,26 @@
             background: white;
             border-radius: 40px;
             border: 2px solid var(--teal);
-            height: 42px;
+            height: 40px;
             overflow: hidden;
         }
 
         .search-box input {
             border: none;
             padding: 0 1rem;
-            width: 180px;
-            font-size: 0.9rem;
+            width: 160px;
+            font-size: 0.85rem;
             outline: none;
-            background: transparent;
         }
 
         .search-box button {
             background: var(--teal);
             border: none;
             color: white;
-            padding: 0 1.2rem;
+            padding: 0 1rem;
             height: 100%;
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.85rem;
         }
 
         .lang-toggle {
@@ -108,40 +102,36 @@
             border: 2px solid var(--teal);
             border-radius: 40px;
             padding: 0 1rem;
-            height: 42px;
+            height: 40px;
             font-weight: 600;
             color: var(--teal);
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             cursor: pointer;
-            font-size: 0.85rem;
         }
 
         .main-content {
-            max-width: 1400px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 1.5rem;
-            min-height: 75vh;
         }
 
         .login-card {
             background: white;
-            max-width: 440px;
+            max-width: 400px;
             margin: 2rem auto;
-            padding: 2rem 1.8rem;
+            padding: 2rem;
             border-radius: 1.5rem;
             text-align: center;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
             border: 1px solid var(--border);
         }
 
         .order-input {
             width: 100%;
-            padding: 0.8rem 1rem;
-            font-size: 1rem;
+            padding: 0.8rem;
             border: 2px solid var(--border);
-            border-radius: 50px;
+            border-radius: 40px;
             margin: 1rem 0;
             text-align: center;
             outline: none;
@@ -151,24 +141,21 @@
             background: var(--teal);
             color: white;
             border: none;
-            padding: 0.75rem 1.2rem;
-            border-radius: 50px;
-            font-weight: 700;
+            padding: 0.7rem;
+            border-radius: 40px;
+            font-weight: 600;
             cursor: pointer;
             width: 100%;
-            font-size: 0.95rem;
         }
 
         .order-header {
             background: white;
             border-radius: 1rem;
             padding: 0.6rem 1.2rem;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
             border: 1px solid var(--teal);
         }
 
@@ -176,12 +163,11 @@
             background: var(--teal-light);
             padding: 0.3rem 1rem;
             border-radius: 30px;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--teal);
-            font-size: 0.8rem;
         }
 
-        /* product card - minimal */
         .product-card {
             background: white;
             border-radius: 1rem;
@@ -191,47 +177,45 @@
         }
 
         .product-header {
-            padding: 0.8rem 1.2rem;
-            background: white;
+            padding: 0.7rem 1rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .product-title {
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--teal);
         }
 
         .product-sku {
-            font-family: monospace;
             background: var(--teal-light);
             padding: 0.15rem 0.5rem;
             border-radius: 12px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             margin-left: 0.5rem;
         }
 
         .product-size {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #6c757d;
-            margin-left: 0.5rem;
+            margin-left: 0.3rem;
         }
 
         .badge-auto {
             background: #e9ecef;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.6rem;
             color: #6c757d;
         }
 
-        /* adaptive columns layout - like image */
         .slots-row {
-            padding: 1rem 1.2rem;
+            padding: 1rem;
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
@@ -239,17 +223,16 @@
             justify-content: flex-start;
         }
 
-        /* circle slot - width adapts based on total count */
-        .slot-wrapper {
+        .slot-circle {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.4rem;
-            flex-shrink: 0;
+            gap: 0.2rem;
         }
 
-        /* dynamic size: if few slots -> larger circles, many slots -> smaller */
         .circle {
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             background: var(--slot-empty);
             border: 2px solid var(--border);
@@ -257,8 +240,10 @@
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            transition: all 0.15s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-size: 1rem;
+            color: #1e2f3a;
+            cursor: pointer;
+            transition: all 0.1s;
         }
 
         .circle.filled {
@@ -268,80 +253,51 @@
         }
 
         .circle.disabled {
-            background: var(--disabled-bg);
+            background: #f1f3f5;
             border-color: #dee2e6;
-            color: #adb5bd;
+            cursor: default;
         }
 
-        .slot-label {
-            font-size: 0.65rem;
-            font-weight: 500;
-            color: #8b9aab;
-        }
-
-        .input-group-mini {
-            display: flex;
-            gap: 0.4rem;
-            margin-top: 0.2rem;
-        }
-
-        .slot-input {
-            width: 70px;
-            padding: 0.3rem 0.2rem;
-            text-align: center;
-            border: 1.5px solid var(--border);
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            outline: none;
-        }
-
-        .slot-input:focus {
+        .circle.editable:hover {
             border-color: var(--teal);
+            box-shadow: 0 0 0 2px var(--teal-light);
         }
 
-        .btn-set {
-            background: var(--teal);
-            border: none;
-            color: white;
-            padding: 0.25rem 0.7rem;
-            border-radius: 30px;
-            font-size: 0.65rem;
+        .circle-input {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2px solid var(--teal);
+            background: white;
+            text-align: center;
+            font-size: 1rem;
             font-weight: 600;
-            cursor: pointer;
+            outline: none;
+            font-family: monospace;
         }
 
-        .btn-clear {
-            background: transparent;
-            border: 1px solid #dc3545;
-            color: #dc3545;
-            padding: 0.2rem 0.6rem;
-            border-radius: 30px;
+        .circle-input:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 2px var(--teal-light);
+        }
+
+        .slot-number {
             font-size: 0.6rem;
-            cursor: pointer;
+            color: #8b9aab;
         }
 
         .auto-note {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             color: #8b9aab;
-            text-align: center;
-            margin-top: 0.2rem;
-        }
-
-        .product-footer {
-            padding: 0.5rem 1.2rem 0.8rem;
-            display: flex;
-            justify-content: flex-end;
-            border-top: 1px solid var(--border);
         }
 
         .global-actions {
+            margin-top: 1rem;
             display: flex;
             justify-content: flex-end;
-            margin-top: 1rem;
         }
 
-        .toast-msg {
+        .toast {
             position: fixed;
             bottom: 20px;
             left: 50%;
@@ -349,18 +305,15 @@
             background: var(--teal);
             color: white;
             padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            font-weight: 600;
+            border-radius: 30px;
+            font-size: 0.8rem;
             z-index: 2000;
             display: none;
-            font-size: 0.8rem;
-            white-space: nowrap;
         }
 
-        @media (max-width: 700px) {
-            .slots-row { gap: 0.8rem; justify-content: center; }
-            .slot-input { width: 60px; }
-            .toast-msg { white-space: normal; max-width: 90%; text-align: center; }
+        @media (max-width: 600px) {
+            .circle, .circle-input { width: 55px; height: 55px; font-size: 0.8rem; }
+            .slots-row { gap: 0.7rem; justify-content: center; }
         }
     </style>
 </head>
@@ -384,19 +337,15 @@
     </div>
 </header>
 <main class="main-content" id="app"></main>
-<div id="toast" class="toast-msg"></div>
+<div id="toast" class="toast"></div>
 
 <script>
-    // ======================== DATA ========================
     const MIN_PHOTO = 1000;
     const MAX_PHOTO = 9999;
-    
-    // Products based on table (article, pose, userSelectable flag)
+
     const productsDB = [
         { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "โลโก้ชั้นเรียนภาพถ่ายอะคริลิค", size: "8x12", pose: 1, selectable: false },
         { article: "A12", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "12x12", pose: 1, selectable: true },
-        { article: "A13", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "5x5", pose: 1, selectable: true },
-        { article: "A14", name_en: "ACRYLIC PHOTO class + logo", name_th: "คลาสเรียน+โลโก้", size: "12x12", pose: 2, selectable: false },
         { article: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "10x10", pose: 1, selectable: true },
         { article: "W12", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "12x12", pose: 1, selectable: true },
         { article: "W13", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "16x16", pose: 1, selectable: true },
@@ -405,47 +354,36 @@
         { article: "W16", name_en: "FLOAT FRAME design", name_th: "การออกแบบกรอบลอย", size: "12x18", pose: 3, selectable: true },
         { article: "W17", name_en: "FLOAT FRAME class logo", name_th: "เฟรมลอยโลโก้คลาส", size: "16x24", pose: 1, selectable: false },
         { article: "C11", name_en: "CANVAS", name_th: "ผ้าใบ", size: "12x18", pose: 1, selectable: true },
-        { article: "C12", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x24", pose: 1, selectable: true },
-        { article: "C13", name_en: "CANVAS", name_th: "ผ้าใบ", size: "20x30", pose: 1, selectable: true },
-        { article: "C14", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x16", pose: 1, selectable: true },
         { article: "C15", name_en: "CANVAS design", name_th: "การออกแบบผ้าใบ", size: "20x20", pose: 9, selectable: true },
-        { article: "F11", name_en: "PHOTO BOX", name_th: "กล่องภาพถ่าย", size: "12x16", pose: 1, selectable: true },
-        { article: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะกรอบอลูมิเนียม", size: "8x12", pose: 2, selectable: true },
-        { article: "F13", name_en: "GOLD FRAMES", name_th: "กรอบทอง", size: "6x9", pose: 1, selectable: true },
-        { article: "F14", name_en: "GOLD FRAMES", name_th: "กรอบทอง", size: "4x6", pose: 1, selectable: true },
-        { article: "F15", name_en: "MAGNET INSTAX", name_th: "แม่เหล็กอินสแตกซ์", size: "3x3.5", pose: 2, selectable: true },
-        { article: "B11", name_en: "INSTABOOK 16p", name_th: "อินสตาบุ๊ค", size: "5.5x5.5", pose: 16, selectable: true },
-        { article: "B13", name_en: "ELITE SCHOOL BOOK", name_th: "หนังสือเรียน", size: "8x12", pose: 31, selectable: true },
+        { article: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะ", size: "8x12", pose: 2, selectable: true },
+        { article: "B11", name_en: "INSTABOOK", name_th: "อินสตาบุ๊ค", size: "5.5x5.5", pose: 16, selectable: true },
         { article: "K11", name_en: "WALL CALENDAR", name_th: "ปฏิทินติดผนัง", size: "30x42cm", pose: 20, selectable: true },
-        { article: "K12", name_en: "CALENDAR POSTER", name_th: "ปฏิทินโปสเตอร์", size: "24x36", pose: 1, selectable: true },
-        { article: "K15", name_en: "CALENDAR GROUP M", name_th: "กลุ่มปฏิทิน M", size: "16x24", pose: 1, selectable: false },
-        { article: "D11", name_en: "MUG LOGO", name_th: "โลโก้แก้ว", size: "350ml", pose: 2, selectable: false },
         { article: "D12", name_en: "MUG INDIVIDUAL", name_th: "แก้วบุคคล", size: "350ml", pose: 4, selectable: true },
-        { article: "Q1", name_en: "Package S", name_th: "แพ็คเกจ S", size: "6x9/4x6", pose: 6, selectable: false },
-        { article: "Q2", name_en: "Package M", name_th: "แพ็คเกจ M", size: "mix", pose: 11, selectable: false }
+        { article: "Q1", name_en: "Package S", name_th: "แพ็คเกจ S", size: "6x9/4x6", pose: 6, selectable: false }
     ];
-    
+
     let currentLang = 'en';
     let currentOrder = null;
     let assignments = {};
-    
+    let editingSlot = null;
+
     const trans = {
-        en: { enter: "Enter Order Number", sub: "Please enter order number", btn: "Continue", invalid: "Use code 1111", ok: "✓ Order loaded", dup: "⚠️ Photo already used", range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Confirmed", set: "Set", clear: "Clear", confirm: "✓ Confirm All", back: "← Back", filled: "filled", auto: "auto", photo: "Photo" },
-        th: { enter: "กรอกหมายเลขคำสั่งซื้อ", sub: "กรุณากรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", ok: "✓ โหลดสำเร็จ", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ บันทึกแล้ว", set: "ตั้ง", clear: "ล้าง", confirm: "✓ ยืนยันทั้งหมด", back: "← กลับ", filled: "รูป", auto: "อัตโนมัติ", photo: "รูป" }
+        en: { enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", ok: "✓ Loaded", dup: "Photo already used", range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Confirmed", back: "← Back", filled: "filled", auto: "auto" },
+        th: { enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", ok: "✓ โหลดแล้ว", dup: "หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ บันทึกแล้ว", back: "← กลับ", filled: "รูป", auto: "อัตโนมัติ" }
     };
-    
+
     function t(key) { return trans[currentLang][key] || trans.en[key]; }
-    
+
     function toast(msg) {
         const el = document.getElementById('toast');
         el.textContent = msg;
         el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 2300);
+        setTimeout(() => el.style.display = 'none', 2000);
     }
-    
+
     function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO; }
-    
-    function isUsedInProduct(prodKey, num, excludeIdx = -1) {
+
+    function isUsedInProduct(prodKey, num, excludeIdx) {
         const a = assignments[prodKey];
         if (!a) return false;
         for (let i = 0; i < a.values.length; i++) {
@@ -453,8 +391,8 @@
         }
         return false;
     }
-    
-    function setSlot(prodKey, idx, val) {
+
+    function setValue(prodKey, idx, val) {
         const a = assignments[prodKey];
         if (!a || !a.selectable) return false;
         if (!isValid(val)) { toast(t('range')); return false; }
@@ -463,14 +401,8 @@
         render();
         return true;
     }
-    
-    function clearSlot(prodKey, idx) {
-        const a = assignments[prodKey];
-        if (a && a.selectable) { a.values[idx] = null; render(); }
-    }
-    
+
     function loadOrder() {
-        // pick products: include W16, plus few random selectable, plus one non-selectable
         const w16 = productsDB.find(p => p.article === "W16");
         const c15 = productsDB.find(p => p.article === "C15");
         const f12 = productsDB.find(p => p.article === "F12");
@@ -480,7 +412,6 @@
         let selected = [w16, c15, f12, b11].filter(Boolean);
         if (nonSel && !selected.includes(nonSel)) selected.push(nonSel);
         
-        // add few more random selectable
         const selectableOnly = productsDB.filter(p => p.selectable === true && !selected.includes(p));
         for (let i = selectableOnly.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -506,22 +437,52 @@
         render();
         toast(t('ok'));
     }
-    
-    // dynamic circle size based on pose count
-    function getCircleSize(poseCount) {
-        if (poseCount <= 2) return 85;
-        if (poseCount <= 4) return 75;
-        if (poseCount <= 8) return 68;
-        if (poseCount <= 16) return 60;
-        return 54;
+
+    function handleCircleClick(prodKey, idx, currentVal) {
+        const a = assignments[prodKey];
+        if (!a || !a.selectable) return;
+        
+        const circleDiv = document.getElementById(`circle_${prodKey}_${idx}`);
+        if (!circleDiv) return;
+        
+        if (editingSlot === `${prodKey}_${idx}`) return;
+        
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.value = currentVal !== null ? currentVal : '';
+        input.className = 'circle-input';
+        input.min = MIN_PHOTO;
+        input.max = MAX_PHOTO;
+        input.style.width = `${circleDiv.offsetWidth}px`;
+        input.style.height = `${circleDiv.offsetHeight}px`;
+        
+        circleDiv.replaceWith(input);
+        input.focus();
+        
+        const save = () => {
+            const newVal = parseInt(input.value);
+            input.replaceWith(circleDiv);
+            editingSlot = null;
+            if (!isNaN(newVal) && newVal !== currentVal) {
+                setValue(prodKey, idx, newVal);
+            } else if (isNaN(newVal) && currentVal !== null) {
+                setValue(prodKey, idx, null);
+            }
+        };
+        
+        input.addEventListener('blur', save);
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') save();
+        });
+        
+        editingSlot = `${prodKey}_${idx}`;
     }
-    
+
     function render() {
         const container = document.getElementById('app');
         if (!currentOrder) {
             container.innerHTML = `<div class="login-card">
                 <h3>${t('enter')}</h3>
-                <p style="color:#6c757d; font-size:0.85rem;">${t('sub')}</p>
                 <input type="text" id="loginCode" class="order-input" placeholder="1111" value="1111">
                 <button class="btn-primary" id="loginExec">${t('btn')}</button>
             </div>`;
@@ -541,15 +502,13 @@
         
         let html = `<div class="order-header">
             <div class="order-badge">📦 ${currentOrder.number}</div>
-            <div class="order-badge">${totalFilled}/${totalSlots} ${t('filled')}</div>
-            <button class="order-badge" id="backBtn" style="background:white; border:1px solid var(--teal); cursor:pointer;">${t('back')}</button>
+            <div class="order-badge">${totalFilled}/${totalSlots}</div>
+            <button class="order-badge" id="backBtn" style="background:white; cursor:pointer;">${t('back')}</button>
         </div>`;
         
         for (let [key, asgn] of Object.entries(assignments)) {
-            const poseCount = asgn.pose;
-            const circleSize = getCircleSize(poseCount);
             const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
-            const selectable = asgn.selectable;
+            const poseCount = asgn.pose;
             
             html += `<div class="product-card">
                 <div class="product-header">
@@ -557,79 +516,61 @@
                         <span class="product-title">${name || asgn.article}</span>
                         <span class="product-sku">${asgn.article}</span>
                         <span class="product-size">${asgn.size}</span>
-                        ${!selectable ? `<span class="badge-auto">🔒 ${t('auto')}</span>` : ''}
+                        ${!asgn.selectable ? `<span class="badge-auto">🔒 ${t('auto')}</span>` : ''}
                     </div>
-                    <div class="order-badge" style="font-size:0.7rem;">${asgn.values.filter(v=>v!==null).length}/${poseCount}</div>
                 </div>
                 <div class="slots-row">`;
             
             for (let i = 0; i < poseCount; i++) {
                 const val = asgn.values[i];
                 const isFilled = val !== null;
-                const circleClass = `circle ${isFilled ? 'filled' : ''} ${!selectable ? 'disabled' : ''}`;
-                const displayVal = isFilled ? val : '?';
+                const circleClass = `circle ${isFilled ? 'filled' : ''} ${asgn.selectable ? 'editable' : 'disabled'}`;
+                const displayText = isFilled ? val : '';
                 
-                html += `<div class="slot-wrapper" style="width:${circleSize}px;">
-                    <div class="${circleClass}" style="width:${circleSize}px; height:${circleSize}px; font-size:${Math.max(12, circleSize * 0.22)}px;">
-                        ${displayVal}
-                    </div>
-                    <div class="slot-label">${t('photo')} ${i+1}</div>`;
-                
-                if (selectable) {
-                    if (isFilled) {
-                        html += `<button class="btn-clear" onclick="window.clearSlotAction('${key}', ${i})">${t('clear')}</button>`;
-                    } else {
-                        html += `<div class="input-group-mini">
-                            <input type="number" id="inp_${key}_${i}" class="slot-input" placeholder="${MIN_PHOTO}" min="${MIN_PHOTO}" max="${MAX_PHOTO}">
-                            <button class="btn-set" onclick="window.setSlotAction('${key}', ${i})">${t('set')}</button>
-                        </div>`;
-                    }
+                if (asgn.selectable) {
+                    html += `<div class="slot-circle">
+                        <div id="circle_${key}_${i}" class="${circleClass}" onclick="handleCircleClick('${key}', ${i}, ${val !== null ? val : 'null'})">${displayText}</div>
+                    </div>`;
                 } else {
-                    html += `<div class="auto-note">📸 ${t('auto')}</div>`;
+                    html += `<div class="slot-circle">
+                        <div class="circle disabled"></div>
+                        <div class="auto-note">${t('auto')}</div>
+                    </div>`;
                 }
-                html += `</div>`;
             }
-            html += `</div><div class="product-footer"></div></div>`;
+            html += `</div></div>`;
         }
         
-        html += `<div class="global-actions"><button class="btn-primary" id="confirmFinalBtn" style="width:auto; padding:0.5rem 1.5rem;">${t('confirm')}</button></div>`;
+        html += `<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.5rem 1.5rem;">✓ ${t('saved')}</button></div>`;
         container.innerHTML = html;
         
         document.getElementById('backBtn')?.addEventListener('click', () => { currentOrder = null; render(); });
-        document.getElementById('confirmFinalBtn')?.addEventListener('click', () => {
-            let summary = "WHITE FOX STUDIO\n━━━━━━━━━━━━━━━━\n";
+        document.getElementById('confirmBtn')?.addEventListener('click', () => {
+            let summary = "WHITE FOX STUDIO\n━━━━━━━━━━━━\n";
             for (let [key, a] of Object.entries(assignments)) {
                 const name = currentLang === 'en' ? a.nameEn : a.nameTh;
-                summary += `\n${a.article} — ${name}\n${a.size} | ${a.pose} pose(s)\n`;
+                summary += `\n${a.article} — ${name}\n`;
                 for (let i = 0; i < a.values.length; i++) {
-                    summary += `  ${t('photo')} ${i+1}: ${a.values[i] || '❌'}\n`;
+                    summary += `  ${i+1}: ${a.values[i] || '—'}\n`;
                 }
             }
             alert(summary);
             toast(t('saved'));
         });
     }
-    
-    window.setSlotAction = (prodKey, idx) => {
-        const inp = document.getElementById(`inp_${prodKey}_${idx}`);
-        if (inp) {
-            const raw = parseInt(inp.value);
-            if (!isNaN(raw)) { setSlot(prodKey, idx, raw); inp.value = ''; }
-            else toast(t('range'));
-        }
-    };
-    window.clearSlotAction = (prodKey, idx) => { clearSlot(prodKey, idx); };
-    
-    function updateLangUI() {
+
+    window.handleCircleClick = handleCircleClick;
+
+    function updateLang() {
         document.getElementById('langIcon').innerText = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
         document.getElementById('langText').innerText = currentLang === 'en' ? 'EN' : 'TH';
         if (currentOrder) render();
         else render();
     }
-    
+
     document.getElementById('langBtn')?.addEventListener('click', () => {
         currentLang = currentLang === 'en' ? 'th' : 'en';
-        updateLangUI();
+        updateLang();
     });
     document.getElementById('checkBtn')?.addEventListener('click', () => {
         const code = document.getElementById('orderInput').value.trim();
@@ -639,9 +580,9 @@
     document.getElementById('orderInput')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') document.getElementById('checkBtn')?.click();
     });
-    
+
     render();
-    updateLangUI();
+    updateLang();
 </script>
 </body>
 </html>
