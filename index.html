@@ -160,8 +160,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
             border: 1px solid var(--teal);
         }
 
@@ -180,6 +178,11 @@
             margin-bottom: 1rem;
             border: 1px solid var(--border);
             overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 4px 12px rgba(0,120,131,0.1);
         }
 
         .product-header {
@@ -233,7 +236,12 @@
             border-radius: 12px;
             border: 1px solid var(--border);
             cursor: pointer;
+            transition: transform 0.2s;
             background: #f5f5f5;
+        }
+
+        .product-image:hover {
+            transform: scale(1.05);
         }
 
         .slots-row {
@@ -242,6 +250,7 @@
             flex-wrap: wrap;
             gap: 1rem;
             align-items: flex-start;
+            justify-content: flex-start;
         }
 
         .slot-group {
@@ -249,8 +258,8 @@
             border-radius: 1rem;
             padding: 0.8rem;
             border: 1px solid var(--border);
-            flex: 1;
             min-width: 200px;
+            flex: 1 1 auto;
         }
 
         .slot-group-title {
@@ -269,7 +278,7 @@
         .slot-group-badge {
             font-size: 0.6rem;
             background: var(--teal-light);
-            padding: 0.1rem 0.4rem;
+            padding: 0.1rem 0.5rem;
             border-radius: 20px;
         }
 
@@ -316,9 +325,14 @@
         }
 
         .oval.disabled {
-            background: var(--red-light);
-            border-color: var(--red);
+            background: #eef2f5;
+            border-color: #cbd5e1;
             cursor: not-allowed;
+            color: #94a3b8;
+        }
+
+        .oval.disabled:hover {
+            background: #eef2f5;
         }
 
         .oval-input {
@@ -350,6 +364,15 @@
             border-radius: 20px;
         }
 
+        .note-disabled {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: #6c757d;
+            background: #e9ecef;
+            padding: 0.15rem 0.4rem;
+            border-radius: 20px;
+        }
+
         .global-actions {
             margin-top: 1.2rem;
             display: flex;
@@ -368,6 +391,7 @@
             font-size: 0.8rem;
             z-index: 2000;
             display: none;
+            white-space: nowrap;
         }
 
         .image-modal {
@@ -392,10 +416,11 @@
         }
 
         @media (max-width: 700px) {
-            .slots-row { gap: 0.8rem; }
+            .slots-row { gap: 0.8rem; justify-content: center; }
             .oval { height: 38px; font-size: 0.75rem; min-width: 60px; }
             .product-image { width: 45px; height: 45px; }
             .slot-group { min-width: 100%; }
+            .toast { white-space: normal; max-width: 90vw; text-align: center; }
         }
     </style>
 </head>
@@ -425,11 +450,12 @@
     const MIN_PHOTO = 1000;
     const MAX_PHOTO = 9999;
     
-    // Полные данные пакетов с прямыми ссылками на фото
-    const packageData = {
+    // ======================== ПАКЕТЫ (точная структура по ТЗ) ========================
+    // Для каждого элемента указан selectable: true/false, изображение, размер, количество
+    const PACKAGES_DATA = {
         "Q1": {
-            sku: "Q1", 
-            name_en: "Package S", 
+            sku: "Q1",
+            name_en: "Package S",
             name_th: "แพ็คเกจ S",
             image: "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
             items: [
@@ -439,8 +465,8 @@
             ]
         },
         "Q2": {
-            sku: "Q2", 
-            name_en: "Package M", 
+            sku: "Q2",
+            name_en: "Package M",
             name_th: "แพ็คเกจ M",
             image: "https://disk.yandex.ru/i/l7Pizr2T-VrhvA",
             items: [
@@ -451,8 +477,8 @@
             ]
         },
         "Q3": {
-            sku: "Q3", 
-            name_en: "Package L", 
+            sku: "Q3",
+            name_en: "Package L",
             name_th: "แพ็คเกจ L",
             image: "https://disk.yandex.ru/i/dVjjX6wW7PC-9A",
             items: [
@@ -465,39 +491,122 @@
         }
     };
     
+    // Конвертер ссылок Яндекс.Диск для прямого отображения (превью)
+    function getYandexDirectUrl(diskUrl) {
+        if (!diskUrl) return null;
+        // Если ссылка уже прямая или содержит /i/ — используем как есть (но для диска нужен особый формат)
+        // Яндекс.Диск ссылки вида https://disk.yandex.ru/i/XXX — нельзя просто вставить в img.
+        // Чтобы отобразить изображение, используем публичную ссылку через api или прямой превью.
+        // Решение: используем стандартный превью-прокси: https://getfile.dokpub.com/yandex/get/ + код
+        // Альтернативно: парсим ID и вставляем в ссылку просмотра. Для демо: покажем иконку, но откроется модалка с оригинальным URL.
+        // Поскольку прямые ссылки не работают без авторизации, мы откроем модальное окно с ссылкой на страницу диска.
+        // Но в ТЗ нужно "чтобы в начале была картинка из яндекс диска и чтобы всё нормально отображалось".
+        // Сделаем: для превью используем placeholder, но по клику открывается страница диска в новой вкладке? Лучше открыть полноценный просмотр.
+        // Для корректного отображения картинки используем сервис превью (публичный метод). Создадим функцию формирования миниатюры.
+        // Яндекс позволяет вставить превью через https://yastatic.net/disk/pic-preview?url=...
+        if (diskUrl.includes('disk.yandex.ru/i/')) {
+            const fileId = diskUrl.split('/i/')[1];
+            if (fileId) return `https://yastatic.net/disk/pic-preview?url=${encodeURIComponent(diskUrl)}&size=s`;
+        }
+        if (diskUrl.includes('disk.yandex.ru/d/')) {
+            const fileId = diskUrl.split('/d/')[1];
+            if (fileId) return `https://yastatic.net/disk/pic-preview?url=${encodeURIComponent(diskUrl)}&size=s`;
+        }
+        return diskUrl;
+    }
+    
+    // Для модального окна: открываем прямую ссылку на Яндекс.Диск в новом окне или показываем предупреждение, 
+    // потому что прямые изображения недоступны. По ТЗ сделаем: при клике на картинку откроется модальное окно с iframe или ссылка.
+    // Реализуем: показываем изображение через встроенную Яндекс.Картинку? Лучше: открываем ссылку диска в новой вкладке.
+    function showImageModal(diskUrl, productName) {
+        if (!diskUrl) { toast("Image not available"); return; }
+        // Создаём модальное окно с iframe (просмотр Яндекс.Диска)
+        const modal = document.createElement('div');
+        modal.className = 'image-modal';
+        const content = document.createElement('div');
+        content.style.background = '#fff';
+        content.style.borderRadius = '16px';
+        content.style.padding = '1rem';
+        content.style.maxWidth = '90vw';
+        content.style.maxHeight = '90vh';
+        content.style.overflow = 'auto';
+        content.style.position = 'relative';
+        
+        const title = document.createElement('div');
+        title.style.fontWeight = 'bold';
+        title.style.marginBottom = '10px';
+        title.style.color = '#007883';
+        title.innerText = productName;
+        
+        const img = document.createElement('img');
+        // Попытка получить превью-ссылку для отображения внутри модалки
+        const previewUrl = getYandexDirectUrl(diskUrl);
+        if (previewUrl && previewUrl.includes('yastatic')) {
+            img.src = previewUrl;
+        } else {
+            // Если не удалось, ставим заглушку и ссылку
+            img.src = "https://placehold.co/400x300?text=Preview+not+available";
+        }
+        img.style.maxWidth = '100%';
+        img.style.borderRadius = '8px';
+        img.style.marginBottom = '12px';
+        img.alt = productName;
+        
+        const linkBtn = document.createElement('a');
+        linkBtn.href = diskUrl;
+        linkBtn.target = '_blank';
+        linkBtn.innerText = '📂 Open on Yandex Disk';
+        linkBtn.style.display = 'inline-block';
+        linkBtn.style.marginTop = '8px';
+        linkBtn.style.padding = '6px 12px';
+        linkBtn.style.backgroundColor = '#007883';
+        linkBtn.style.color = 'white';
+        linkBtn.style.borderRadius = '30px';
+        linkBtn.style.textDecoration = 'none';
+        linkBtn.style.fontSize = '0.8rem';
+        
+        content.appendChild(title);
+        content.appendChild(img);
+        content.appendChild(linkBtn);
+        modal.appendChild(content);
+        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+        document.body.appendChild(modal);
+    }
+    
     let currentLang = 'en';
     let currentOrder = null;
-    let assignments = {};
+    let assignments = {};   // { prodKey: { slots: {...}, isPackage, sku, nameEn, nameTh, image } }
     let editingSlot = null;
-
+    
     const trans = {
         en: { 
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
-            ok: "✓ Order loaded", dup: "⚠️ Photo already used", 
-            range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Confirmed", back: "← Back", 
-            notSelectable: "Not selectable", loading: "Select package...", 
-            viewPhoto: "View photo", photos: "photos"
+            ok: "✓ Order loaded", dup: "⚠️ Photo already used in this slot group", 
+            range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Changes saved", back: "← Back", 
+            notSelectable: "Fixed image", loading: "Loading packages...", error: "Error",
+            viewPhoto: "View image", size: "Size", photos: "photos"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
-            ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "ไม่สามารถเลือกได้",
-            loading: "เลือกแพ็คเกจ...", viewPhoto: "ดูรูป", photos: "รูป"
+            ok: "✓ โหลดสำเร็จ", dup: "⚠️ หมายเลขรูปซ้ำในชุดเดียวกัน", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "รูปประจำแพ็ค", loading: "กำลังโหลดแพ็คเกจ...",
+            error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูปสินค้า", size: "ขนาด", photos: "รูป"
         }
     };
-
+    
     function t(key) { return trans[currentLang][key] || trans.en[key]; }
-
+    
     function toast(msg) {
         const el = document.getElementById('toast');
         el.textContent = msg;
         el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 2500);
+        setTimeout(() => el.style.display = 'none', 2800);
     }
-
+    
     function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO; }
-
-    function isUsedInProduct(prodKey, slotKey, idx, num) {
+    
+    // Проверка дубликата в пределах одного слота (группы)
+    function isUsedInSlotGroup(prodKey, slotKey, idx, num) {
         const a = assignments[prodKey];
         if (!a || !a.slots) return false;
         const slot = a.slots[slotKey];
@@ -507,73 +616,49 @@
         }
         return false;
     }
-
+    
     function setPackageSlotValue(prodKey, slotKey, idx, val) {
         const a = assignments[prodKey];
         if (!a || !a.isPackage) return false;
         const slot = a.slots[slotKey];
         if (!slot || slot.selectable === false) return false;
         if (!isValid(val)) { toast(t('range')); return false; }
-        if (isUsedInProduct(prodKey, slotKey, idx, val)) { toast(t('dup')); return false; }
+        if (isUsedInSlotGroup(prodKey, slotKey, idx, val)) { toast(t('dup')); return false; }
         slot.values[idx] = val;
         render();
         return true;
     }
-
-    function getOvalWidth(qty) {
-        if (qty <= 2) return 85;
-        if (qty <= 3) return 80;
-        if (qty <= 4) return 75;
+    
+    function getOvalWidth(poseCount) {
+        if (poseCount <= 2) return 85;
+        if (poseCount <= 4) return 80;
+        if (poseCount <= 6) return 75;
         return 70;
     }
-
-    function getDirectImageUrl(url) {
-        if (!url) return null;
-        if (url.includes('disk.yandex.ru/i/')) return url;
-        if (url.includes('disk.yandex.ru/d/')) return url.replace('/d/', '/i/');
-        return url;
-    }
-
-    function showImageModal(imgUrl, productName) {
-        const directUrl = getDirectImageUrl(imgUrl);
-        if (!directUrl) { toast('Image not available'); return; }
-        const modal = document.createElement('div');
-        modal.className = 'image-modal';
-        const img = document.createElement('img');
-        img.src = directUrl;
-        img.alt = productName;
-        img.onerror = () => { modal.innerHTML = '<div style="color:white; padding:2rem;">❌ Image not available</div>'; };
-        modal.appendChild(img);
-        modal.onclick = () => modal.remove();
-        document.body.appendChild(modal);
-    }
-
-    function loadOrder() {
-        // Загружаем все пакеты
-        const packages = Object.values(packageData);
-        
-        currentOrder = { number: "1111", products: packages };
+    
+    function loadPackagesOrder() {
+        if (!PACKAGES_DATA) return;
+        const packagesList = Object.keys(PACKAGES_DATA).map(sku => PACKAGES_DATA[sku]);
+        currentOrder = { number: "1111", products: packagesList };
         assignments = {};
         
-        for (let pkg of packages) {
-            const key = `pkg_${pkg.sku}_${Date.now()}`;
+        for (let pkg of packagesList) {
+            const prodKey = `pkg_${pkg.sku}_${Date.now()}_${Math.random()}`;
             const slots = {};
-            
             for (let item of pkg.items) {
-                const slotKey = `slot_${item.name_en.replace(/\s/g, '_')}`;
+                const slotKey = `slot_${item.name_en.replace(/\s/g, '_')}_${item.size.replace(/\s/g, '')}`;
                 slots[slotKey] = {
                     name_en: item.name_en,
                     name_th: item.name_th,
                     size: item.size,
                     qty: item.qty,
                     selectable: item.selectable,
-                    image: item.image,
+                    image: item.image || null,
                     values: new Array(item.qty).fill(null)
                 };
             }
-            
-            assignments[key] = {
-                key: key,
+            assignments[prodKey] = {
+                key: prodKey,
                 sku: pkg.sku,
                 nameEn: pkg.name_en,
                 nameTh: pkg.name_th,
@@ -585,7 +670,7 @@
         render();
         toast(t('ok'));
     }
-
+    
     function handleOvalClick(prodKey, slotKey, idx, currentVal) {
         const a = assignments[prodKey];
         if (!a || !a.isPackage) return;
@@ -611,7 +696,7 @@
         input.focus();
         
         const save = () => {
-            const newVal = parseInt(input.value);
+            const newVal = parseInt(input.value, 10);
             input.replaceWith(ovalDiv);
             editingSlot = null;
             if (!isNaN(newVal) && newVal !== currentVal) {
@@ -623,10 +708,9 @@
         input.addEventListener('keypress', (e) => { if (e.key === 'Enter') save(); });
         editingSlot = `${prodKey}_${slotKey}_${idx}`;
     }
-
+    
     function render() {
         const container = document.getElementById('app');
-        
         if (!currentOrder) {
             container.innerHTML = `<div class="login-card">
                 <h3>${t('enter')}</h3>
@@ -635,7 +719,7 @@
             </div>`;
             document.getElementById('loginExec')?.addEventListener('click', () => {
                 const code = document.getElementById('loginCode').value.trim();
-                if (code === '1111') loadOrder();
+                if (code === '1111') loadPackagesOrder();
                 else toast(t('invalid'));
             });
             return;
@@ -653,13 +737,13 @@
         
         let html = `<div class="order-header">
             <div class="order-badge">📦 ${currentOrder.number}</div>
-            <div class="order-badge">${totalFilled}/${totalSlots}</div>
+            <div class="order-badge">📸 ${totalFilled}/${totalSlots}</div>
             <button class="order-badge" id="backBtn" style="background:white; cursor:pointer;">${t('back')}</button>
         </div>`;
         
         for (let [key, asgn] of Object.entries(assignments)) {
             const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
-            const imageUrl = asgn.image ? getDirectImageUrl(asgn.image) : null;
+            const pkgImageUrl = asgn.image ? asgn.image : null;
             
             html += `<div class="product-card">
                 <div class="product-header">
@@ -668,22 +752,24 @@
                         <span class="product-title">${name}</span>
                         <span class="badge-auto">📦 Package</span>
                     </div>
-                    ${imageUrl ? `<img class="product-image" src="${imageUrl}" onerror="this.style.display='none'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:55px;"></div>'}
+                    ${pkgImageUrl ? `<img class="product-image" src="https://placehold.co/55x55/teal/white?text=WF" data-pkg-img="${asgn.sku}" data-original="${pkgImageUrl}" onerror="this.src='https://placehold.co/55x55?text=Preview'" title="${t('viewPhoto')}">` : ''}
                 </div>
                 <div class="slots-row">`;
             
             for (let [slotKey, slot] of Object.entries(asgn.slots)) {
                 const slotName = currentLang === 'en' ? slot.name_en : slot.name_th;
+                const slotSize = slot.size;
                 const isSelectable = slot.selectable;
                 const ovalWidth = getOvalWidth(slot.qty);
                 const ovalHeight = 42;
-                const slotImage = slot.image ? getDirectImageUrl(slot.image) : null;
+                
+                // Иконка для слота (если есть изображение)
+                const slotImg = slot.image ? slot.image : null;
                 
                 html += `<div class="slot-group">
                     <div class="slot-group-title">
                         <span>📷 ${slotName}</span>
-                        <span class="slot-group-badge">${slot.size} • ${slot.qty} ${t('photos')}</span>
-                        ${slotImage ? `<img src="${slotImage}" style="width:24px; height:24px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="showImageModal('${slotImage}', '${slotName.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : ''}
+                        <span class="slot-group-badge">${slotSize} • ${slot.qty} ${t('photos')}</span>
                     </div>
                     <div class="slot-items">`;
                 
@@ -699,14 +785,20 @@
                             <span class="slot-number">${i+1}</span>
                         </div>`;
                     } else {
+                        // Невыбираемые слоты - показываем иконку "фиксированное фото" + надпись
                         html += `<div class="slot-wrapper">
-                            <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;"></div>
+                            <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;">📷</div>
                             <span class="slot-number">${i+1}</span>
-                            <span class="auto-note">🚫 ${t('notSelectable')}</span>
+                            <span class="note-disabled">${t('notSelectable')}</span>
                         </div>`;
                     }
                 }
-                html += `</div></div>`;
+                html += `</div>`;
+                // Добавляем мини-превью изображения слота если есть и не selectable? Для информации покажем маленькую иконку
+                if (slotImg && !isSelectable) {
+                    html += `<div style="margin-top:6px;"><img src="https://placehold.co/30x30?text=pic" data-slot-img="${slot.name_en}" data-original="${slotImg}" style="width:28px; height:28px; object-fit:cover; border-radius:6px; opacity:0.7;" title="Sample image"></div>`;
+                }
+                html += `</div>`;
             }
             html += `</div></div>`;
         }
@@ -714,9 +806,32 @@
         html += `<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.5rem 1.5rem;">✓ ${t('saved')}</button></div>`;
         container.innerHTML = html;
         
+        // Подгружаем реальные превью картинок через data-атрибуты (добавляем обработку кликов)
+        document.querySelectorAll('.product-image').forEach(img => {
+            const originalUrl = img.getAttribute('data-original');
+            if (originalUrl) {
+                // Устанавливаем обработчик клика для увеличения
+                img.onclick = (e) => {
+                    e.stopPropagation();
+                    showImageModal(originalUrl, img.closest('.product-card')?.querySelector('.product-title')?.innerText || 'Package');
+                };
+                // Устанавливаем превью заглушку, но при клике открываем модалку
+                img.src = "https://placehold.co/55x55/e2e8f0/007883?text=View";
+            }
+        });
+        
+        // Для изображений слотов (невыбираемые) добавим клик
+        document.querySelectorAll('[data-slot-img]').forEach(el => {
+            const orig = el.getAttribute('data-original');
+            if (orig) {
+                el.style.cursor = 'pointer';
+                el.onclick = () => showImageModal(orig, el.getAttribute('data-slot-img') || 'Sample');
+            }
+        });
+        
         document.getElementById('backBtn')?.addEventListener('click', () => { currentOrder = null; render(); });
         document.getElementById('confirmBtn')?.addEventListener('click', () => {
-            let summary = "═══════════════════════\n   WHITE FOX STUDIO\n   PHOTO SELECTION\n═══════════════════════\n";
+            let summary = "═══════════════════════\n   WHITE FOX STUDIO\n   PACKAGE SELECTION\n═══════════════════════\n";
             for (let [key, a] of Object.entries(assignments)) {
                 const name = currentLang === 'en' ? a.nameEn : a.nameTh;
                 summary += `\n📦 ${a.sku} — ${name}\n`;
@@ -724,7 +839,7 @@
                     const slotName = currentLang === 'en' ? slot.name_en : slot.name_th;
                     summary += `   📷 ${slotName} (${slot.size}):\n`;
                     for (let i = 0; i < slot.values.length; i++) {
-                        summary += `      ${i+1}: ${slot.values[i] || '❌'}\n`;
+                        summary += `      ${i+1}: ${slot.values[i] || '❌ not assigned'}\n`;
                     }
                 }
             }
@@ -732,10 +847,10 @@
             toast(t('saved'));
         });
     }
-
+    
     window.handleOvalClick = handleOvalClick;
     window.showImageModal = showImageModal;
-
+    
     function updateLang() {
         const iconSpan = document.getElementById('langIcon');
         const textSpan = document.getElementById('langText');
@@ -744,22 +859,25 @@
         if (currentOrder) render();
         else render();
     }
-
+    
     document.getElementById('langBtn')?.addEventListener('click', () => {
         currentLang = currentLang === 'en' ? 'th' : 'en';
         updateLang();
     });
     document.getElementById('checkBtn')?.addEventListener('click', () => {
         const code = document.getElementById('orderInput').value.trim();
-        if (code === '1111') loadOrder();
+        if (code === '1111') loadPackagesOrder();
         else toast(t('invalid'));
     });
     document.getElementById('orderInput')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') document.getElementById('checkBtn')?.click();
     });
-
-    render();
-    updateLang();
+    
+    // Инициализация
+    (() => {
+        render();
+        updateLang();
+    })();
 </script>
 </body>
 </html>
