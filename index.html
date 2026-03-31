@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio · Complete Photo Selection System</title>
+    <title>White Fox Studio · Photo Selection with Auto-Assign</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         * {
@@ -26,10 +26,8 @@
             --red: #dc2626;
             --red-light: #fee2e2;
             --slot-filled: #c8e6df;
-            --cover: #fef3c7;
-            --internal: #e0e7ff;
-            --design: #f3e8ff;
-            --package: #ffd966;
+            --auto-bg: #f1f3f4;
+            --auto-border: #9ca3af;
         }
 
         .header {
@@ -156,35 +154,6 @@
             width: 100%;
         }
 
-        .category-filter {
-            background: white;
-            border-radius: 1rem;
-            padding: 0.75rem 1rem;
-            margin-bottom: 1.2rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            align-items: center;
-            border: 1px solid var(--border);
-            overflow-x: auto;
-        }
-
-        .category-btn {
-            background: #f0f0f0;
-            border: none;
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-
-        .category-btn.active {
-            background: var(--teal);
-            color: white;
-        }
-
         .order-header {
             background: white;
             border-radius: 1rem;
@@ -235,38 +204,16 @@
             flex: 1;
         }
 
-        .product-category {
-            background: var(--teal-light);
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--teal);
-            display: inline-block;
-            margin-right: 0.5rem;
-        }
-
         .product-sku {
-            background: #e9ecef;
+            background: var(--teal-light);
             padding: 0.25rem 0.8rem;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 700;
-            color: #495057;
+            color: var(--teal);
             font-family: monospace;
             display: inline-block;
             margin-bottom: 0.5rem;
-        }
-
-        .badge-package {
-            background: var(--package);
-            padding: 0.25rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #856404;
-            display: inline-block;
-            margin-left: 0.5rem;
         }
 
         .product-title {
@@ -300,6 +247,27 @@
             font-weight: 600;
         }
 
+        .badge-auto {
+            background: var(--red-light);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            color: var(--red);
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .badge-package {
+            background: #ffd966;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            color: #856404;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+
         .product-image {
             width: 70px;
             height: 70px;
@@ -312,13 +280,14 @@
             flex-shrink: 0;
         }
 
-        .slots-container {
-            margin-top: 1rem;
-            padding-top: 0.8rem;
-            border-top: 1px solid var(--border);
+        .product-image:hover {
+            transform: scale(1.05);
         }
 
         .slots-row {
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid var(--border);
             display: flex;
             flex-wrap: wrap;
             gap: 0.8rem;
@@ -331,7 +300,6 @@
             flex-direction: column;
             align-items: center;
             gap: 0.3rem;
-            min-width: 80px;
         }
 
         .oval {
@@ -362,27 +330,13 @@
             color: var(--teal-dark);
         }
 
+        /* Disabled auto-assigned slots: grey, not clickable */
         .oval.disabled {
             background: #e5e7eb;
             border-color: #9ca3af;
             cursor: not-allowed;
             color: #6b7280;
             opacity: 0.9;
-        }
-
-        .oval.cover {
-            background: var(--cover);
-            border-color: #f59e0b;
-        }
-
-        .oval.internal {
-            background: var(--internal);
-            border-color: #6366f1;
-        }
-
-        .oval.design {
-            background: var(--design);
-            border-color: #a855f7;
         }
 
         .oval-input {
@@ -400,28 +354,24 @@
         }
 
         .slot-number {
-            font-size: 0.6rem;
-            font-weight: 500;
-            color: #6b7280;
-            text-align: center;
-            max-width: 100px;
-        }
-
-        .slot-note {
             font-size: 0.55rem;
             font-weight: 500;
-            color: #dc2626;
-            background: var(--red-light);
+            color: #8b9aab;
+        }
+
+        .auto-note {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: #4b5563;
+            background: #e5e7eb;
             padding: 0.15rem 0.4rem;
             border-radius: 20px;
-            text-align: center;
         }
 
         .global-actions {
             margin-top: 1.5rem;
             display: flex;
             justify-content: flex-end;
-            gap: 1rem;
         }
 
         .toast {
@@ -465,16 +415,9 @@
             color: var(--teal);
             font-size: 1.1rem;
         }
-
-        .stats-bar {
-            background: white;
-            border-radius: 1rem;
-            padding: 0.5rem 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid var(--border);
+        
+        .preload-placeholder {
+            min-height: 200px;
         }
 
         @media (max-width: 700px) {
@@ -482,8 +425,6 @@
             .oval { height: 38px; font-size: 0.75rem; min-width: 60px; padding: 0 0.5rem; }
             .product-image { width: 55px; height: 55px; }
             .product-title { font-size: 0.9rem; }
-            .slot-wrapper { min-width: 65px; }
-            .slot-number { font-size: 0.55rem; }
         }
     </style>
 </head>
@@ -521,12 +462,93 @@
     let productsDB = [];
     let currentLang = 'en';
     let currentOrder = null;
-    let assignments = {};
+    let assignments = {};  // structure: { productKey: { ..., values: [], selectableMask: bool[], autoAssignedLabels: [] } }
     let editingSlot = null;
     let isLoading = true;
-    let currentCategory = 'all';
 
-    // Complete translations
+    // ========== PACKAGE AUTO-ASSIGNMENT RULES ==========
+    // Define rules based on package SKU or name patterns.
+    // Each rule defines which slot indices (0-based) are auto-assigned and their display label.
+    // Future packages can be added here.
+    const PACKAGE_AUTO_RULES = {
+        // Package S: "Class Serious + Logo" auto-assigned (slot 0)
+        "S": {
+            autoSlots: [
+                { index: 0, label: "Class Serious + Logo" }
+            ]
+        },
+        // Package M: "Class Serious + Logo" (slot 0) + "Class Sabai" (slot 1)
+        "M": {
+            autoSlots: [
+                { index: 0, label: "Class Serious + Logo" },
+                { index: 1, label: "Class Sabai" }
+            ]
+        },
+        // Package L: "Class Serious + Logo" (slot0), "Class Sabai" (slot1), plus third slot auto if exists
+        "L": {
+            autoSlots: [
+                { index: 0, label: "Class Serious + Logo" },
+                { index: 1, label: "Class Sabai" }
+                // third slot remains selectable unless future rules extend
+            ]
+        }
+    };
+    
+    // Helper: detect package size/type from SKU or name
+    function detectPackageType(product) {
+        const sku = (product.sku || '').toUpperCase();
+        const nameEn = (product.name_en || '').toUpperCase();
+        const nameTh = (product.name_th || '').toUpperCase();
+        
+        // Check SKU patterns first
+        if (sku.includes('PACKAGE-S') || sku === 'S' || nameEn.includes('PACKAGE S') || nameEn.includes('STARTER')) return 'S';
+        if (sku.includes('PACKAGE-M') || sku === 'M' || nameEn.includes('PACKAGE M') || nameEn.includes('MEDIUM')) return 'M';
+        if (sku.includes('PACKAGE-L') || sku === 'L' || nameEn.includes('PACKAGE L') || nameEn.includes('DELUXE') || nameEn.includes('LARGE')) return 'L';
+        
+        // fallback: check if it's a package and has specific keywords
+        if (product.isPackage) {
+            if (nameEn.includes('SERIOUS') && nameEn.includes('LOGO')) return 'S';
+        }
+        return null;
+    }
+    
+    // Generate auto-assign config for a package product
+    function getAutoAssignConfig(product) {
+        if (!product.isPackage) return null;
+        const pkgType = detectPackageType(product);
+        if (!pkgType) return null;
+        const rule = PACKAGE_AUTO_RULES[pkgType];
+        if (!rule) return null;
+        
+        // Build array of auto-assigned indices and their labels
+        const totalSlots = product.pose || 1;
+        const autoMap = new Array(totalSlots).fill(null);
+        rule.autoSlots.forEach(slot => {
+            if (slot.index < totalSlots) {
+                autoMap[slot.index] = slot.label;
+            }
+        });
+        return autoMap;
+    }
+    
+    // Preload images for all products to avoid layout shift
+    async function preloadProductImages(products) {
+        const imageUrls = products
+            .map(p => p.image_url || p.image)
+            .filter(url => url && url.startsWith('http') && !url.includes('data:image/svg'));
+        
+        const loadPromises = imageUrls.map(url => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = url;
+            });
+        });
+        await Promise.all(loadPromises);
+        console.log(`✅ Preloaded ${imageUrls.length} images`);
+    }
+
     const trans = {
         en: { 
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
@@ -534,34 +556,14 @@
             range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, 
             saved: "✓ Selection saved", back: "← Back", notSelectable: "Auto-assigned",
             loading: "Loading products...", error: "Error", viewPhoto: "View photo", 
-            size: "Size", photos: "Photos", noImage: "No image",
-            categories: "Categories", all: "All", products: "Products", packages: "Packages",
-            backCover: "Back Cover", frontCover: "Front Cover", internal: "Internal", 
-            design: "Design", portrait: "Portrait", group: "Group", logo: "Logo",
-            selectPhoto: "Enter photo #", total: "Total"
-        },
-        ru: { 
-            enter: "Введите номер заказа", btn: "Продолжить", invalid: "Используйте код 1111", 
-            ok: "✓ Заказ загружен", dup: "⚠️ Номер фото уже используется", 
-            range: `Используйте ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ Выбор сохранен", back: "← Назад", notSelectable: "Автоназначение",
-            loading: "Загрузка товаров...", error: "Ошибка", viewPhoto: "Просмотр фото",
-            size: "Размер", photos: "Фото", noImage: "Нет фото",
-            categories: "Категории", all: "Все", products: "Товары", packages: "Пакеты",
-            backCover: "Задняя обложка", frontCover: "Передняя обложка", internal: "Внутренняя", 
-            design: "Дизайн", portrait: "Портрет", group: "Групповое", logo: "Логотип",
-            selectPhoto: "Введите номер", total: "Всего"
+            size: "Size", pose: "Photos", noImage: "No image", package: "Package"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
             ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
             saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "กำหนดอัตโนมัติ",
             loading: "กำลังโหลดสินค้า...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูป",
-            size: "ขนาด", photos: "รูปภาพ", noImage: "ไม่มีรูป",
-            categories: "หมวดหมู่", all: "ทั้งหมด", products: "สินค้า", packages: "แพ็คเกจ",
-            backCover: "ปกหลัง", frontCover: "ปกหน้า", internal: "ภายใน", 
-            design: "ดีไซน์", portrait: "ภาพบุคคล", group: "กลุ่ม", logo: "โลโก้",
-            selectPhoto: "กรอกหมายเลข", total: "ทั้งหมด"
+            size: "ขนาด", pose: "จำนวนรูป", noImage: "ไม่มีรูป", package: "แพ็คเกจ"
         }
     };
 
@@ -585,10 +587,12 @@
         return false;
     }
 
+    // Set value with auto-assign protection
     function setValue(prodKey, idx, val) {
         const a = assignments[prodKey];
         if (!a) return false;
-        if (a.disabledSlots && a.disabledSlots[idx]) {
+        // Disable editing if slot is auto-assigned
+        if (a.selectableMask && a.selectableMask[idx] === false) {
             toast(t('notSelectable'));
             return false;
         }
@@ -600,300 +604,221 @@
     }
 
     function getOvalWidth(poseCount) {
-        if (poseCount <= 3) return 95;
-        if (poseCount <= 5) return 88;
-        if (poseCount <= 8) return 82;
-        if (poseCount <= 12) return 76;
-        if (poseCount <= 20) return 70;
-        return 64;
+        if (poseCount <= 2) return 95;
+        if (poseCount <= 3) return 88;
+        if (poseCount <= 4) return 82;
+        if (poseCount <= 6) return 76;
+        if (poseCount <= 10) return 70;
+        if (poseCount <= 16) return 64;
+        return 58;
     }
 
-    function getOvalClass(type, isFilled, isDisabled) {
-        if (isDisabled) return 'oval disabled';
-        let baseClass = 'oval';
-        if (isFilled) baseClass += ' filled';
-        if (type === 'cover' || type === 'frontCover' || type === 'backCover') baseClass += ' cover';
-        if (type === 'internal') baseClass += ' internal';
-        if (type === 'design') baseClass += ' design';
-        return baseClass;
-    }
-
-    // Complete product database with all SKUs from your specification
-    function getCompleteProductDatabase() {
-        return {
-            // A: ACRYLIC PHOTO
-            acrylic: [
-                { sku: "A11", name_en: "Acrylic Photo 11x11", name_ru: "Акриловое фото 11x11", name_th: "ภาพอะคริลิค 11x11", size: "11x11 inch", photos: 1, type: "group", note: "Group photo is selected", sequence: "1. group" },
-                { sku: "A12", name_en: "Acrylic Photo 12x12", name_ru: "Акриловое фото 12x12", name_th: "ภาพอะคริลิค 12x12", size: "12x12 inch", photos: 1, type: "portrait", note: "", sequence: "1. portr" },
-                { sku: "A13", name_en: "Acrylic Photo 13x13", name_ru: "Акриловое фото 13x13", name_th: "ภาพอะคริลิค 13x13", size: "13x13 inch", photos: 1, type: "portrait", note: "", sequence: "1. portr" },
-                { sku: "A14", name_en: "Acrylic Photo 14x14", name_ru: "Акриловое фото 14x14", name_th: "ภาพอะคริลิค 14x14", size: "14x14 inch", photos: 2, type: "group+brand", note: "Group photo not selected, contains group+portrait+logo", sequence: "1. group+portr, 2. brand" }
-            ],
-            // W: FLOAT FRAME
-            frame: [
-                { sku: "W11", name_en: "Float Frame 11x11", name_ru: "Плавающая рамка 11x11", name_th: "กรอบลอย 11x11", size: "11x11 inch", photos: 1, type: "portrait", note: "", sequence: "1. portr" },
-                { sku: "W12", name_en: "Float Frame 12x12", name_ru: "Плавающая рамка 12x12", name_th: "กรอบลอย 12x12", size: "12x12 inch", photos: 1, type: "portrait", note: "", sequence: "1. portr" },
-                { sku: "W13", name_en: "Float Frame 13x13", name_ru: "Плавающая рамка 13x13", name_th: "กรอบลอย 13x13", size: "13x13 inch", photos: 1, type: "portrait", note: "", sequence: "1. portr" },
-                { sku: "W14", name_en: "Float Frame 14x14", name_ru: "Плавающая рамка 14x14", name_th: "กรอบลอย 14x14", size: "14x14 inch", photos: 1, type: "portrait", note: "", sequence: "1. portr" },
-                { sku: "W15", name_en: "Float Frame with Logo", name_ru: "Плавающая рамка с логотипом", name_th: "กรอบลอยพร้อมโลโก้", size: "14x14 inch", photos: 1, type: "portrait+logo", note: "Photo contains portrait and logo", sequence: "1. portr, 2. brand" },
-                { sku: "W16", name_en: "Float Frame Design Set", name_ru: "Дизайн сет", name_th: "ชุดดีไซน์", size: "14x14 inch", photos: 3, type: "design", note: "Three design elements", sequence: "1. design, 2. design, 3. design" },
-                { sku: "W17", name_en: "Float Frame Group", name_ru: "Групповая рамка", name_th: "กรอบกลุ่ม", size: "14x14 inch", photos: 1, type: "group+logo", note: "Group photo not selected, combines group shot with logo", sequence: "1. group, 2. brand" }
-            ],
-            // C: CANVAS
-            canvas: [
-                { sku: "C11", name_en: "Canvas 11x14", name_ru: "Холст 11x14", name_th: "ผ้าใบ 11x14", size: "11x14 inch", photos: 1, type: "portrait", note: "", sequence: "1. portr" },
-                { sku: "C12", name_en: "Canvas 12x16", name_ru: "Холст 12x16", name_th: "ผ้าใบ 12x16", size: "12x16 inch", photos: 1, type: "portrait", note: "", sequence: "1. portr" },
-                { sku: "C13", name_en: "Canvas 16x20", name_ru: "Холст 16x20", name_th: "ผ้าใบ 16x20", size: "16x20 inch", photos: 1, type: "portrait", note: "", sequence: "1. portr" },
-                { sku: "C14", name_en: "Canvas 20x24", name_ru: "Холст 20x24", name_th: "ผ้าใบ 20x24", size: "20x24 inch", photos: 1, type: "portrait", note: "", sequence: "1. portr" },
-                { sku: "C15", name_en: "Canvas Collage", name_ru: "Коллаж на холсте", name_th: "ภาพตัดต่อผ้าใบ", size: "24x36 inch", photos: 9, type: "design", note: "Nine design elements", sequence: "1-9. design" }
-            ],
-            // B: BOOKS
-            books: [
-                { sku: "B11", name_en: "Photo Book 16 pages", name_ru: "Фотоальбом 16 страниц", name_th: "อัลบั้มรูป 16 หน้า", size: "8x8 inch", photos: 16, type: "book", note: "Front cover + Back cover for 16-page book", sequence: "Back Cover, Front Cover" },
-                { sku: "B12", name_en: "Photo Book 14 pages", name_ru: "Фотоальбом 14 страниц", name_th: "อัลบั้มรูป 14 หน้า", size: "8x8 inch", photos: 14, type: "book", note: "2 covers + 12 internal pages", sequence: "Back Cover, Front Cover, 12 internal photos" },
-                { sku: "B13", name_en: "Photo Book 31 pages", name_ru: "Фотоальбом 31 страниц", name_th: "อัลบั้มรูป 31 หน้า", size: "8x8 inch", photos: 31, type: "book", note: "2 covers + 29 internal, choose group photo", sequence: "Back Cover, Front Cover (portrait), 29 internal photos" },
-                { sku: "B14", name_en: "Photo Book Deluxe", name_ru: "Делюкс альбом", name_th: "อัลบั้มดีลักซ์", size: "10x10 inch", photos: 31, type: "book", note: "Teacher photo not selected, choose group photo", sequence: "Back Cover, Front Cover, 29 internal photos" }
-            ],
-            // K: CALENDARS
-            calendars: [
-                { sku: "K11", name_en: "Wall Calendar", name_ru: "Настенный календарь", name_th: "ปฏิทินติดผนัง", size: "A3", photos: 20, type: "calendar", note: "20 photos across 13 pages", sequence: "13 pages of photos" },
-                { sku: "K12", name_en: "Poster Calendar", name_ru: "Календарь-постер", name_th: "ปฏิทินโปสเตอร์", size: "A2", photos: 1, type: "poster", note: "Single poster image", sequence: "1 poster image" },
-                { sku: "K13", name_en: "Flip Calendar", name_ru: "Перекидной календарь", name_th: "ปฏิทินพลิก", size: "A4", photos: 12, type: "calendar", note: "12 photos for flip calendar", sequence: "12 pages of photos" },
-                { sku: "K14", name_en: "Desk Calendar", name_ru: "Настольный календарь", name_th: "ปฏิทินตั้งโต๊ะ", size: "A5", photos: 25, type: "calendar", note: "25 photos for desk calendar", sequence: "25 pages of photos" },
-                { sku: "K15", name_en: "Calendar with Group", name_ru: "Календарь с группой", name_th: "ปฏิทินพร้อมรูปกลุ่ม", size: "A4", photos: 12, type: "calendar", note: "Choose a group photo", sequence: "Group photo selection required" },
-                { sku: "K16", name_en: "Calendar Group Edition", name_ru: "Календарь групповая", name_th: "ปฏิทินรุ่นกลุ่ม", size: "A4", photos: 12, type: "calendar", note: "Choose a group photo", sequence: "Group photo selection required" }
-            ],
-            // D: MUGS & BOTTLES
-            mugs: [
-                { sku: "D11", name_en: "Mug with Logo", name_ru: "Кружка с логотипом", name_th: "แก้วน้ำพร้อมโลโก้", size: "330ml", photos: 2, type: "logo", note: "School logo on both sides", sequence: "2 photos - school logo" },
-                { sku: "D12", name_en: "Photo Mug", name_ru: "Фотокружка", name_th: "แก้วน้ำภาพถ่าย", size: "330ml", photos: 4, type: "photo", note: "4 photos around mug", sequence: "4 photos" },
-                { sku: "D13", name_en: "Photo Bottle", name_ru: "Бутылка с фото", name_th: "ขวดน้ำภาพถ่าย", size: "600ml", photos: 8, type: "photo", note: "8 photos on bottle", sequence: "8 photos" },
-                { sku: "D14", name_en: "Water Bottle Logo", name_ru: "Бутылка с логотипом", name_th: "ขวดน้ำพร้อมโลโก้", size: "500ml", photos: 2, type: "logo", note: "Logo for water bottle", sequence: "2 photos - logo" }
-            ],
-            // Packages
-            packages: [
-                { sku: "PKG-S", name_en: "Package S - Starter", name_ru: "Пакет S - Стартовый", name_th: "แพ็คเกจ S - ชุดเริ่มต้น", size: "Mixed", photos: 6, type: "package", note: "Includes Class Serious + Logo (auto-assigned)", isPackage: true, autoSlots: [0] },
-                { sku: "PKG-M", name_en: "Package M - Medium", name_ru: "Пакет M - Средний", name_th: "แพ็คเกจ M - ชุดกลาง", size: "Mixed", photos: 8, type: "package", note: "Includes Class Serious + Logo and Class Sabai", isPackage: true, autoSlots: [0, 1] },
-                { sku: "PKG-L", name_en: "Package L - Deluxe", name_ru: "Пакет L - Делюкс", name_th: "แพ็คเกจ L - ชุดดีลักซ์", size: "Mixed", photos: 12, type: "package", note: "Includes Class Serious + Logo and Class Sabai", isPackage: true, autoSlots: [0, 1] }
-            ]
-        };
-    }
-
-    function buildProductsArray() {
-        const db = getCompleteProductDatabase();
-        const allProducts = [];
-        
-        // Add all regular products
-        for (const category in db) {
-            if (category !== 'packages' && Array.isArray(db[category])) {
-                db[category].forEach(product => {
-                    allProducts.push({
-                        ...product,
-                        category: category,
-                        isPackage: false
-                    });
-                });
-            }
+    function getDirectImageUrl(imgUrl) {
+        if (!imgUrl) return null;
+        if (imgUrl.includes('i.postimg.cc')) return imgUrl;
+        if (imgUrl.includes('disk.yandex.ru')) {
+            if (imgUrl.includes('/i/')) return imgUrl;
+            if (imgUrl.includes('/d/')) return imgUrl.replace('/d/', '/i/');
         }
-        
-        // Add packages
-        if (db.packages) {
-            db.packages.forEach(pkg => {
-                allProducts.push({
-                    ...pkg,
-                    category: 'packages',
-                    isPackage: true
-                });
-            });
-        }
-        
-        return allProducts;
+        return imgUrl;
     }
 
-    function generateSlotConfig(product) {
-        const slots = [];
-        const photos = product.photos;
-        
-        if (product.isPackage) {
-            // Package slots with auto-assigned
-            for (let i = 0; i < photos; i++) {
-                let type = 'photo';
-                let label = `Photo ${i + 1}`;
-                let disabled = false;
-                let note = null;
-                
-                if (product.autoSlots && product.autoSlots.includes(i)) {
-                    if (i === 0) {
-                        label = "Class Serious + Logo";
-                        note = "Auto-assigned";
-                    } else if (i === 1) {
-                        label = "Class Sabai";
-                        note = "Auto-assigned";
-                    }
-                    disabled = true;
-                }
-                
-                slots.push({ type, label, note, disabled });
-            }
-            return slots;
-        }
-        
-        // Regular products based on sequence
-        const sequence = product.sequence || '';
-        
-        if (product.type === 'book') {
-            // Special handling for books
-            if (photos === 16) {
-                slots.push({ type: 'backCover', label: t('backCover'), note: null, disabled: false });
-                slots.push({ type: 'frontCover', label: t('frontCover'), note: null, disabled: false });
-                for (let i = 2; i < photos; i++) {
-                    slots.push({ type: 'internal', label: `Page ${i - 1}`, note: null, disabled: false });
-                }
-            } else {
-                slots.push({ type: 'backCover', label: t('backCover'), note: null, disabled: false });
-                slots.push({ type: 'frontCover', label: t('frontCover'), note: "Preferably portrait", disabled: false });
-                for (let i = 2; i < photos; i++) {
-                    const isGroupPage = (product.note && product.note.includes('group') && i === 5);
-                    slots.push({ 
-                        type: isGroupPage ? 'group' : 'internal', 
-                        label: `Page ${i - 1}`, 
-                        note: isGroupPage ? "Group photo required" : null, 
-                        disabled: false 
-                    });
-                }
-            }
-        } else if (product.type === 'group' || product.type === 'group+brand') {
-            slots.push({ type: 'group', label: 'Group Photo', note: product.note, disabled: product.note?.includes('not selected') });
-            if (product.photos > 1) {
-                slots.push({ type: 'brand', label: 'Brand/Logo', note: null, disabled: false });
-            }
-        } else if (product.type === 'design' && product.photos > 1) {
-            for (let i = 0; i < product.photos; i++) {
-                slots.push({ type: 'design', label: `Design ${i + 1}`, note: null, disabled: false });
-            }
-        } else if (product.type === 'portrait+logo') {
-            slots.push({ type: 'portrait', label: 'Portrait + Logo', note: product.note, disabled: false });
-        } else if (product.type === 'group+logo') {
-            slots.push({ type: 'group', label: 'Group + Logo', note: product.note, disabled: product.note?.includes('not selected') });
-        } else {
-            // Default: portrait or photo
-            for (let i = 0; i < product.photos; i++) {
-                slots.push({ 
-                    type: product.type === 'portrait' ? 'portrait' : 'photo', 
-                    label: product.type === 'portrait' ? 'Portrait' : `Photo ${i + 1}`, 
-                    note: i === 0 && product.note ? product.note : null, 
-                    disabled: false 
-                });
-            }
-        }
-        
-        return slots;
+    function showImageModal(imgUrl, productName) {
+        const directUrl = getDirectImageUrl(imgUrl);
+        if (!directUrl) { toast('No image available'); return; }
+        const modal = document.createElement('div');
+        modal.className = 'image-modal';
+        const img = document.createElement('img');
+        img.src = directUrl;
+        img.alt = productName;
+        img.onerror = () => { modal.innerHTML = '<div style="color:white; text-align:center; padding:2rem;">❌ Image not available</div>'; };
+        modal.appendChild(img);
+        modal.onclick = () => modal.remove();
+        document.body.appendChild(modal);
     }
 
-    async function loadProducts() {
-        console.log('🚀 Loading products...');
-        isLoading = true;
-        render();
+    async function loadProductsFromSupabase() {
+        console.log('🚀 Initializing Supabase client...');
         
         try {
-            // Try to load from Supabase first
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase client initialized');
             
-            const { data: productData, error: productError } = await supabaseClient
+            isLoading = true;
+            render();
+            
+            // Fetch product_cards
+            console.log('📥 Fetching products from product_cards...');
+            const { data: productCardsData, error: productCardsError } = await supabaseClient
                 .from('product_cards')
-                .select('*')
-                .limit(10);
+                .select('*');
             
-            if (productError || !productData || productData.length === 0) {
-                console.log('No data from Supabase, using complete demo database');
-                productsDB = buildProductsArray();
-            } else {
-                // Process Supabase data
-                productsDB = productData.map(item => ({
-                    sku: item.sku,
-                    name_en: item.name_en,
-                    name_ru: item.name_ru || item.name_en,
-                    name_th: item.name_th || item.name_en,
-                    size: item.size || '',
-                    photos: item.total_photos || item.pose || 1,
-                    category: 'other',
-                    isPackage: false,
-                    sequence: item.architecture_sequence || '',
-                    note: item.selection_notes || item.mess || ''
-                }));
-                
-                // Add packages if available
-                const { data: packageData } = await supabaseClient.from('packages_with_price').select('*');
-                if (packageData && packageData.length > 0) {
-                    packageData.forEach(pkg => {
-                        productsDB.push({
-                            sku: pkg.sku,
-                            name_en: pkg.name_en,
-                            name_ru: pkg.name_ru || pkg.name_en,
-                            name_th: pkg.name_th || pkg.name_en,
-                            size: pkg.size || '',
-                            photos: pkg.total_photos || 1,
-                            category: 'packages',
-                            isPackage: true,
-                            autoSlots: pkg.sku.includes('S') ? [0] : (pkg.sku.includes('M') ? [0,1] : (pkg.sku.includes('L') ? [0,1] : []))
-                        });
+            if (productCardsError) throw productCardsError;
+            console.log(`✅ Fetched ${productCardsData?.length || 0} products`);
+            
+            // Fetch packages_with_price
+            console.log('📦 Fetching packages from packages_with_price...');
+            const { data: packagesData, error: packagesError } = await supabaseClient
+                .from('packages_with_price')
+                .select('*');
+            
+            if (packagesError) console.warn('⚠️ Packages error:', packagesError.message);
+            else console.log(`✅ Fetched ${packagesData?.length || 0} packages`);
+            
+            let processedProducts = [];
+            
+            // Process regular products
+            if (productCardsData) {
+                productCardsData.forEach(card => {
+                    let variants = [];
+                    try {
+                        if (card.variants) {
+                            variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
+                        }
+                    } catch(e) { console.warn(e); }
+                    
+                    let pose = 1;
+                    if (variants.length > 0 && variants[0].pose) pose = Math.min(parseInt(variants[0].pose), 30);
+                    if (card.pose) pose = Math.min(parseInt(card.pose), 30);
+                    if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 30);
+                    
+                    let selectable = true;
+                    const nameEn = card.name_en || '';
+                    if (nameEn.toLowerCase().includes('group') || nameEn.toLowerCase().includes('logo')) selectable = false;
+                    
+                    processedProducts.push({
+                        id: card.card_id || `card_${Date.now()}`,
+                        sku: card.sku || `SKU_${card.card_id}`,
+                        name_en: card.name_en || 'Product',
+                        name_th: card.name_th || 'สินค้า',
+                        size: card.size || '',
+                        pose: pose,
+                        selectable: selectable,
+                        image_url: card.cover_image || null,
+                        image: card.cover_image || null,
+                        isPackage: false,
+                        sort_product: card.sort_product || 999
                     });
-                }
+                });
             }
+            
+            // Process packages with auto-assignment rules
+            if (packagesData && packagesData.length) {
+                packagesData.forEach(pkg => {
+                    if (pkg.visible === false) return;
+                    
+                    let packageItems = [];
+                    let totalPhotos = pkg.total_photos || 0;
+                    try {
+                        if (pkg.contents) {
+                            packageItems = typeof pkg.contents === 'string' ? JSON.parse(pkg.contents) : pkg.contents;
+                            totalPhotos = packageItems.reduce((sum, item) => sum + (item.qty || 1), 0);
+                        }
+                    } catch(e) { console.warn(e); }
+                    if (totalPhotos < 1) totalPhotos = 1;
+                    
+                    const packageSku = pkg.sku || pkg.slug || `PACKAGE-${Date.now()}`;
+                    const placeholderImage = pkg.image_url || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='20'%3E${packageSku}%3C/text%3E%3C/svg%3E`;
+                    
+                    processedProducts.push({
+                        id: `package_${packageSku}`,
+                        sku: packageSku,
+                        name_en: pkg.name_en || packageSku,
+                        name_th: pkg.name_th || pkg.name_en || packageSku,
+                        size: pkg.size || '',
+                        pose: totalPhotos,
+                        selectable: true,
+                        image_url: pkg.image_url || placeholderImage,
+                        image: pkg.image_url || placeholderImage,
+                        isPackage: true,
+                        packageItems: packageItems,
+                        totalPhotos: totalPhotos,
+                        sort_product: pkg.sort_order || 999
+                    });
+                });
+            }
+            
+            productsDB = processedProducts.sort((a,b) => (a.sort_product||999) - (b.sort_product||999));
             
             if (productsDB.length === 0) {
-                productsDB = buildProductsArray();
+                productsDB = getDemoProducts();
             }
             
-            console.log(`✅ Loaded ${productsDB.length} products`);
+            // Preload images to avoid layout shifts
+            await preloadProductImages(productsDB);
+            
             isLoading = false;
-            render();
+            toast(`✅ ${productsDB.length} products loaded`);
             
         } catch (error) {
-            console.error('Error loading products:', error);
-            productsDB = buildProductsArray();
+            console.error('❌ Supabase error:', error);
+            productsDB = getDemoProducts();
+            await preloadProductImages(productsDB);
             isLoading = false;
-            render();
-            toast(`Using demo database: ${productsDB.length} products`);
+            toast(`⚠️ Using demo data (${productsDB.length} products)`);
         }
+    }
+
+    function getDemoProducts() {
+        return [
+            { id: "prod_A12", sku: "A12", name_en: "Acrylic Photo 12x12", name_th: "ภาพอะคริลิค", size: "12x12 inch", pose: 1, selectable: true, image: null, isPackage: false },
+            { id: "prod_C13", sku: "C13", name_en: "Canvas 20x30", name_th: "ผ้าใบ", size: "20x30 inch", pose: 1, selectable: true, image: null, isPackage: false },
+            { id: "package_S1", sku: "PACKAGE-S", name_en: "Package S - Starter", name_th: "แพ็คเกจ S", size: "Mixed", pose: 3, selectable: true, image: null, isPackage: true },
+            { id: "package_M1", sku: "PACKAGE-M", name_en: "Package M - Medium", name_th: "แพ็คเกจ M", size: "Mixed", pose: 4, selectable: true, image: null, isPackage: true },
+            { id: "package_L1", sku: "PACKAGE-L", name_en: "Package L - Deluxe", name_th: "แพ็คเกจ L", size: "Mixed", pose: 5, selectable: true, image: null, isPackage: true }
+        ];
     }
 
     function loadRandomOrder() {
         if (productsDB.length === 0) return;
         
-        let filtered = currentCategory === 'all' ? productsDB : productsDB.filter(p => p.category === currentCategory);
-        if (filtered.length === 0) filtered = productsDB;
-        
-        const shuffled = [...filtered];
+        const shuffled = [...productsDB];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
         
-        const selected = shuffled.slice(0, Math.min(12, shuffled.length));
+        const selected = shuffled.slice(0, Math.min(8, shuffled.length));
+        console.log(`📋 Order products:`, selected.map(p => p.sku));
         
         currentOrder = { number: "1111", products: selected };
         assignments = {};
         
         for (let prod of selected) {
-            const key = `${prod.sku}_${Date.now()}_${Math.random()}`;
-            const slotConfig = generateSlotConfig(prod);
+            const key = `${prod.isPackage ? 'pkg' : 'prd'}_${prod.sku}_${Date.now()}_${Math.random()}`;
+            const poseCount = prod.pose || 1;
+            
+            // Determine auto-assign configuration for packages
+            let autoConfig = null;
+            let selectableMask = new Array(poseCount).fill(true);
+            let autoLabels = new Array(poseCount).fill(null);
+            
+            if (prod.isPackage) {
+                autoConfig = getAutoAssignConfig(prod);
+                if (autoConfig) {
+                    for (let i = 0; i < poseCount; i++) {
+                        if (autoConfig[i] !== null) {
+                            selectableMask[i] = false;   // disabled, not clickable
+                            autoLabels[i] = autoConfig[i];
+                        }
+                    }
+                }
+            }
             
             assignments[key] = {
                 key: key,
+                id: prod.id,
                 sku: prod.sku,
                 nameEn: prod.name_en,
-                nameRu: prod.name_ru,
                 nameTh: prod.name_th,
-                category: prod.category,
                 size: prod.size,
-                pose: prod.photos,
-                image: prod.image || null,
+                pose: poseCount,
+                selectable: prod.selectable && !prod.isPackage ? true : true, // packages are selectable except auto slots
+                image: prod.image_url || prod.image,
                 isPackage: prod.isPackage || false,
-                values: new Array(prod.photos).fill(null),
-                disabledSlots: slotConfig.map(s => s.disabled),
-                slotNotes: slotConfig.map(s => s.note),
-                slotTypes: slotConfig.map(s => s.type),
-                slotLabels: slotConfig.map(s => s.label)
+                values: new Array(poseCount).fill(null),
+                selectableMask: selectableMask,
+                autoLabels: autoLabels
             };
         }
         render();
@@ -903,7 +828,8 @@
     function handleOvalClick(prodKey, idx, currentVal) {
         const a = assignments[prodKey];
         if (!a) return;
-        if (a.disabledSlots && a.disabledSlots[idx]) {
+        // Check if this slot is auto-assigned (disabled)
+        if (a.selectableMask && a.selectableMask[idx] === false) {
             toast(t('notSelectable'));
             return;
         }
@@ -913,6 +839,7 @@
         if (editingSlot === `${prodKey}_${idx}`) return;
         
         const width = ovalDiv.offsetWidth;
+        const height = ovalDiv.offsetHeight;
         const input = document.createElement('input');
         input.type = 'number';
         input.value = currentVal !== null ? currentVal : '';
@@ -920,8 +847,7 @@
         input.min = MIN_PHOTO;
         input.max = MAX_PHOTO;
         input.style.width = `${width}px`;
-        input.style.height = '42px';
-        input.placeholder = t('selectPhoto');
+        input.style.height = `${height}px`;
         
         ovalDiv.replaceWith(input);
         input.focus();
@@ -954,43 +880,11 @@
         }
         
         if (!currentOrder) {
-            const categories = [
-                { id: 'all', name: t('all') },
-                { id: 'acrylic', name: 'Acrylic' },
-                { id: 'frame', name: 'Float Frame' },
-                { id: 'canvas', name: 'Canvas' },
-                { id: 'books', name: 'Books' },
-                { id: 'calendars', name: 'Calendars' },
-                { id: 'mugs', name: 'Mugs & Bottles' },
-                { id: 'packages', name: t('packages') }
-            ];
-            
-            let catsHtml = `<div class="category-filter">
-                <span style="font-weight:600; margin-right:0.5rem;">📁 ${t('categories')}:</span>`;
-            categories.forEach(cat => {
-                catsHtml += `<button class="category-btn ${currentCategory === cat.id ? 'active' : ''}" data-cat="${cat.id}">${cat.name}</button>`;
-            });
-            catsHtml += `</div>`;
-            
-            let statsHtml = `<div class="stats-bar">
-                <span>📦 ${t('products')}: ${productsDB.filter(p => !p.isPackage).length}</span>
-                <span>🎁 ${t('packages')}: ${productsDB.filter(p => p.isPackage).length}</span>
-                <span>📷 ${t('total')}: ${productsDB.length}</span>
-            </div>`;
-            
-            container.innerHTML = catsHtml + statsHtml + `<div class="login-card">
-                <h3>🎬 ${t('enter')}</h3>
+            container.innerHTML = `<div class="login-card">
+                <h3>${t('enter')}</h3>
                 <input type="text" id="loginCode" class="order-input" placeholder="1111" value="1111">
                 <button class="btn-primary" id="loginExec">${t('btn')}</button>
             </div>`;
-            
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    currentCategory = btn.dataset.cat;
-                    render();
-                });
-            });
-            
             document.getElementById('loginExec')?.addEventListener('click', () => {
                 const code = document.getElementById('loginCode').value.trim();
                 if (code === '1111') loadRandomOrder();
@@ -1006,54 +900,60 @@
         }
         
         let html = `<div class="order-header">
-            <div class="order-badge">📦 Order: ${currentOrder.number}</div>
-            <div class="order-badge">✅ ${totalFilled}/${totalSlots} ${t('photos')}</div>
+            <div class="order-badge">📦 ${currentOrder.number}</div>
+            <div class="order-badge">${totalFilled}/${totalSlots}</div>
             <button class="order-badge" id="backBtn" style="background:white; cursor:pointer;">${t('back')}</button>
         </div>`;
         
         for (let [key, asgn] of Object.entries(assignments)) {
-            const name = currentLang === 'en' ? asgn.nameEn : (currentLang === 'ru' ? asgn.nameRu : asgn.nameTh);
+            const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
             const poseCount = asgn.pose;
             const ovalWidth = getOvalWidth(poseCount);
+            const ovalHeight = 42;
+            const imageUrl = getDirectImageUrl(asgn.image);
             
             html += `<div class="product-card">
                 <div class="product-content">
                     <div class="product-header">
                         <div class="product-info">
                             <div>
-                                <span class="product-sku">${asgn.sku}</span>
-                                ${asgn.isPackage ? '<span class="badge-package">📦 PACKAGE</span>' : ''}
+                                <span class="product-sku">${asgn.sku || 'N/A'}</span>
+                                ${asgn.isPackage ? `<span class="badge-package">📦 ${t('package')}</span>` : ''}
                             </div>
-                            <div class="product-title">${name}</div>
+                            <div class="product-title">${name || asgn.sku}</div>
                             <div class="product-details">
                                 ${asgn.size ? `<span class="product-size">📏 ${t('size')}: ${asgn.size}</span>` : ''}
-                                <span class="product-pose">📷 ${t('photos')}: ${poseCount}</span>
+                                <span class="product-pose">📷 ${t('pose')}: ${poseCount}</span>
                             </div>
                         </div>
-                        <div style="width:70px; height:70px; background:#f0f0f0; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:2rem;">📷</div>
+                        ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onerror="this.src='https://placehold.co/70x70?text=No+Image'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:70px; height:70px; background:#f0f0f0; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#999;">No img</div>'}
                     </div>
-                    <div class="slots-container">
-                        <div class="slots-row">`;
+                    <div class="slots-row">`;
             
             for (let i = 0; i < poseCount; i++) {
                 const val = asgn.values[i];
                 const isFilled = val !== null;
-                const isDisabled = asgn.disabledSlots && asgn.disabledSlots[i];
-                const slotType = asgn.slotTypes ? asgn.slotTypes[i] : 'photo';
-                const slotLabel = asgn.slotLabels ? asgn.slotLabels[i] : `${i+1}`;
-                const slotNote = asgn.slotNotes ? asgn.slotNotes[i] : null;
-                const ovalClass = getOvalClass(slotType, isFilled, isDisabled);
+                const isAutoSlot = asgn.selectableMask && asgn.selectableMask[i] === false;
+                const autoLabel = (asgn.autoLabels && asgn.autoLabels[i]) ? asgn.autoLabels[i] : t('notSelectable');
                 
-                html += `<div class="slot-wrapper">
-                    <div id="oval_${key}_${i}" class="${ovalClass}" 
-                         style="width:${ovalWidth}px; height:42px;"
-                         onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : ''}</div>
-                    <span class="slot-number">${slotLabel}</span>
-                    ${slotNote ? `<span class="slot-note">📌 ${slotNote}</span>` : ''}
-                </div>`;
+                if (!isAutoSlot && asgn.selectable) {
+                    // Selectable slot (normal)
+                    html += `<div class="slot-wrapper">
+                        <div id="oval_${key}_${i}" class="oval ${isFilled ? 'filled' : ''}" 
+                             style="width:${ovalWidth}px; height:${ovalHeight}px;"
+                             onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : ''}</div>
+                        <span class="slot-number">${i+1}</span>
+                    </div>`;
+                } else {
+                    // Auto-assigned disabled slot: grey, not clickable, show label "Auto-assigned"
+                    html += `<div class="slot-wrapper">
+                        <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;"></div>
+                        <span class="slot-number">${i+1}</span>
+                        <span class="auto-note">${autoLabel}</span>
+                    </div>`;
+                }
             }
-            
-            html += `</div></div></div></div>`;
+            html += `</div></div></div>`;
         }
         
         html += `<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.5rem 1.5rem;">✓ ${t('saved')}</button></div>`;
@@ -1061,17 +961,15 @@
         
         document.getElementById('backBtn')?.addEventListener('click', () => { currentOrder = null; render(); });
         document.getElementById('confirmBtn')?.addEventListener('click', () => {
-            let summary = "═══════════════════════════\n   WHITE FOX STUDIO\n   PHOTO SELECTION\n═══════════════════════════\n\n";
+            let summary = "═══════════════════════════\n   WHITE FOX STUDIO\n   PHOTO SELECTION\n═══════════════════════════\n";
             for (let [key, a] of Object.entries(assignments)) {
-                const name = currentLang === 'en' ? a.nameEn : (currentLang === 'ru' ? a.nameRu : a.nameTh);
-                summary += `📦 ${a.sku} — ${name}\n`;
-                summary += `📏 ${t('size')}: ${a.size || '—'}  |  📷 ${t('photos')}: ${a.pose}\n`;
+                const name = currentLang === 'en' ? a.nameEn : a.nameTh;
+                summary += `\n📦 ${a.sku} — ${name}\n📏 ${t('size')}: ${a.size || '—'}  |  📷 ${t('pose')}: ${a.pose}\n`;
                 for (let i = 0; i < a.values.length; i++) {
-                    const slotLabel = a.slotLabels ? a.slotLabels[i] : `${i+1}`;
-                    const val = a.values[i] || '❌';
-                    summary += `   ${slotLabel.padEnd(20)}: ${val}\n`;
+                    const isAuto = a.selectableMask && a.selectableMask[i] === false;
+                    const autoTag = isAuto ? ` [${a.autoLabels[i] || 'Auto'}]` : '';
+                    summary += `   ${String(i+1).padStart(2)}: ${a.values[i] || '❌'}${autoTag}\n`;
                 }
-                summary += `\n${'─'.repeat(50)}\n`;
             }
             alert(summary);
             toast(t('saved'));
@@ -1079,43 +977,35 @@
     }
 
     window.handleOvalClick = handleOvalClick;
+    window.showImageModal = showImageModal;
 
     function updateLang() {
         const iconSpan = document.getElementById('langIcon');
         const textSpan = document.getElementById('langText');
-        if (iconSpan) {
-            if (currentLang === 'en') iconSpan.innerText = '🇬🇧';
-            else if (currentLang === 'ru') iconSpan.innerText = '🇷🇺';
-            else iconSpan.innerText = '🇹🇭';
-        }
-        if (textSpan) {
-            if (currentLang === 'en') textSpan.innerText = 'EN';
-            else if (currentLang === 'ru') textSpan.innerText = 'RU';
-            else textSpan.innerText = 'TH';
-        }
+        if (iconSpan) iconSpan.innerText = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
+        if (textSpan) textSpan.innerText = currentLang === 'en' ? 'EN' : 'TH';
         if (currentOrder) render();
         else render();
     }
 
     document.getElementById('langBtn')?.addEventListener('click', () => {
-        const langs = ['en', 'ru', 'th'];
-        const currentIndex = langs.indexOf(currentLang);
-        currentLang = langs[(currentIndex + 1) % langs.length];
+        currentLang = currentLang === 'en' ? 'th' : 'en';
         updateLang();
     });
-    
     document.getElementById('checkBtn')?.addEventListener('click', () => {
         const code = document.getElementById('orderInput').value.trim();
         if (code === '1111') loadRandomOrder();
         else toast(t('invalid'));
     });
-    
     document.getElementById('orderInput')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') document.getElementById('checkBtn')?.click();
     });
 
-    // Initialize
-    loadProducts();
+    (async () => {
+        await loadProductsFromSupabase();
+        render();
+        updateLang();
+    })();
 </script>
 </body>
 </html>
