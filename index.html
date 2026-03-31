@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio · Photo Selection</title>
+    <title>White Fox Studio · Photo Selection with Auto-Assign</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         * {
@@ -26,6 +26,8 @@
             --red: #dc2626;
             --red-light: #fee2e2;
             --slot-filled: #c8e6df;
+            --auto-bg: #f1f3f4;
+            --auto-border: #9ca3af;
         }
 
         .header {
@@ -298,7 +300,6 @@
             flex-direction: column;
             align-items: center;
             gap: 0.3rem;
-            max-width: 100px;
         }
 
         .oval {
@@ -329,11 +330,13 @@
             color: var(--teal-dark);
         }
 
+        /* Disabled auto-assigned slots: grey, not clickable */
         .oval.disabled {
-            background: var(--red-light);
-            border-color: var(--red);
+            background: #e5e7eb;
+            border-color: #9ca3af;
             cursor: not-allowed;
-            opacity: 0.7;
+            color: #6b7280;
+            opacity: 0.9;
         }
 
         .oval-input {
@@ -356,22 +359,11 @@
             color: #8b9aab;
         }
 
-        .slot-name {
-            font-size: 0.5rem;
-            font-weight: 500;
-            color: #6c757d;
-            text-align: center;
-            max-width: 90px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
         .auto-note {
             font-size: 0.55rem;
             font-weight: 500;
-            color: var(--red);
-            background: var(--red-light);
+            color: #4b5563;
+            background: #e5e7eb;
             padding: 0.15rem 0.4rem;
             border-radius: 20px;
         }
@@ -423,13 +415,16 @@
             color: var(--teal);
             font-size: 1.1rem;
         }
+        
+        .preload-placeholder {
+            min-height: 200px;
+        }
 
         @media (max-width: 700px) {
             .slots-row { gap: 0.6rem; }
             .oval { height: 38px; font-size: 0.75rem; min-width: 60px; padding: 0 0.5rem; }
             .product-image { width: 55px; height: 55px; }
             .product-title { font-size: 0.9rem; }
-            .slot-name { font-size: 0.45rem; max-width: 70px; }
         }
     </style>
 </head>
@@ -465,30 +460,110 @@
     
     let supabaseClient = null;
     let productsDB = [];
-    let packagesDB = [];
     let currentLang = 'en';
     let currentOrder = null;
-    let assignments = {};
+    let assignments = {};  // structure: { productKey: { ..., values: [], selectableMask: bool[], autoAssignedLabels: [] } }
     let editingSlot = null;
     let isLoading = true;
+
+    // ========== PACKAGE AUTO-ASSIGNMENT RULES ==========
+    // Define rules based on package SKU or name patterns.
+    // Each rule defines which slot indices (0-based) are auto-assigned and their display label.
+    // Future packages can be added here.
+    const PACKAGE_AUTO_RULES = {
+        // Package S: "Class Serious + Logo" auto-assigned (slot 0)
+        "S": {
+            autoSlots: [
+                { index: 0, label: "Class Serious + Logo" }
+            ]
+        },
+        // Package M: "Class Serious + Logo" (slot 0) + "Class Sabai" (slot 1)
+        "M": {
+            autoSlots: [
+                { index: 0, label: "Class Serious + Logo" },
+                { index: 1, label: "Class Sabai" }
+            ]
+        },
+        // Package L: "Class Serious + Logo" (slot0), "Class Sabai" (slot1), plus third slot auto if exists
+        "L": {
+            autoSlots: [
+                { index: 0, label: "Class Serious + Logo" },
+                { index: 1, label: "Class Sabai" }
+                // third slot remains selectable unless future rules extend
+            ]
+        }
+    };
+    
+    // Helper: detect package size/type from SKU or name
+    function detectPackageType(product) {
+        const sku = (product.sku || '').toUpperCase();
+        const nameEn = (product.name_en || '').toUpperCase();
+        const nameTh = (product.name_th || '').toUpperCase();
+        
+        // Check SKU patterns first
+        if (sku.includes('PACKAGE-S') || sku === 'S' || nameEn.includes('PACKAGE S') || nameEn.includes('STARTER')) return 'S';
+        if (sku.includes('PACKAGE-M') || sku === 'M' || nameEn.includes('PACKAGE M') || nameEn.includes('MEDIUM')) return 'M';
+        if (sku.includes('PACKAGE-L') || sku === 'L' || nameEn.includes('PACKAGE L') || nameEn.includes('DELUXE') || nameEn.includes('LARGE')) return 'L';
+        
+        // fallback: check if it's a package and has specific keywords
+        if (product.isPackage) {
+            if (nameEn.includes('SERIOUS') && nameEn.includes('LOGO')) return 'S';
+        }
+        return null;
+    }
+    
+    // Generate auto-assign config for a package product
+    function getAutoAssignConfig(product) {
+        if (!product.isPackage) return null;
+        const pkgType = detectPackageType(product);
+        if (!pkgType) return null;
+        const rule = PACKAGE_AUTO_RULES[pkgType];
+        if (!rule) return null;
+        
+        // Build array of auto-assigned indices and their labels
+        const totalSlots = product.pose || 1;
+        const autoMap = new Array(totalSlots).fill(null);
+        rule.autoSlots.forEach(slot => {
+            if (slot.index < totalSlots) {
+                autoMap[slot.index] = slot.label;
+            }
+        });
+        return autoMap;
+    }
+    
+    // Preload images for all products to avoid layout shift
+    async function preloadProductImages(products) {
+        const imageUrls = products
+            .map(p => p.image_url || p.image)
+            .filter(url => url && url.startsWith('http') && !url.includes('data:image/svg'));
+        
+        const loadPromises = imageUrls.map(url => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = url;
+            });
+        });
+        await Promise.all(loadPromises);
+        console.log(`✅ Preloaded ${imageUrls.length} images`);
+    }
 
     const trans = {
         en: { 
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
             ok: "✓ Order loaded", dup: "⚠️ Photo number already used", 
             range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ Selection saved", back: "← Back", notSelectable: "Group Photo",
-            selectable: "Individual", loading: "Loading products...", 
-            error: "Error", viewPhoto: "View photo", size: "Size", pose: "Photos", 
-            package: "Package", photo: "Photo"
+            saved: "✓ Selection saved", back: "← Back", notSelectable: "Auto-assigned",
+            loading: "Loading products...", error: "Error", viewPhoto: "View photo", 
+            size: "Size", pose: "Photos", noImage: "No image", package: "Package"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
             ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "ภาพกลุ่ม",
-            selectable: "รายบุคคล", loading: "กำลังโหลดสินค้า...", 
-            error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูป", size: "ขนาด", pose: "จำนวนรูป",
-            package: "แพ็คเกจ", photo: "รูป"
+            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "กำหนดอัตโนมัติ",
+            loading: "กำลังโหลดสินค้า...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูป",
+            size: "ขนาด", pose: "จำนวนรูป", noImage: "ไม่มีรูป", package: "แพ็คเกจ"
         }
     };
 
@@ -512,9 +587,15 @@
         return false;
     }
 
+    // Set value with auto-assign protection
     function setValue(prodKey, idx, val) {
         const a = assignments[prodKey];
-        if (!a || !a.slots || !a.slots[idx] || !a.slots[idx].selectable) return false;
+        if (!a) return false;
+        // Disable editing if slot is auto-assigned
+        if (a.selectableMask && a.selectableMask[idx] === false) {
+            toast(t('notSelectable'));
+            return false;
+        }
         if (!isValid(val)) { toast(t('range')); return false; }
         if (isUsedInProduct(prodKey, idx, val)) { toast(t('dup')); return false; }
         a.values[idx] = val;
@@ -561,220 +642,183 @@
         
         try {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('✅ Supabase client initialized successfully');
+            console.log('✅ Supabase client initialized');
             
             isLoading = true;
             render();
             
-            // Load product cards from Supabase
-            console.log('📥 Fetching products from product_cards table...');
+            // Fetch product_cards
+            console.log('📥 Fetching products from product_cards...');
             const { data: productCardsData, error: productCardsError } = await supabaseClient
                 .from('product_cards')
                 .select('*');
             
-            if (productCardsError) {
-                console.error('❌ Error fetching product cards:', productCardsError);
-            } else {
-                console.log(`✅ Fetched ${productCardsData?.length || 0} product cards`);
-            }
+            if (productCardsError) throw productCardsError;
+            console.log(`✅ Fetched ${productCardsData?.length || 0} products`);
             
-            // Load packages from Supabase
+            // Fetch packages_with_price
             console.log('📦 Fetching packages from packages_with_price...');
             const { data: packagesData, error: packagesError } = await supabaseClient
                 .from('packages_with_price')
                 .select('*');
             
-            if (packagesError) {
-                console.warn('⚠️ Error fetching packages:', packagesError.message);
-            } else {
-                console.log(`✅ Fetched ${packagesData?.length || 0} packages`);
-            }
+            if (packagesError) console.warn('⚠️ Packages error:', packagesError.message);
+            else console.log(`✅ Fetched ${packagesData?.length || 0} packages`);
             
-            productsDB = [];
-            packagesDB = [];
+            let processedProducts = [];
             
-            // Process individual products
-            if (productCardsData && productCardsData.length > 0) {
-                for (const card of productCardsData) {
+            // Process regular products
+            if (productCardsData) {
+                productCardsData.forEach(card => {
                     let variants = [];
                     try {
                         if (card.variants) {
                             variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
                         }
-                    } catch (e) {}
-                    
-                    let cardSku = card.sku;
-                    if (!cardSku && variants.length > 0) cardSku = variants[0].sku;
-                    if (!cardSku) cardSku = card.card_id || `card_${Date.now()}`;
+                    } catch(e) { console.warn(e); }
                     
                     let pose = 1;
                     if (variants.length > 0 && variants[0].pose) pose = Math.min(parseInt(variants[0].pose), 30);
                     if (card.pose) pose = Math.min(parseInt(card.pose), 30);
                     if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 30);
-                    if (pose < 1) pose = 1;
                     
                     let selectable = true;
                     const nameEn = card.name_en || '';
-                    if (nameEn.toLowerCase().includes('group') || nameEn.toLowerCase().includes('logo')) {
-                        selectable = false;
-                    }
+                    if (nameEn.toLowerCase().includes('group') || nameEn.toLowerCase().includes('logo')) selectable = false;
                     
-                    productsDB.push({
-                        id: card.card_id || `card_${cardSku}`,
-                        sku: cardSku,
-                        name_en: card.name_en || `Product ${cardSku}`,
-                        name_th: card.name_th || `สินค้า ${cardSku}`,
+                    processedProducts.push({
+                        id: card.card_id || `card_${Date.now()}`,
+                        sku: card.sku || `SKU_${card.card_id}`,
+                        name_en: card.name_en || 'Product',
+                        name_th: card.name_th || 'สินค้า',
                         size: card.size || '',
                         pose: pose,
                         selectable: selectable,
+                        image_url: card.cover_image || null,
                         image: card.cover_image || null,
-                        isPackage: false
+                        isPackage: false,
+                        sort_product: card.sort_product || 999
                     });
-                }
+                });
             }
             
-            // Process packages from Supabase with proper selectable flags
-            if (packagesData && packagesData.length > 0) {
-                for (const pkg of packagesData) {
-                    const packageSku = pkg.sku || pkg.slug;
-                    let packageItems = [];
-                    let totalPhotos = 0;
+            // Process packages with auto-assignment rules
+            if (packagesData && packagesData.length) {
+                packagesData.forEach(pkg => {
+                    if (pkg.visible === false) return;
                     
+                    let packageItems = [];
+                    let totalPhotos = pkg.total_photos || 0;
                     try {
                         if (pkg.contents) {
                             packageItems = typeof pkg.contents === 'string' ? JSON.parse(pkg.contents) : pkg.contents;
                             totalPhotos = packageItems.reduce((sum, item) => sum + (item.qty || 1), 0);
                         }
-                    } catch(e) {}
-                    
+                    } catch(e) { console.warn(e); }
                     if (totalPhotos < 1) totalPhotos = 1;
                     
-                    packagesDB.push({
+                    const packageSku = pkg.sku || pkg.slug || `PACKAGE-${Date.now()}`;
+                    const placeholderImage = pkg.image_url || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='20'%3E${packageSku}%3C/text%3E%3C/svg%3E`;
+                    
+                    processedProducts.push({
                         id: `package_${packageSku}`,
                         sku: packageSku,
-                        name_en: pkg.name_en || `Package ${packageSku}`,
-                        name_th: pkg.name_th || `แพ็คเกจ ${packageSku}`,
-                        size: pkg.size || 'Mixed',
+                        name_en: pkg.name_en || packageSku,
+                        name_th: pkg.name_th || pkg.name_en || packageSku,
+                        size: pkg.size || '',
                         pose: totalPhotos,
-                        image: pkg.image_url || null,
+                        selectable: true,
+                        image_url: pkg.image_url || placeholderImage,
+                        image: pkg.image_url || placeholderImage,
                         isPackage: true,
-                        packageItems: packageItems
+                        packageItems: packageItems,
+                        totalPhotos: totalPhotos,
+                        sort_product: pkg.sort_order || 999
                     });
-                }
-            } else {
-                // Fallback packages with proper selectable flags based on requirements
-                console.log('Using fallback package definitions with correct selectable flags');
-                packagesDB = getFallbackPackages();
+                });
             }
             
-            console.log(`✅ Total products: ${productsDB.length}, Packages: ${packagesDB.length}`);
+            productsDB = processedProducts.sort((a,b) => (a.sort_product||999) - (b.sort_product||999));
+            
+            if (productsDB.length === 0) {
+                productsDB = getDemoProducts();
+            }
+            
+            // Preload images to avoid layout shifts
+            await preloadProductImages(productsDB);
             
             isLoading = false;
-            toast(`✅ ${productsDB.length + packagesDB.length} items loaded`);
+            toast(`✅ ${productsDB.length} products loaded`);
             
         } catch (error) {
-            console.error('❌ Error:', error);
-            packagesDB = getFallbackPackages();
+            console.error('❌ Supabase error:', error);
+            productsDB = getDemoProducts();
+            await preloadProductImages(productsDB);
             isLoading = false;
-            toast(`✅ ${packagesDB.length} packages loaded`);
+            toast(`⚠️ Using demo data (${productsDB.length} products)`);
         }
     }
 
-    function getFallbackPackages() {
-        // Package definitions with selectable flags based on requirements
-        // Group photos (Class Serious + Logo, Class Sabai) are NOT selectable
-        // Individual photos ARE selectable
+    function getDemoProducts() {
         return [
-            {
-                id: "package_Q1",
-                sku: "Q1",
-                name_en: "Package S",
-                name_th: "แพ็คเกจ S",
-                size: "Mixed",
-                pose: 6,
-                image: null,
-                isPackage: true,
-                packageItems: [
-                    { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false },
-                    { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "4x6 inch", qty: 1, selectable: true },
-                    { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 4, selectable: true }
-                ]
-            },
-            {
-                id: "package_Q2",
-                sku: "Q2",
-                name_en: "Package M",
-                name_th: "แพ็คเกจ M",
-                size: "Mixed",
-                pose: 11,
-                image: null,
-                isPackage: true,
-                packageItems: [
-                    { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false },
-                    { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false },
-                    { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true },
-                    { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 8, selectable: true }
-                ]
-            },
-            {
-                id: "package_Q3",
-                sku: "Q3",
-                name_en: "Package L",
-                name_th: "แพ็คเกจ L",
-                size: "Mixed",
-                pose: 14,
-                image: null,
-                isPackage: true,
-                packageItems: [
-                    { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "8x12 inch", qty: 1, selectable: false },
-                    { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true },
-                    { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false },
-                    { name_en: "Individual", name_th: "รายบุคคล", size: "6x9 inch", qty: 1, selectable: true },
-                    { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 10, selectable: true }
-                ]
-            }
+            { id: "prod_A12", sku: "A12", name_en: "Acrylic Photo 12x12", name_th: "ภาพอะคริลิค", size: "12x12 inch", pose: 1, selectable: true, image: null, isPackage: false },
+            { id: "prod_C13", sku: "C13", name_en: "Canvas 20x30", name_th: "ผ้าใบ", size: "20x30 inch", pose: 1, selectable: true, image: null, isPackage: false },
+            { id: "package_S1", sku: "PACKAGE-S", name_en: "Package S - Starter", name_th: "แพ็คเกจ S", size: "Mixed", pose: 3, selectable: true, image: null, isPackage: true },
+            { id: "package_M1", sku: "PACKAGE-M", name_en: "Package M - Medium", name_th: "แพ็คเกจ M", size: "Mixed", pose: 4, selectable: true, image: null, isPackage: true },
+            { id: "package_L1", sku: "PACKAGE-L", name_en: "Package L - Deluxe", name_th: "แพ็คเกจ L", size: "Mixed", pose: 5, selectable: true, image: null, isPackage: true }
         ];
     }
 
     function loadRandomOrder() {
-        console.log('🔄 Loading random order with packages...');
+        if (productsDB.length === 0) return;
         
-        // Load all packages
-        const selected = [...packagesDB];
+        const shuffled = [...productsDB];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        
+        const selected = shuffled.slice(0, Math.min(8, shuffled.length));
+        console.log(`📋 Order products:`, selected.map(p => p.sku));
         
         currentOrder = { number: "1111", products: selected };
         assignments = {};
         
         for (let prod of selected) {
-            const key = `package_${prod.sku}_${Date.now()}_${Math.random()}`;
+            const key = `${prod.isPackage ? 'pkg' : 'prd'}_${prod.sku}_${Date.now()}_${Math.random()}`;
+            const poseCount = prod.pose || 1;
             
-            // Build slots from package items with proper selectable flags
-            const slots = [];
-            if (prod.packageItems) {
-                for (let item of prod.packageItems) {
-                    for (let i = 0; i < item.qty; i++) {
-                        slots.push({
-                            id: `${item.name_en}_${i}`,
-                            name_en: item.name_en,
-                            name_th: item.name_th,
-                            size: item.size,
-                            selectable: item.selectable === true
-                        });
+            // Determine auto-assign configuration for packages
+            let autoConfig = null;
+            let selectableMask = new Array(poseCount).fill(true);
+            let autoLabels = new Array(poseCount).fill(null);
+            
+            if (prod.isPackage) {
+                autoConfig = getAutoAssignConfig(prod);
+                if (autoConfig) {
+                    for (let i = 0; i < poseCount; i++) {
+                        if (autoConfig[i] !== null) {
+                            selectableMask[i] = false;   // disabled, not clickable
+                            autoLabels[i] = autoConfig[i];
+                        }
                     }
                 }
             }
             
             assignments[key] = {
                 key: key,
+                id: prod.id,
                 sku: prod.sku,
                 nameEn: prod.name_en,
                 nameTh: prod.name_th,
                 size: prod.size,
-                pose: slots.length,
-                image: prod.image,
-                isPackage: true,
-                slots: slots,
-                values: new Array(slots.length).fill(null)
+                pose: poseCount,
+                selectable: prod.selectable && !prod.isPackage ? true : true, // packages are selectable except auto slots
+                image: prod.image_url || prod.image,
+                isPackage: prod.isPackage || false,
+                values: new Array(poseCount).fill(null),
+                selectableMask: selectableMask,
+                autoLabels: autoLabels
             };
         }
         render();
@@ -783,8 +827,12 @@
 
     function handleOvalClick(prodKey, idx, currentVal) {
         const a = assignments[prodKey];
-        if (!a || !a.slots || !a.slots[idx]) return;
-        if (!a.slots[idx].selectable) return;
+        if (!a) return;
+        // Check if this slot is auto-assigned (disabled)
+        if (a.selectableMask && a.selectableMask[idx] === false) {
+            toast(t('notSelectable'));
+            return;
+        }
         
         const ovalDiv = document.getElementById(`oval_${prodKey}_${idx}`);
         if (!ovalDiv) return;
@@ -810,6 +858,8 @@
             editingSlot = null;
             if (!isNaN(newVal) && newVal !== currentVal) {
                 setValue(prodKey, idx, newVal);
+            } else if (isNaN(newVal) && currentVal !== null) {
+                setValue(prodKey, idx, null);
             }
         };
         
@@ -868,39 +918,38 @@
                         <div class="product-info">
                             <div>
                                 <span class="product-sku">${asgn.sku || 'N/A'}</span>
-                                <span class="badge-package">📦 ${t('package')}</span>
+                                ${asgn.isPackage ? `<span class="badge-package">📦 ${t('package')}</span>` : ''}
                             </div>
                             <div class="product-title">${name || asgn.sku}</div>
                             <div class="product-details">
-                                <span class="product-size">📏 ${t('size')}: ${asgn.size || 'Mixed'}</span>
+                                ${asgn.size ? `<span class="product-size">📏 ${t('size')}: ${asgn.size}</span>` : ''}
                                 <span class="product-pose">📷 ${t('pose')}: ${poseCount}</span>
                             </div>
                         </div>
-                        ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onerror="this.style.display='none'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:70px;"></div>'}
+                        ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onerror="this.src='https://placehold.co/70x70?text=No+Image'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:70px; height:70px; background:#f0f0f0; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#999;">No img</div>'}
                     </div>
                     <div class="slots-row">`;
             
             for (let i = 0; i < poseCount; i++) {
-                const slot = asgn.slots ? asgn.slots[i] : null;
-                const isSelectable = slot ? slot.selectable : true;
                 const val = asgn.values[i];
                 const isFilled = val !== null;
-                const slotName = currentLang === 'en' ? (slot?.name_en || t('photo')) : (slot?.name_th || t('photo'));
+                const isAutoSlot = asgn.selectableMask && asgn.selectableMask[i] === false;
+                const autoLabel = (asgn.autoLabels && asgn.autoLabels[i]) ? asgn.autoLabels[i] : t('notSelectable');
                 
-                if (isSelectable) {
+                if (!isAutoSlot && asgn.selectable) {
+                    // Selectable slot (normal)
                     html += `<div class="slot-wrapper">
                         <div id="oval_${key}_${i}" class="oval ${isFilled ? 'filled' : ''}" 
                              style="width:${ovalWidth}px; height:${ovalHeight}px;"
                              onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : ''}</div>
                         <span class="slot-number">${i+1}</span>
-                        <span class="slot-name" title="${slotName}">✅ ${slotName}</span>
                     </div>`;
                 } else {
+                    // Auto-assigned disabled slot: grey, not clickable, show label "Auto-assigned"
                     html += `<div class="slot-wrapper">
-                        <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;">👥</div>
+                        <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;"></div>
                         <span class="slot-number">${i+1}</span>
-                        <span class="slot-name" title="${slotName}">👥 ${slotName}</span>
-                        <span class="auto-note">${t('notSelectable')}</span>
+                        <span class="auto-note">${autoLabel}</span>
                     </div>`;
                 }
             }
@@ -915,12 +964,11 @@
             let summary = "═══════════════════════════\n   WHITE FOX STUDIO\n   PHOTO SELECTION\n═══════════════════════════\n";
             for (let [key, a] of Object.entries(assignments)) {
                 const name = currentLang === 'en' ? a.nameEn : a.nameTh;
-                summary += `\n📦 ${a.sku} — ${name}\n`;
+                summary += `\n📦 ${a.sku} — ${name}\n📏 ${t('size')}: ${a.size || '—'}  |  📷 ${t('pose')}: ${a.pose}\n`;
                 for (let i = 0; i < a.values.length; i++) {
-                    const slot = a.slots ? a.slots[i] : null;
-                    const slotName = currentLang === 'en' ? (slot?.name_en || 'Photo') : (slot?.name_th || 'รูป');
-                    const status = a.values[i] ? a.values[i] : (slot?.selectable ? '❌ empty' : '🔒 group photo');
-                    summary += `   ${String(i+1).padStart(2)}: ${status} (${slotName})\n`;
+                    const isAuto = a.selectableMask && a.selectableMask[i] === false;
+                    const autoTag = isAuto ? ` [${a.autoLabels[i] || 'Auto'}]` : '';
+                    summary += `   ${String(i+1).padStart(2)}: ${a.values[i] || '❌'}${autoTag}\n`;
                 }
             }
             alert(summary);
