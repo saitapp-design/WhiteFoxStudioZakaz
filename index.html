@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio · Photo Selection</title>
+    <title>White Fox Studio · Photo Selection with Options</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         * {
@@ -13,7 +13,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #f0f4f9 100%);
             min-height: 100vh;
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
@@ -40,16 +40,15 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(255,255,255,0.92);
+            background: rgba(255,255,255,0.94);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,120,131,0.15);
-            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid rgba(0,120,131,0.2);
         }
 
         .top-bar {
             max-width: 1440px;
             margin: 0 auto;
-            padding: 0.75rem 1.8rem;
+            padding: 0.7rem 1.8rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -67,7 +66,6 @@
             width: 42px;
             height: 42px;
             object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
         }
 
         .logo-text {
@@ -77,7 +75,6 @@
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            letter-spacing: -0.3px;
         }
 
         .right-actions {
@@ -95,13 +92,11 @@
             height: 44px;
             overflow: hidden;
             box-shadow: var(--shadow-sm);
-            transition: all 0.2s;
         }
         .search-box:focus-within {
             border-color: var(--teal);
             box-shadow: 0 0 0 3px var(--teal-glow);
         }
-
         .search-box input {
             border: none;
             padding: 0 1.2rem;
@@ -110,7 +105,6 @@
             outline: none;
             font-weight: 500;
         }
-
         .search-box button {
             background: var(--teal);
             border: none;
@@ -119,11 +113,7 @@
             height: 100%;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
-            font-size: 0.85rem;
         }
-        .search-box button:hover { background: var(--teal-dark); }
-
         .lang-toggle {
             background: white;
             border: 1px solid var(--border);
@@ -136,12 +126,6 @@
             align-items: center;
             gap: 6px;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: var(--shadow-sm);
-        }
-        .lang-toggle:hover {
-            border-color: var(--teal);
-            background: var(--teal-light);
         }
 
         .main-content {
@@ -157,25 +141,22 @@
             padding: 2.2rem;
             border-radius: 2rem;
             text-align: center;
-            border: 1px solid var(--border);
             box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
         }
 
         .order-input {
             width: 100%;
-            padding: 0.9rem 1rem;
+            padding: 0.9rem;
             border: 2px solid var(--border);
             border-radius: 60px;
             margin: 1.2rem 0;
             text-align: center;
             font-size: 1rem;
             outline: none;
-            transition: all 0.2s;
-            font-weight: 500;
         }
         .order-input:focus {
             border-color: var(--teal);
-            box-shadow: 0 0 0 3px var(--teal-glow);
         }
 
         .btn-primary {
@@ -188,9 +169,8 @@
             cursor: pointer;
             width: 100%;
             transition: all 0.2s;
-            font-size: 1rem;
         }
-        .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
+        .btn-primary:hover { background: var(--teal-dark); }
 
         .order-header {
             background: white;
@@ -213,10 +193,9 @@
             color: var(--teal);
         }
 
-        /* GRID with auto-fit — карточки адаптируются по высоте */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
             gap: 1.5rem;
             align-items: start;
         }
@@ -230,12 +209,10 @@
             display: flex;
             flex-direction: column;
             height: auto;
-            min-height: 280px;
         }
         .product-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: var(--shadow-lg);
-            border-color: var(--teal-light);
         }
 
         .product-content {
@@ -246,14 +223,12 @@
             gap: 0.9rem;
         }
 
-        /* HEADER: SKU + название в одной строке */
         .product-header-row {
             display: flex;
             align-items: baseline;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 0.5rem;
-            margin-bottom: 0.2rem;
         }
         .sku-badge {
             background: var(--teal-light);
@@ -262,15 +237,12 @@
             font-size: 0.7rem;
             font-weight: 700;
             color: var(--teal);
-            font-family: 'SF Mono', monospace;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
+            font-family: monospace;
         }
         .product-title-compact {
             font-weight: 700;
             font-size: 1rem;
             color: var(--gray-700);
-            line-height: 1.3;
         }
         .badge-package {
             background: #ffecb3;
@@ -280,10 +252,8 @@
             font-weight: 700;
             color: #b76e0e;
             margin-left: 0.5rem;
-            white-space: nowrap;
         }
 
-        /* детали: размер и кол-во фото */
         .product-meta {
             display: flex;
             flex-wrap: wrap;
@@ -304,9 +274,6 @@
             border-radius: 30px;
             color: var(--gray-700);
         }
-        .meta-icon {
-            font-size: 0.75rem;
-        }
 
         .product-image {
             width: 72px;
@@ -315,16 +282,9 @@
             border-radius: 14px;
             border: 1px solid var(--border);
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
             background: var(--gray-100);
             flex-shrink: 0;
-            box-shadow: var(--shadow-sm);
         }
-        .product-image:hover {
-            transform: scale(1.03);
-            box-shadow: var(--shadow-md);
-        }
-
         .image-placeholder {
             width: 72px;
             height: 72px;
@@ -335,10 +295,8 @@
             justify-content: center;
             font-size: 0.65rem;
             color: var(--gray-500);
-            border: 1px solid var(--border);
         }
 
-        /* Флекс для картинки и основной инфы */
         .product-top {
             display: flex;
             gap: 1rem;
@@ -348,25 +306,41 @@
             flex: 1;
         }
 
-        /* SLOTS ROW — компактно */
+        /* SLOTS SECTION */
+        .slots-section {
+            margin-top: 0.5rem;
+        }
+        .slot-group {
+            margin-bottom: 1rem;
+        }
+        .slot-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .slot-badge {
+            background: var(--teal-light);
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            color: var(--teal);
+        }
         .slots-row {
-            margin-top: auto;
-            padding-top: 1rem;
             display: flex;
             flex-wrap: wrap;
             gap: 0.7rem;
-            align-items: flex-end;
-            justify-content: flex-start;
-            border-top: 1px solid var(--border);
+            align-items: center;
         }
-
         .slot-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0.25rem;
         }
-
         .oval {
             border-radius: 48px;
             background: white;
@@ -376,69 +350,80 @@
             justify-content: center;
             font-weight: 700;
             font-size: 0.85rem;
-            color: #1f2a3a;
             cursor: pointer;
-            transition: all 0.15s;
             height: 42px;
             padding: 0 0.9rem;
             min-width: 68px;
-            background: white;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
         .oval:hover:not(.disabled) {
             border-width: 2px;
             background: var(--teal-light);
-            transform: scale(0.97);
         }
         .oval.filled {
             background: var(--slot-filled);
             border-color: var(--teal);
-            color: var(--teal-dark);
-            font-weight: 800;
         }
         .oval.disabled {
             background: #f1f3f5;
             border-color: #d1d5db;
             cursor: not-allowed;
             color: #9ca3af;
-            opacity: 0.8;
         }
-
         .oval-input {
             border-radius: 48px;
             border: 2px solid var(--teal);
-            background: white;
             text-align: center;
             font-weight: 600;
-            font-size: 0.85rem;
-            outline: none;
-            font-family: monospace;
             height: 42px;
             padding: 0 0.7rem;
             min-width: 68px;
-            box-shadow: 0 0 0 2px var(--teal-glow);
+            outline: none;
         }
-
         .slot-number {
             font-size: 0.55rem;
             font-weight: 600;
             color: var(--gray-500);
-            background: transparent;
-            padding: 0 0.2rem;
         }
-
         .auto-note {
             font-size: 0.5rem;
             font-weight: 600;
-            color: #8b5a2b;
             background: #fef3c7;
-            padding: 0.2rem 0.45rem;
+            padding: 0.15rem 0.4rem;
             border-radius: 20px;
-            max-width: 100px;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            color: #b76e0e;
+        }
+
+        /* OPTIONS ROW (foreground/background etc) */
+        .options-row {
+            margin-top: 0.8rem;
+            padding-top: 0.6rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+        .option-select {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--gray-50);
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+        }
+        .option-select label {
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        .option-select select {
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 0.25rem 0.6rem;
+            font-size: 0.7rem;
+            background: white;
+            cursor: pointer;
+            outline: none;
         }
 
         .global-actions {
@@ -446,17 +431,6 @@
             display: flex;
             justify-content: flex-end;
         }
-        .btn-save {
-            background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
-            border: none;
-            padding: 0.7rem 2rem;
-            border-radius: 60px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            box-shadow: var(--shadow-sm);
-            width: auto;
-        }
-
         .toast {
             position: fixed;
             bottom: 28px;
@@ -467,13 +441,9 @@
             padding: 0.7rem 1.6rem;
             border-radius: 60px;
             font-size: 0.85rem;
-            font-weight: 500;
             z-index: 2000;
             display: none;
-            backdrop-filter: blur(8px);
-            background: rgba(0,0,0,0.8);
         }
-
         .image-modal {
             position: fixed;
             top: 0;
@@ -493,19 +463,11 @@
             object-fit: contain;
             border-radius: 20px;
         }
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: var(--teal);
-            font-weight: 500;
-        }
+        .loading { text-align: center; padding: 3rem; color: var(--teal); }
 
         @media (max-width: 680px) {
-            .products-grid { grid-template-columns: 1fr; gap: 1rem; }
-            .main-content { padding: 1.2rem; }
-            .product-header-row { flex-direction: column; align-items: flex-start; }
-            .sku-badge { white-space: normal; }
-            .oval { height: 38px; font-size: 0.75rem; min-width: 58px; padding: 0 0.6rem; }
+            .products-grid { grid-template-columns: 1fr; }
+            .main-content { padding: 1rem; }
         }
     </style>
 </head>
@@ -546,52 +508,152 @@
     let editingSlot = null;
     let isLoading = true;
 
-    // AUTO-ASSIGN RULES
-    const PACKAGE_AUTO_RULES = {
-        "S": { autoSlots: [{ index: 0, label: "Serious+Logo" }] },
-        "M": { autoSlots: [{ index: 0, label: "Serious+Logo" }, { index: 1, label: "Sabai" }] },
-        "L": { autoSlots: [{ index: 0, label: "Serious+Logo" }, { index: 1, label: "Sabai" }] }
-    };
-    
-    function detectPackageType(product) {
-        const sku = (product.sku || '').toUpperCase();
-        const nameEn = (product.name_en || '').toUpperCase();
-        if (sku.includes('PACKAGE-S') || sku === 'S' || nameEn.includes('PACKAGE S') || nameEn.includes('STARTER')) return 'S';
-        if (sku.includes('PACKAGE-M') || sku === 'M' || nameEn.includes('PACKAGE M') || nameEn.includes('MEDIUM')) return 'M';
-        if (sku.includes('PACKAGE-L') || sku === 'L' || nameEn.includes('PACKAGE L') || nameEn.includes('DELUXE')) return 'L';
-        return null;
+    // Extended product data from the table
+    const EXTENDED_PRODUCTS = [
+        { article: "A11", name_en: "ACRYLIC PHOTO class logo", name_th: "อะคริลิคคลาสโลโก้", size: "8x12", pose: 1, hasOptions: false, note: "group photo" },
+        { article: "A12", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "12x12", pose: 1, hasOptions: false },
+        { article: "A13", name_en: "ACRYLIC PHOTO", name_th: "ภาพถ่ายอะคริลิค", size: "5x5", pose: 1, hasOptions: false },
+        { article: "A14", name_en: "ACRYLIC PHOTO class + individual logo", name_th: "คลาส+โลโก้ส่วนตัว", size: "12x12", pose: 2, hasOptions: true, optionType: "group+portrait" },
+        { article: "W11", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "10x10", pose: 1 },
+        { article: "W12", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "12x12", pose: 1 },
+        { article: "W13", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "16x16", pose: 1 },
+        { article: "W14", name_en: "FLOAT FRAME", name_th: "เฟรมลอย", size: "8x12", pose: 1 },
+        { article: "W15", name_en: "FLOAT FRAME individual logo", name_th: "กรอบลอยโลโก้", size: "10x15", pose: 1, hasOptions: true, optionType: "logo" },
+        { article: "W16", name_en: "FLOAT FRAME design", name_th: "ออกแบบกรอบลอย", size: "12x18", pose: 3, hasOptions: true, optionType: "design" },
+        { article: "C11", name_en: "CANVAS", name_th: "ผ้าใบ", size: "12x18", pose: 1 },
+        { article: "C12", name_en: "CANVAS", name_th: "ผ้าใบ", size: "16x24", pose: 1 },
+        { article: "C13", name_en: "CANVAS", name_th: "ผ้าใบ", size: "20x30", pose: 1 },
+        { article: "C15", name_en: "CANVAS design", name_th: "ออกแบบผ้าใบ", size: "20x20", pose: 9, hasOptions: true, optionType: "design" },
+        { article: "F12", name_en: "PHOTO COLLAGE", name_th: "ภาพตัดปะ", size: "8x12", pose: 2, hasOptions: true, optionType: "collage" },
+        { article: "B11", name_en: "INSTABOOK", name_th: "อินสตาบุ๊ค", size: "5.5x5.5", pose: 16, hasOptions: true, optionType: "book" },
+        { article: "B12", name_en: "MINI BOOK", name_th: "หนังสือขนาดเล็ก", size: "6x8", pose: 14, hasOptions: true, optionType: "book" },
+        { article: "B13", name_en: "ELITE SCHOOL BOOK", name_th: "หนังสือเรียนชั้นสูง", size: "8x12", pose: 31, hasOptions: true, optionType: "book_premium" },
+        { article: "K11", name_en: "WALL CALENDAR", name_th: "ปฏิทินติดผนัง", size: "30x42cm", pose: 20, hasOptions: true, optionType: "calendar" },
+        { article: "S11", name_en: "SHAKING HEAD ACRYLIC STAND boy", name_th: "ขาตั้งอะคริลิค", size: "10x10cm", pose: 1, hasOptions: false },
+        { article: "S12", name_en: "SHAKING HEAD ACRYLIC STAND girl", name_th: "ขาตั้งอะคริลิค", size: "10x10cm", pose: 1 },
+        { article: "S13", name_en: "SHAKING HEAD teacher+student", name_th: "ขาตั้งครู+นักเรียน", size: "10x10cm", pose: 2, hasOptions: true, optionType: "portrait_pair" },
+        { article: "E14", name_en: "KEYRING ALUM", name_th: "พวงกุญแจ", size: "5cm", pose: 2, hasOptions: true, optionType: "portrait_pair" },
+        { article: "E15", name_en: "HAND MIRROR", name_th: "กระจกมือ", size: "7.5cm", pose: 1 },
+        { article: "E16", name_en: "MINI PILLOW", name_th: "หมอนมินิ", size: "7.5x7.5cm", pose: 4, hasOptions: true, optionType: "multi_portrait" },
+        // Packages
+        { article: "PACKAGE-S", name_en: "Package S - Class Serious + Logo", name_th: "แพ็คเกจ S", size: "Mixed", pose: 3, isPackage: true, autoSlots: [0] },
+        { article: "PACKAGE-M", name_en: "Package M - Class Serious + Sabai", name_th: "แพ็คเกจ M", size: "Mixed", pose: 4, isPackage: true, autoSlots: [0,1] },
+        { article: "PACKAGE-L", name_en: "Package L - Deluxe", name_th: "แพ็คเกจ L", size: "Mixed", pose: 5, isPackage: true, autoSlots: [0,1] }
+    ];
+
+    function loadExtendedProducts() {
+        return EXTENDED_PRODUCTS.map(p => ({
+            id: p.article,
+            sku: p.article,
+            name_en: p.name_en,
+            name_th: p.name_th,
+            size: p.size,
+            pose: p.pose,
+            isPackage: p.isPackage || false,
+            hasOptions: p.hasOptions || false,
+            optionType: p.optionType || null,
+            autoSlots: p.autoSlots || null,
+            image_url: null,
+            sort_product: 0
+        }));
     }
-    
-    function getAutoAssignConfig(product) {
-        if (!product.isPackage) return null;
-        const pkgType = detectPackageType(product);
-        if (!pkgType) return null;
-        const rule = PACKAGE_AUTO_RULES[pkgType];
-        if (!rule) return null;
-        const totalSlots = product.pose || 1;
-        const autoMap = new Array(totalSlots).fill(null);
-        rule.autoSlots.forEach(slot => { if (slot.index < totalSlots) autoMap[slot.index] = slot.label; });
-        return autoMap;
+
+    async function loadProductsFromSupabase() {
+        try {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            isLoading = true; render();
+            const { data: productCardsData } = await supabaseClient.from('product_cards').select('*').maybeSingle();
+            const { data: packagesData } = await supabaseClient.from('packages_with_price').select('*');
+            
+            let processed = [];
+            if (productCardsData && productCardsData.length) {
+                productCardsData.forEach(card => {
+                    processed.push({
+                        id: card.card_id, sku: card.sku || card.card_id,
+                        name_en: card.name_en, name_th: card.name_th,
+                        size: card.size, pose: card.pose || 1,
+                        isPackage: false, hasOptions: false, image_url: card.cover_image
+                    });
+                });
+            }
+            if (!processed.length) processed = loadExtendedProducts();
+            if (packagesData?.length) {
+                packagesData.forEach(pkg => {
+                    if (pkg.visible !== false) {
+                        processed.push({
+                            id: pkg.sku, sku: pkg.sku, name_en: pkg.name_en, name_th: pkg.name_th,
+                            size: pkg.size, pose: pkg.total_photos || 3, isPackage: true,
+                            autoSlots: pkg.sku?.includes('S') ? [0] : (pkg.sku?.includes('M') ? [0,1] : null),
+                            image_url: pkg.image_url
+                        });
+                    }
+                });
+            }
+            productsDB = processed.length ? processed : loadExtendedProducts();
+            isLoading = false;
+            toast(`✅ ${productsDB.length} products loaded`);
+        } catch(e) {
+            console.warn(e);
+            productsDB = loadExtendedProducts();
+            isLoading = false;
+            toast(`📦 Demo mode: ${productsDB.length} items`);
+        }
+    }
+
+    function loadRandomOrder() {
+        if (!productsDB.length) return;
+        const shuffled = [...productsDB];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const selected = shuffled.slice(0, Math.min(8, shuffled.length));
+        currentOrder = { number: "1111", products: selected };
+        assignments = {};
+        
+        for (let prod of selected) {
+            const key = `${prod.isPackage ? 'pkg' : 'prd'}_${prod.sku}_${Date.now()}_${Math.random()}`;
+            const poseCount = prod.pose || 1;
+            let selectableMask = new Array(poseCount).fill(true);
+            let autoLabels = new Array(poseCount).fill(null);
+            
+            if (prod.isPackage && prod.autoSlots) {
+                prod.autoSlots.forEach(idx => {
+                    if (idx < poseCount) { selectableMask[idx] = false; autoLabels[idx] = "Auto"; }
+                });
+            }
+            
+            assignments[key] = {
+                key, sku: prod.sku, nameEn: prod.name_en, nameTh: prod.name_th,
+                size: prod.size, pose: poseCount, image: prod.image_url,
+                isPackage: prod.isPackage || false, hasOptions: prod.hasOptions || false,
+                optionType: prod.optionType || null,
+                values: new Array(poseCount).fill(null),
+                selectableMask, autoLabels,
+                // Additional options storage (foreground/background etc)
+                extraOptions: {}
+            };
+        }
+        render();
+        toast(t('ok'));
     }
 
     const trans = {
-        en: { 
-            enter: "Enter order number", btn: "Continue", invalid: "Use demo code 1111", ok: "✓ Order loaded", 
-            dup: "⚠️ Photo already used", range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Selection saved", 
-            back: "← Back", notSelectable: "Auto", loading: "Loading...", viewPhoto: "View", size: "Size", pose: "Photos", 
-            package: "Package", skuLabel: "SKU"
-        },
-        th: { 
-            enter: "กรอกเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัสทดสอบ 1111", ok: "✓ โหลดสำเร็จ", 
-            dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ บันทึกแล้ว", 
-            back: "← กลับ", notSelectable: "อัตโนมัติ", loading: "กำลังโหลด...", viewPhoto: "ดูรูป", 
-            size: "ขนาด", pose: "รูป", package: "แพ็คเกจ", skuLabel: "รหัส"
-        }
+        en: { enter: "Enter order number", btn: "Continue", invalid: "Use code 1111", ok: "✓ Order loaded",
+              dup: "⚠️ Photo already used", range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ Saved",
+              back: "← Back", notSelectable: "Auto", loading: "Loading...", viewPhoto: "View",
+              size: "Size", pose: "Photos", package: "Package", foreground: "Foreground", background: "Background",
+              designType: "Design type", selectOption: "Select..." },
+        th: { enter: "กรอกเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", ok: "✓ โหลดแล้ว",
+              dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, saved: "✓ บันทึกแล้ว",
+              back: "← กลับ", notSelectable: "อัตโนมัติ", loading: "กำลังโหลด...", viewPhoto: "ดูรูป",
+              size: "ขนาด", pose: "รูป", package: "แพ็คเกจ", foreground: "ภาพหน้า", background: "ภาพหลัง",
+              designType: "รูปแบบดีไซน์", selectOption: "เลือก..." }
     };
     function t(key) { return trans[currentLang][key] || trans.en[key]; }
     function toast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 2000); }
     function isValid(n) { return !isNaN(n) && n >= MIN_PHOTO && n <= MAX_PHOTO && Number.isInteger(n); }
-    function isUsedInProduct(prodKey, idx, num) { const a = assignments[prodKey]; if (!a) return false; for (let i = 0; i < a.values.length; i++) if (i !== idx && a.values[i] === num) return true; return false; }
+    function isUsedInProduct(prodKey, idx, num) { const a = assignments[prodKey]; if (!a) return false; for (let i=0; i<a.values.length; i++) if (i!==idx && a.values[i]===num) return true; return false; }
 
     function setValue(prodKey, idx, val) {
         const a = assignments[prodKey];
@@ -604,117 +666,11 @@
         return true;
     }
 
-    function getOvalWidth(poseCount) {
-        if (poseCount <= 2) return 88;
-        if (poseCount <= 3) return 80;
-        if (poseCount <= 5) return 74;
-        if (poseCount <= 8) return 68;
-        return 62;
-    }
-
-    function getDirectImageUrl(imgUrl) { if (!imgUrl) return null; if (imgUrl.includes('i.postimg.cc')) return imgUrl; if (imgUrl.includes('disk.yandex.ru')) return imgUrl.replace('/d/', '/i/'); return imgUrl; }
-    function showImageModal(imgUrl, productName) { const directUrl = getDirectImageUrl(imgUrl); if (!directUrl) { toast('No image'); return; } const modal = document.createElement('div'); modal.className = 'image-modal'; const img = document.createElement('img'); img.src = directUrl; img.alt = productName; img.onerror = () => { modal.innerHTML = '<div style="color:white;">❌</div>'; }; modal.appendChild(img); modal.onclick = () => modal.remove(); document.body.appendChild(modal); }
-
-    async function loadProductsFromSupabase() {
-        try {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            isLoading = true; render();
-            const { data: productCardsData, error: productCardsError } = await supabaseClient.from('product_cards').select('*');
-            if (productCardsError) throw productCardsError;
-            const { data: packagesData, error: packagesError } = await supabaseClient.from('packages_with_price').select('*');
-            if (packagesError) console.warn('packages error:', packagesError);
-            
-            let processed = [];
-            if (productCardsData?.length) {
-                productCardsData.forEach(card => {
-                    let variants = [];
-                    try { variants = card.variants ? (typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants) : []; } catch(e) {}
-                    let pose = 1;
-                    if (variants[0]?.pose) pose = Math.min(parseInt(variants[0].pose), 30);
-                    if (card.pose) pose = Math.min(parseInt(card.pose), 30);
-                    if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 30);
-                    let skuValue = card.sku;
-                    if (!skuValue && variants[0]?.sku) skuValue = variants[0].sku;
-                    if (!skuValue) skuValue = card.card_id || `SKU_${Date.now()}`;
-                    processed.push({
-                        id: card.card_id || skuValue,
-                        sku: skuValue,
-                        name_en: card.name_en || 'Product',
-                        name_th: card.name_th || 'สินค้า',
-                        size: card.size || (variants[0]?.size || ''),
-                        pose: Math.max(1, pose),
-                        image_url: card.cover_image || null,
-                        isPackage: false,
-                        sort_product: card.sort_product || 999
-                    });
-                });
-            }
-            if (packagesData?.length) {
-                packagesData.forEach(pkg => {
-                    if (pkg.visible === false) return;
-                    let totalPhotos = pkg.total_photos || 1;
-                    try { if (pkg.contents) { const items = typeof pkg.contents === 'string' ? JSON.parse(pkg.contents) : pkg.contents; totalPhotos = items.reduce((s, i) => s + (i.qty || 1), 0) || 1; } } catch(e) {}
-                    const packageSku = pkg.sku || pkg.slug || `PKG-${Date.now()}`;
-                    const placeholder = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='20'%3E${packageSku.slice(0,10)}%3C/text%3E%3C/svg%3E`;
-                    processed.push({
-                        id: `pkg_${packageSku}`,
-                        sku: packageSku,
-                        name_en: pkg.name_en || packageSku,
-                        name_th: pkg.name_th || pkg.name_en || packageSku,
-                        size: pkg.size || 'Set',
-                        pose: Math.max(1, totalPhotos),
-                        image_url: pkg.image_url || placeholder,
-                        isPackage: true,
-                        sort_product: pkg.sort_order || 999
-                    });
-                });
-            }
-            productsDB = processed.sort((a,b) => (a.sort_product||999) - (b.sort_product||999));
-            if (!productsDB.length) productsDB = getDemoProducts();
-            isLoading = false;
-            toast(`✨ ${productsDB.length} products ready`);
-        } catch(e) {
-            console.error(e);
-            productsDB = getDemoProducts();
-            isLoading = false;
-            toast(`⚡ Demo mode (${productsDB.length} items)`);
+    function updateExtraOption(prodKey, optionName, value) {
+        if (assignments[prodKey]) {
+            assignments[prodKey].extraOptions[optionName] = value;
+            toast(`✓ ${optionName}: ${value}`);
         }
-    }
-
-    function getDemoProducts() {
-        return [
-            { id: "1", sku: "ACR-1224", name_en: "Acrylic 12x12", name_th: "อะคริลิค", size: "12x12\"", pose: 1, isPackage: false, sort_product: 1, image_url: null },
-            { id: "2", sku: "CANV-2030", name_en: "Canvas Gallery", name_th: "ผ้าใบแคนวาส", size: "20x30\"", pose: 1, isPackage: false, sort_product: 2, image_url: null },
-            { id: "3", sku: "PACKAGE-S", name_en: "Package S - Starter", name_th: "แพ็คเกจ S", size: "3-in-1", pose: 3, isPackage: true, sort_product: 3, image_url: null },
-            { id: "4", sku: "PACKAGE-M", name_en: "Package M - Medium", name_th: "แพ็คเกจ M", size: "4 items", pose: 4, isPackage: true, sort_product: 4, image_url: null },
-            { id: "5", sku: "PACKAGE-L", name_en: "Package L - Deluxe", name_th: "แพ็คเกจ L", size: "5pcs set", pose: 5, isPackage: true, sort_product: 5, image_url: null }
-        ];
-    }
-
-    function loadRandomOrder() {
-        if (!productsDB.length) return;
-        const shuffled = [...productsDB];
-        for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
-        const selected = shuffled.slice(0, Math.min(6, shuffled.length));
-        currentOrder = { number: "1111", products: selected };
-        assignments = {};
-        for (let prod of selected) {
-            const key = `${prod.isPackage ? 'pkg' : 'prd'}_${prod.sku}_${Date.now()}_${Math.random()}`;
-            const poseCount = prod.pose || 1;
-            let selectableMask = new Array(poseCount).fill(true);
-            let autoLabels = new Array(poseCount).fill(null);
-            if (prod.isPackage) {
-                const autoConf = getAutoAssignConfig(prod);
-                if (autoConf) for (let i=0; i<poseCount; i++) if (autoConf[i]) { selectableMask[i] = false; autoLabels[i] = autoConf[i]; }
-            }
-            assignments[key] = {
-                key, sku: prod.sku, nameEn: prod.name_en, nameTh: prod.name_th, size: prod.size, pose: poseCount,
-                image: prod.image_url, isPackage: prod.isPackage || false, values: new Array(poseCount).fill(null),
-                selectableMask, autoLabels
-            };
-        }
-        render();
-        toast(t('ok'));
     }
 
     function handleOvalClick(prodKey, idx, currentVal) {
@@ -749,35 +705,85 @@
         }
         let totalSlots = 0, totalFilled = 0;
         for (let a of Object.values(assignments)) { totalSlots += a.values.length; totalFilled += a.values.filter(v => v !== null).length; }
-        let html = `<div class="order-header"><div class="order-badge">📦 ORDER #${currentOrder.number}</div><div class="order-badge">📸 ${totalFilled}/${totalSlots}</div><button class="order-badge" id="backBtn" style="background:white; cursor:pointer;">${t('back')}</button></div><div class="products-grid">`;
+        let html = `<div class="order-header"><div class="order-badge">📦 ORDER #${currentOrder.number}</div><div class="order-badge">📸 ${totalFilled}/${totalSlots}</div><button class="order-badge" id="backBtn" style="background:white;">${t('back')}</button></div><div class="products-grid">`;
+        
         for (let [key, asgn] of Object.entries(assignments)) {
             const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
             const poseCount = asgn.pose;
-            const ovalWidth = getOvalWidth(poseCount);
-            const imgUrl = getDirectImageUrl(asgn.image);
-            const hasImage = imgUrl && imgUrl.startsWith('http');
-            html += `<div class="product-card"><div class="product-content"><div class="product-top"><div class="product-info-main"><div class="product-header-row"><span class="sku-badge">🔖 ${asgn.sku}</span><div class="product-title-compact">${name || asgn.sku}${asgn.isPackage ? `<span class="badge-package">📦 ${t('package')}</span>` : ''}</div></div><div class="product-meta">${asgn.size ? `<span class="meta-item"><span class="meta-icon">📏</span> ${t('size')}: ${asgn.size}</span>` : ''}<span class="meta-item"><span class="meta-icon">📷</span> ${t('pose')}: ${poseCount}</span></div></div>${hasImage ? `<img class="product-image" src="${imgUrl}" onerror="this.src='https://placehold.co/72x72?text=No+Img'" onclick="showImageModal('${imgUrl.replace(/'/g, "\\'")}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : `<div class="image-placeholder">📷 ${t('noImage')||'no img'}</div>`}</div><div class="slots-row">`;
+            const hasOpt = asgn.hasOptions;
+            const optionType = asgn.optionType;
+            
+            html += `<div class="product-card"><div class="product-content"><div class="product-top"><div class="product-info-main"><div class="product-header-row"><span class="sku-badge">🔖 ${asgn.sku}</span><div class="product-title-compact">${name || asgn.sku}${asgn.isPackage ? `<span class="badge-package">📦 ${t('package')}</span>` : ''}</div></div><div class="product-meta">${asgn.size ? `<span class="meta-item">📏 ${t('size')}: ${asgn.size}</span>` : ''}<span class="meta-item">📷 ${t('pose')}: ${poseCount}</span></div></div>${asgn.image ? `<img class="product-image" src="${asgn.image}" onerror="this.style.display='none'" onclick="showImageModal('${asgn.image}', '${name}')">` : `<div class="image-placeholder">📷</div>`}</div>`;
+            
+            // Slots
+            html += `<div class="slots-section">`;
             for (let i = 0; i < poseCount; i++) {
                 const val = asgn.values[i];
                 const isAuto = asgn.selectableMask && asgn.selectableMask[i] === false;
-                const autoLabel = asgn.autoLabels?.[i] || t('notSelectable');
+                const autoLabel = asgn.autoLabels?.[i];
                 if (!isAuto) {
-                    html += `<div class="slot-wrapper"><div id="oval_${key}_${i}" class="oval ${val !== null ? 'filled' : ''}" style="width:${ovalWidth}px; height:42px;" onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${val !== null ? val : '___'}</div><span class="slot-number">#${i+1}</span></div>`;
+                    html += `<div class="slot-group"><div class="slot-label"><span>Slot ${i+1}</span></div><div class="slots-row"><div class="slot-wrapper"><div id="oval_${key}_${i}" class="oval ${val !== null ? 'filled' : ''}" style="height:42px;" onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${val !== null ? val : '___'}</div><span class="slot-number">#${i+1}</span></div></div></div>`;
                 } else {
-                    html += `<div class="slot-wrapper"><div class="oval disabled" style="width:${ovalWidth}px; height:42px;"></div><span class="slot-number">#${i+1}</span><span class="auto-note">🔒 ${autoLabel}</span></div>`;
+                    html += `<div class="slot-group"><div class="slot-label"><span>Slot ${i+1}</span><span class="slot-badge">🔒 ${autoLabel || t('notSelectable')}</span></div><div class="slots-row"><div class="slot-wrapper"><div class="oval disabled" style="height:42px;"></div><span class="slot-number">#${i+1}</span></div></div></div>`;
                 }
             }
-            html += `</div></div></div>`;
+            html += `</div>`;
+            
+            // Additional options (Foreground/Background etc)
+            if (hasOpt && poseCount >= 2) {
+                const fgVal = asgn.extraOptions?.foreground || '';
+                const bgVal = asgn.extraOptions?.background || '';
+                html += `<div class="options-row"><div class="option-select"><label>🎬 ${t('foreground')}:</label><select data-key="${key}" data-opt="foreground"><option value="">${t('selectOption')}</option><option value="portrait" ${fgVal==='portrait'?'selected':''}>Portrait</option><option value="group" ${fgVal==='group'?'selected':''}>Group photo</option><option value="design" ${fgVal==='design'?'selected':''}>Design</option></select></div><div class="option-select"><label>🌄 ${t('background')}:</label><select data-key="${key}" data-opt="background"><option value="">${t('selectOption')}</option><option value="portrait" ${bgVal==='portrait'?'selected':''}>Portrait</option><option value="group" ${bgVal==='group'?'selected':''}>Group photo</option><option value="logo" ${bgVal==='logo'?'selected':''}>Logo</option></select></div></div>`;
+            } else if (hasOpt && optionType === 'design') {
+                html += `<div class="options-row"><div class="option-select"><label>🎨 ${t('designType')}:</label><select data-key="${key}" data-opt="design"><option value="">${t('selectOption')}</option><option value="modern">Modern</option><option value="classic">Classic</option><option value="minimal">Minimal</option></select></div></div>`;
+            }
+            html += `</div></div>`;
         }
-        html += `</div><div class="global-actions"><button class="btn-primary btn-save" id="confirmBtn">💾 ${t('saved')}</button></div>`;
+        html += `</div><div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.7rem 2rem;">💾 ${t('saved')}</button></div>`;
         container.innerHTML = html;
+        
+        // Attach option change handlers
+        document.querySelectorAll('.option-select select').forEach(select => {
+            select.addEventListener('change', (e) => {
+                const key = select.getAttribute('data-key');
+                const opt = select.getAttribute('data-opt');
+                if (key && opt) updateExtraOption(key, opt, select.value);
+            });
+        });
         document.getElementById('backBtn')?.addEventListener('click', () => { currentOrder = null; render(); });
-        document.getElementById('confirmBtn')?.addEventListener('click', () => { let summary = "WHITE FOX\n"; for (let [key,a] of Object.entries(assignments)) { const nm = currentLang === 'en' ? a.nameEn : a.nameTh; summary += `\n${a.sku} — ${nm}\n${a.size ? `📏 ${a.size} | ` : ''}📷 ${a.pose} фото\n`; for (let i=0;i<a.values.length;i++) { const autoFlag = a.selectableMask && !a.selectableMask[i]; summary += `  ${i+1}. ${a.values[i] || '❌'}${autoFlag ? ` [${a.autoLabels?.[i] || 'Auto'}]` : ''}\n`; } } alert(summary); toast(t('saved')); });
+        document.getElementById('confirmBtn')?.addEventListener('click', () => {
+            let summary = "══════════════════\n   WHITE FOX STUDIO\n══════════════════\n";
+            for (let [key,a] of Object.entries(assignments)) {
+                const nm = currentLang === 'en' ? a.nameEn : a.nameTh;
+                summary += `\n📦 ${a.sku} — ${nm}\n📏 ${a.size || '—'} | 📷 ${a.pose}\n`;
+                for (let i=0; i<a.values.length; i++) {
+                    summary += `   ${i+1}. ${a.values[i] || '❌'}`;
+                    if (a.selectableMask && !a.selectableMask[i]) summary += ` [Auto]`;
+                    summary += `\n`;
+                }
+                if (Object.keys(a.extraOptions).length) summary += `   ⚙️ Options: ${JSON.stringify(a.extraOptions)}\n`;
+            }
+            alert(summary);
+            toast(t('saved'));
+        });
     }
 
     window.handleOvalClick = handleOvalClick;
-    window.showImageModal = showImageModal;
-    function updateLang() { const iconSpan = document.getElementById('langIcon'); const textSpan = document.getElementById('langText'); if (iconSpan) iconSpan.innerText = currentLang === 'en' ? '🇬🇧' : '🇹🇭'; if (textSpan) textSpan.innerText = currentLang === 'en' ? 'EN' : 'TH'; if (currentOrder) render(); else render(); }
+    window.showImageModal = (url, name) => {
+        if (!url) return toast('No image');
+        const modal = document.createElement('div'); modal.className = 'image-modal';
+        const img = document.createElement('img'); img.src = url; img.alt = name;
+        modal.appendChild(img); modal.onclick = () => modal.remove();
+        document.body.appendChild(modal);
+    };
+
+    function updateLang() {
+        const iconSpan = document.getElementById('langIcon'); const textSpan = document.getElementById('langText');
+        if (iconSpan) iconSpan.innerText = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
+        if (textSpan) textSpan.innerText = currentLang === 'en' ? 'EN' : 'TH';
+        if (currentOrder) render(); else render();
+    }
+
     document.getElementById('langBtn')?.addEventListener('click', () => { currentLang = currentLang === 'en' ? 'th' : 'en'; updateLang(); });
     document.getElementById('checkBtn')?.addEventListener('click', () => { const code = document.getElementById('orderInput').value.trim(); if (code === '1111') loadRandomOrder(); else toast(t('invalid')); });
     document.getElementById('orderInput')?.addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('checkBtn')?.click(); });
