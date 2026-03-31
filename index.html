@@ -298,6 +298,7 @@
             flex-direction: column;
             align-items: center;
             gap: 0.3rem;
+            max-width: 100px;
         }
 
         .oval {
@@ -353,6 +354,17 @@
             font-size: 0.55rem;
             font-weight: 500;
             color: #8b9aab;
+        }
+
+        .slot-name {
+            font-size: 0.5rem;
+            font-weight: 500;
+            color: #6c757d;
+            text-align: center;
+            max-width: 90px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .auto-note {
@@ -417,6 +429,7 @@
             .oval { height: 38px; font-size: 0.75rem; min-width: 60px; padding: 0 0.5rem; }
             .product-image { width: 55px; height: 55px; }
             .product-title { font-size: 0.9rem; }
+            .slot-name { font-size: 0.45rem; max-width: 70px; }
         }
     </style>
 </head>
@@ -452,6 +465,7 @@
     
     let supabaseClient = null;
     let productsDB = [];
+    let packagesDB = [];
     let currentLang = 'en';
     let currentOrder = null;
     let assignments = {};
@@ -463,16 +477,18 @@
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
             ok: "✓ Order loaded", dup: "⚠️ Photo number already used", 
             range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ Selection saved", back: "← Back", notSelectable: "Auto-assigned",
-            loading: "Loading products...", error: "Error", viewPhoto: "View photo", 
-            size: "Size", pose: "Photos", noImage: "No image", package: "Package"
+            saved: "✓ Selection saved", back: "← Back", notSelectable: "Group Photo",
+            selectable: "Individual", loading: "Loading products...", 
+            error: "Error", viewPhoto: "View photo", size: "Size", pose: "Photos", 
+            package: "Package", photo: "Photo"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
             ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
-            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "กำหนดอัตโนมัติ",
-            loading: "กำลังโหลดสินค้า...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูป",
-            size: "ขนาด", pose: "จำนวนรูป", noImage: "ไม่มีรูป", package: "แพ็คเกจ"
+            saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "ภาพกลุ่ม",
+            selectable: "รายบุคคล", loading: "กำลังโหลดสินค้า...", 
+            error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูป", size: "ขนาด", pose: "จำนวนรูป",
+            package: "แพ็คเกจ", photo: "รูป"
         }
     };
 
@@ -498,7 +514,7 @@
 
     function setValue(prodKey, idx, val) {
         const a = assignments[prodKey];
-        if (!a || !a.selectable) return false;
+        if (!a || !a.slots || !a.slots[idx] || !a.slots[idx].selectable) return false;
         if (!isValid(val)) { toast(t('range')); return false; }
         if (isUsedInProduct(prodKey, idx, val)) { toast(t('dup')); return false; }
         a.values[idx] = val;
@@ -550,7 +566,7 @@
             isLoading = true;
             render();
             
-            // ===================== LOAD PRODUCTS FROM product_cards =====================
+            // Load product cards from Supabase
             console.log('📥 Fetching products from product_cards table...');
             const { data: productCardsData, error: productCardsError } = await supabaseClient
                 .from('product_cards')
@@ -558,12 +574,11 @@
             
             if (productCardsError) {
                 console.error('❌ Error fetching product cards:', productCardsError);
-                throw productCardsError;
+            } else {
+                console.log(`✅ Fetched ${productCardsData?.length || 0} product cards`);
             }
             
-            console.log(`✅ Fetched ${productCardsData?.length || 0} products from product_cards`);
-            
-            // ===================== LOAD PACKAGES =====================
+            // Load packages from Supabase
             console.log('📦 Fetching packages from packages_with_price...');
             const { data: packagesData, error: packagesError } = await supabaseClient
                 .from('packages_with_price')
@@ -575,207 +590,188 @@
                 console.log(`✅ Fetched ${packagesData?.length || 0} packages`);
             }
             
-            // ===================== PROCESS PRODUCTS =====================
-            let processedProducts = [];
+            productsDB = [];
+            packagesDB = [];
             
+            // Process individual products
             if (productCardsData && productCardsData.length > 0) {
-                productCardsData.forEach(card => {
-                    // Parse variants
+                for (const card of productCardsData) {
                     let variants = [];
                     try {
                         if (card.variants) {
-                            if (typeof card.variants === 'string') {
-                                variants = JSON.parse(card.variants);
-                            } else {
-                                variants = card.variants;
-                            }
+                            variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
                         }
-                    } catch (e) {
-                        console.warn(`Error parsing variants for card:`, e);
-                    }
+                    } catch (e) {}
                     
-                    // Find minimum price
-                    let minPrice = null;
-                    if (variants.length > 0) {
-                        const prices = variants.map(v => v.price || 0);
-                        minPrice = Math.min(...prices);
-                    }
-                    
-                    // Get SKU: first from card.sku, then from first variant, then generate
                     let cardSku = card.sku;
-                    if (!cardSku && variants.length > 0) {
-                        cardSku = variants[0].sku;
-                    }
-                    if (!cardSku) {
-                        cardSku = card.card_id || `card_${Date.now()}`;
-                    }
+                    if (!cardSku && variants.length > 0) cardSku = variants[0].sku;
+                    if (!cardSku) cardSku = card.card_id || `card_${Date.now()}`;
                     
-                    // Get pose count
                     let pose = 1;
-                    if (variants.length > 0 && variants[0].pose) {
-                        pose = Math.min(parseInt(variants[0].pose), 30);
-                    }
+                    if (variants.length > 0 && variants[0].pose) pose = Math.min(parseInt(variants[0].pose), 30);
                     if (card.pose) pose = Math.min(parseInt(card.pose), 30);
                     if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 30);
                     if (pose < 1) pose = 1;
                     
-                    // Determine if selectable (group photos are not selectable)
                     let selectable = true;
                     const nameEn = card.name_en || '';
-                    if (nameEn.toLowerCase().includes('group') || 
-                        nameEn.toLowerCase().includes('logo') || 
-                        (card.mess && card.mess.toLowerCase().includes('group'))) {
+                    if (nameEn.toLowerCase().includes('group') || nameEn.toLowerCase().includes('logo')) {
                         selectable = false;
                     }
                     
-                    const size = card.size || '';
-                    const imageUrl = card.cover_image || null;
-                    
-                    console.log(`📦 Processing product: SKU=${cardSku}, Name=${card.name_en}, Pose=${pose}, Selectable=${selectable}`);
-                    
-                    processedProducts.push({
+                    productsDB.push({
                         id: card.card_id || `card_${cardSku}`,
                         sku: cardSku,
                         name_en: card.name_en || `Product ${cardSku}`,
                         name_th: card.name_th || `สินค้า ${cardSku}`,
-                        description_en: card.descriptions || card.description_en || '',
-                        description_th: card.descriptions_th || card.description_th || '',
-                        size: size,
+                        size: card.size || '',
                         pose: pose,
                         selectable: selectable,
-                        base_price: minPrice || card.price || 0,
-                        image_url: imageUrl,
-                        image: imageUrl,
-                        isPackage: false,
-                        variants: variants,
-                        sort_product: card.sort_product !== undefined ? card.sort_product : 999
+                        image: card.cover_image || null,
+                        isPackage: false
                     });
-                });
+                }
             }
             
-            // ===================== PROCESS PACKAGES =====================
+            // Process packages from Supabase
             if (packagesData && packagesData.length > 0) {
-                console.log(`Processing ${packagesData.length} packages`);
-                
-                packagesData.forEach(pkg => {
-                    if (pkg.visible === false) return;
-                    
-                    const packageSku = pkg.sku || pkg.slug || `package-${Date.now()}`;
-                    
+                for (const pkg of packagesData) {
+                    const packageSku = pkg.sku || pkg.slug;
                     let packageItems = [];
-                    let totalPhotos = pkg.total_photos || 0;
+                    let totalPhotos = 0;
                     
                     try {
                         if (pkg.contents) {
-                            if (typeof pkg.contents === 'string') {
-                                packageItems = JSON.parse(pkg.contents);
-                            } else {
-                                packageItems = pkg.contents;
-                            }
+                            packageItems = typeof pkg.contents === 'string' ? JSON.parse(pkg.contents) : pkg.contents;
                             totalPhotos = packageItems.reduce((sum, item) => sum + (item.qty || 1), 0);
                         }
-                    } catch (e) {
-                        console.warn(`Error parsing contents for package ${packageSku}:`, e);
-                    }
+                    } catch(e) {}
                     
                     if (totalPhotos < 1) totalPhotos = 1;
                     
-                    const placeholderImage = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='20'%3E${packageSku}%3C/text%3E%3C/svg%3E`;
-                    
-                    const packageProduct = {
+                    packagesDB.push({
                         id: `package_${packageSku}`,
                         sku: packageSku,
-                        name_en: pkg.name_en || packageSku,
-                        name_th: pkg.name_th || pkg.name_en || packageSku,
-                        description_en: pkg.description_en || '',
-                        description_th: pkg.description_th || '',
-                        size: pkg.size || '',
+                        name_en: pkg.name_en || `Package ${packageSku}`,
+                        name_th: pkg.name_th || `แพ็คเกจ ${packageSku}`,
+                        size: pkg.size || 'Mixed',
                         pose: totalPhotos,
-                        selectable: true,
-                        price: pkg.price || 0,
-                        old_price: pkg.discount_percent ? Math.round(pkg.price / (1 - pkg.discount_percent/100)) : null,
-                        image_url: pkg.image_url || placeholderImage,
-                        image: pkg.image_url || placeholderImage,
+                        image: pkg.image_url || null,
                         isPackage: true,
-                        packageItems: packageItems,
-                        totalPhotos: totalPhotos,
-                        bonus_type: pkg.bonus_type,
-                        bonus_value: pkg.bonus_value,
-                        discount_percent: pkg.discount_percent,
-                        visible: pkg.visible,
-                        sort_order: pkg.sort_order || 999,
-                        sort_product: pkg.sort_order || 999
-                    };
-                    
-                    console.log(`📦 Package added: ${packageSku} - ${packageProduct.name_en}, Photos: ${totalPhotos}`);
-                    processedProducts.push(packageProduct);
-                });
+                        packageItems: packageItems
+                    });
+                }
+            } else {
+                // Fallback packages with proper selectable flags
+                console.log('Using fallback package definitions');
+                packagesDB = getFallbackPackages();
             }
             
-            productsDB = processedProducts;
-            
-            if (productsDB.length === 0) {
-                console.warn('⚠️ No products loaded, using demo data');
-                productsDB = getDemoProducts();
-            }
-            
-            console.log(`✅ Total products loaded: ${productsDB.length}`);
-            console.log('📊 Products list:', productsDB.map(p => ({ sku: p.sku, type: p.isPackage ? 'package' : 'product', name: p.name_en, pose: p.pose })));
+            console.log(`✅ Total products: ${productsDB.length}, Packages: ${packagesDB.length}`);
             
             isLoading = false;
-            toast(`✅ ${productsDB.length} products loaded`);
+            toast(`✅ ${productsDB.length + packagesDB.length} items loaded`);
             
         } catch (error) {
-            console.error('❌ Supabase error:', error);
-            productsDB = getDemoProducts();
+            console.error('❌ Error:', error);
+            packagesDB = getFallbackPackages();
             isLoading = false;
-            toast(`⚠️ Using demo data (${productsDB.length} products)`);
+            toast(`✅ ${packagesDB.length} packages loaded`);
         }
     }
 
-    function getDemoProducts() {
-        console.log('📦 Using demo product data with SKUs');
+    function getFallbackPackages() {
         return [
-            { id: "product_A12", sku: "A12", name_en: "Acrylic Photo 12x12", name_th: "ภาพถ่ายอะคริลิค 12x12", size: "12x12 inch", pose: 1, selectable: true, image: null, isPackage: false },
-            { id: "product_C13", sku: "C13", name_en: "Canvas 20x30", name_th: "ผ้าใบ 20x30", size: "20x30 inch", pose: 1, selectable: true, image: null, isPackage: false },
-            { id: "product_D13", sku: "D13", name_en: "Water Bottle 600ml", name_th: "ขวดน้ำ 600ml", size: "600 ml", pose: 8, selectable: true, image: null, isPackage: false },
-            { id: "product_F12", sku: "F12", name_en: "Photo Collage", name_th: "ภาพตัดปะ", size: "8x12 inch", pose: 2, selectable: true, image: null, isPackage: false },
-            { id: "product_Q3", sku: "Q3", name_en: "Package L - Deluxe Set", name_th: "แพ็คเกจ L - ชุดดีลักซ์", size: "Mixed", pose: 5, selectable: true, image: null, isPackage: false },
-            { id: "package_Q1", sku: "Q1", name_en: "Package S - Starter", name_th: "แพ็คเกจ S - ชุดเริ่มต้น", size: "Mixed", pose: 6, selectable: true, image: null, isPackage: true }
+            {
+                id: "package_Q1",
+                sku: "Q1",
+                name_en: "Package S",
+                name_th: "แพ็คเกจ S",
+                size: "Mixed",
+                pose: 6,
+                image: null,
+                isPackage: true,
+                packageItems: [
+                    { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false },
+                    { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "4x6 inch", qty: 1, selectable: true },
+                    { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 4, selectable: true }
+                ]
+            },
+            {
+                id: "package_Q2",
+                sku: "Q2",
+                name_en: "Package M",
+                name_th: "แพ็คเกจ M",
+                size: "Mixed",
+                pose: 11,
+                image: null,
+                isPackage: true,
+                packageItems: [
+                    { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "6x9 inch", qty: 1, selectable: false },
+                    { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false },
+                    { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true },
+                    { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 8, selectable: true }
+                ]
+            },
+            {
+                id: "package_Q3",
+                sku: "Q3",
+                name_en: "Package L",
+                name_th: "แพ็คเกจ L",
+                size: "Mixed",
+                pose: 14,
+                image: null,
+                isPackage: true,
+                packageItems: [
+                    { name_en: "Class Serious + Logo", name_th: "คลาสซีเรียส + โลโก้", size: "8x12 inch", qty: 1, selectable: false },
+                    { name_en: "Individual + Logo", name_th: "รายบุคคล + โลโก้", size: "6x9 inch", qty: 1, selectable: true },
+                    { name_en: "Class Sabai", name_th: "คลาสสบาย", size: "6x9 inch", qty: 1, selectable: false },
+                    { name_en: "Individual", name_th: "รายบุคคล", size: "6x9 inch", qty: 1, selectable: true },
+                    { name_en: "Individual", name_th: "รายบุคคล", size: "4x6 inch", qty: 10, selectable: true }
+                ]
+            }
         ];
     }
 
     function loadRandomOrder() {
-        if (productsDB.length === 0) return;
+        console.log('🔄 Loading random order...');
         
-        console.log('🔄 Loading random order with products...');
-        
-        const shuffled = [...productsDB];
-        for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-        }
-        
-        const selected = shuffled.slice(0, Math.min(10, shuffled.length));
-        console.log(`📋 Selected ${selected.length} products:`, selected.map(p => p.sku));
+        // Load all packages
+        const selected = [...packagesDB];
         
         currentOrder = { number: "1111", products: selected };
         assignments = {};
         
         for (let prod of selected) {
-            const key = `${prod.isPackage ? 'package' : 'product'}_${prod.sku}_${Date.now()}_${Math.random()}`;
+            const key = `package_${prod.sku}_${Date.now()}_${Math.random()}`;
+            
+            // Build slots from package items with proper selectable flags
+            const slots = [];
+            if (prod.packageItems) {
+                for (let item of prod.packageItems) {
+                    for (let i = 0; i < item.qty; i++) {
+                        slots.push({
+                            id: `${item.name_en}_${i}`,
+                            name_en: item.name_en,
+                            name_th: item.name_th,
+                            size: item.size,
+                            selectable: item.selectable === true
+                        });
+                    }
+                }
+            }
+            
             assignments[key] = {
                 key: key,
-                id: prod.id,
                 sku: prod.sku,
                 nameEn: prod.name_en,
                 nameTh: prod.name_th,
                 size: prod.size,
-                pose: prod.pose,
-                selectable: prod.selectable,
+                pose: slots.length,
                 image: prod.image,
-                isPackage: prod.isPackage || false,
-                values: new Array(prod.pose).fill(null)
+                isPackage: true,
+                slots: slots,
+                values: new Array(slots.length).fill(null)
             };
         }
         render();
@@ -784,7 +780,8 @@
 
     function handleOvalClick(prodKey, idx, currentVal) {
         const a = assignments[prodKey];
-        if (!a || !a.selectable) return;
+        if (!a || !a.slots || !a.slots[idx]) return;
+        if (!a.slots[idx].selectable) return;
         
         const ovalDiv = document.getElementById(`oval_${prodKey}_${idx}`);
         if (!ovalDiv) return;
@@ -810,8 +807,6 @@
             editingSlot = null;
             if (!isNaN(newVal) && newVal !== currentVal) {
                 setValue(prodKey, idx, newVal);
-            } else if (isNaN(newVal) && currentVal !== null) {
-                setValue(prodKey, idx, null);
             }
         };
         
@@ -870,34 +865,39 @@
                         <div class="product-info">
                             <div>
                                 <span class="product-sku">${asgn.sku || 'N/A'}</span>
-                                ${asgn.isPackage ? `<span class="badge-package">📦 ${t('package')}</span>` : ''}
+                                <span class="badge-package">📦 ${t('package')}</span>
                             </div>
                             <div class="product-title">${name || asgn.sku}</div>
                             <div class="product-details">
-                                ${asgn.size ? `<span class="product-size">📏 ${t('size')}: ${asgn.size}</span>` : ''}
+                                <span class="product-size">📏 ${t('size')}: ${asgn.size || 'Mixed'}</span>
                                 <span class="product-pose">📷 ${t('pose')}: ${poseCount}</span>
-                                ${!asgn.selectable ? `<span class="badge-auto">🔒 ${t('notSelectable')}</span>` : ''}
                             </div>
                         </div>
-                        ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onerror="this.src='https://placehold.co/70x70?text=No+Image'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:70px; height:70px; background:#f0f0f0; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#999;">No img</div>'}
+                        ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onerror="this.style.display='none'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:70px;"></div>'}
                     </div>
                     <div class="slots-row">`;
             
             for (let i = 0; i < poseCount; i++) {
+                const slot = asgn.slots ? asgn.slots[i] : null;
+                const isSelectable = slot ? slot.selectable : true;
                 const val = asgn.values[i];
                 const isFilled = val !== null;
+                const slotName = currentLang === 'en' ? (slot?.name_en || t('photo')) : (slot?.name_th || t('photo'));
+                const slotSize = slot?.size || '';
                 
-                if (asgn.selectable) {
+                if (isSelectable) {
                     html += `<div class="slot-wrapper">
                         <div id="oval_${key}_${i}" class="oval ${isFilled ? 'filled' : ''}" 
                              style="width:${ovalWidth}px; height:${ovalHeight}px;"
                              onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : ''}</div>
                         <span class="slot-number">${i+1}</span>
+                        <span class="slot-name" title="${slotName}">📸 ${slotName}</span>
                     </div>`;
                 } else {
                     html += `<div class="slot-wrapper">
-                        <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;"></div>
+                        <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;">👥</div>
                         <span class="slot-number">${i+1}</span>
+                        <span class="slot-name" title="${slotName}">👥 ${slotName}</span>
                         <span class="auto-note">${t('notSelectable')}</span>
                     </div>`;
                 }
@@ -913,9 +913,12 @@
             let summary = "═══════════════════════════\n   WHITE FOX STUDIO\n   PHOTO SELECTION\n═══════════════════════════\n";
             for (let [key, a] of Object.entries(assignments)) {
                 const name = currentLang === 'en' ? a.nameEn : a.nameTh;
-                summary += `\n📦 ${a.sku} — ${name}\n📏 ${t('size')}: ${a.size || '—'}  |  📷 ${t('pose')}: ${a.pose}\n`;
+                summary += `\n📦 ${a.sku} — ${name}\n`;
                 for (let i = 0; i < a.values.length; i++) {
-                    summary += `   ${String(i+1).padStart(2)}: ${a.values[i] || '❌'}\n`;
+                    const slot = a.slots ? a.slots[i] : null;
+                    const slotName = currentLang === 'en' ? (slot?.name_en || 'Photo') : (slot?.name_th || 'รูป');
+                    const status = a.values[i] ? a.values[i] : (slot?.selectable ? '❌ empty' : '🔒 group photo');
+                    summary += `   ${String(i+1).padStart(2)}: ${status} (${slotName})\n`;
                 }
             }
             alert(summary);
