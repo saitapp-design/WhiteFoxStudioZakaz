@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio · Photo Selection with Architecture Rules</title>
+    <title>White Fox Studio · Photo Selection with Packages & Architecture</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
@@ -405,13 +405,13 @@
         "A11": { slotLabels: ["Group photo"] },
         "A12": { slotLabels: ["Portrait"] },
         "A13": { slotLabels: ["Portrait"] },
-        "A14": { slotLabels: ["Group + Portrait + Logo"] }, // combined photo
+        "A14": { slotLabels: ["Group + Portrait + Logo"] },
         // W: FLOAT FRAME
         "W11": { slotLabels: ["Portrait"] },
         "W12": { slotLabels: ["Portrait"] },
         "W13": { slotLabels: ["Portrait"] },
         "W14": { slotLabels: ["Portrait"] },
-        "W15": { slotLabels: ["Portrait + Logo"] }, // one photo contains both
+        "W15": { slotLabels: ["Portrait + Logo"] },
         "W16": { slotLabels: ["Design 1", "Design 2", "Design 3"] },
         "W17": { slotLabels: ["Group + Logo"] },
         // C: CANVAS
@@ -430,7 +430,7 @@
         "B11": { slotLabels: ["Back Cover", "Front Cover", ...Array.from({length:14}, (_,i) => `Internal Page ${i+1}`)] },
         "B12": { slotLabels: ["Back Cover", "Front Cover", ...Array.from({length:12}, (_,i) => `Internal Page ${i+1}`)] },
         "B13": { slotLabels: ["Back Cover", "Front Cover", ...Array.from({length:29}, (_,i) => `Internal Page ${i+1}`)], notes: ["Group photo required for one internal page"] },
-        "B14": { slotLabels: ["Back Cover", "Front Cover", ...Array.from({length:29}, (_,i) => `Internal Page ${i+1}`)], disabledIndices: [2], notes: ["Teacher's photo not selected", "Group photo required for one internal page"] }, // example: index 2 is teacher slot
+        "B14": { slotLabels: ["Back Cover", "Front Cover", ...Array.from({length:29}, (_,i) => `Internal Page ${i+1}`)], disabledIndices: [2], notes: ["Teacher's photo not selected", "Group photo required for one internal page"] },
         // K: CALENDARS
         "K11": { slotLabels: Array.from({length:20}, (_,i) => `Photo ${i+1}`), notes: ["13 pages of photos"] },
         "K12": { slotLabels: ["Poster Image"] },
@@ -481,38 +481,66 @@
         "ID11": { slotLabels: Array.from({length:38}, (_,i) => `ID Photo ${i+1}`) }
     };
 
-    function getArchitectureForProduct(sku) {
-        if (!sku) return null;
-        const upperSku = sku.toUpperCase();
-        for (let [key, rules] of Object.entries(architectureMap)) {
-            if (upperSku.includes(key)) return rules;
+    // ========== PACKAGE SLOT CONFIGURATION (Q1, Q2, Q3) ==========
+    // Returns { slotLabels: string[], disabledIndices: number[] } for a given package SKU
+    function getPackageSlotConfig(sku, totalSlots) {
+        const upper = sku.toUpperCase();
+        if (upper.includes('Q1') || upper === 'S' || (upper.includes('PACKAGE') && upper.includes('S'))) {
+            // Package S (Q1): 6 photos
+            return {
+                slotLabels: [
+                    "Class Serious + Logo",
+                    "Individual + Logo",
+                    "Individual 1",
+                    "Individual 2",
+                    "Individual 3",
+                    "Individual 4"
+                ],
+                disabledIndices: [0] // "Class Serious + Logo" is "group photo not selected" → disabled
+            };
+        }
+        if (upper.includes('Q2') || upper === 'M' || (upper.includes('PACKAGE') && upper.includes('M'))) {
+            // Package M (Q2): 11 photos
+            return {
+                slotLabels: [
+                    "Class Serious + Logo",
+                    "Class Sabai",
+                    "Individual + Logo",
+                    "Individual 1",
+                    "Individual 2",
+                    "Individual 3",
+                    "Individual 4",
+                    "Individual 5",
+                    "Individual 6",
+                    "Individual 7",
+                    "Individual 8"
+                ],
+                disabledIndices: [0, 1] // both Class Serious + Logo and Class Sabai are "group photo not selected"
+            };
+        }
+        if (upper.includes('Q3') || upper === 'L' || (upper.includes('PACKAGE') && upper.includes('L'))) {
+            // Package L (Q3): 14 photos
+            return {
+                slotLabels: [
+                    "Class Serious + Logo",
+                    "Individual + Logo",
+                    "Class Sabai",
+                    "Individual 6x9",
+                    "Individual 4x6 1",
+                    "Individual 4x6 2",
+                    "Individual 4x6 3",
+                    "Individual 4x6 4",
+                    "Individual 4x6 5",
+                    "Individual 4x6 6",
+                    "Individual 4x6 7",
+                    "Individual 4x6 8",
+                    "Individual 4x6 9",
+                    "Individual 4x6 10"
+                ],
+                disabledIndices: [0, 2] // Class Serious + Logo and Class Sabai are disabled
+            };
         }
         return null;
-    }
-
-    // ========== PACKAGE AUTO-ASSIGN RULES (keep existing) ==========
-    const PACKAGE_AUTO_RULES = {
-        "S": { autoSlots: [{ index: 0, label: "Class Serious + Logo" }] },
-        "M": { autoSlots: [{ index: 0, label: "Class Serious + Logo" }, { index: 1, label: "Class Sabai" }] },
-        "L": { autoSlots: [{ index: 0, label: "Class Serious + Logo" }, { index: 1, label: "Class Sabai" }] }
-    };
-    function detectPackageType(product) {
-        const sku = (product.sku || '').toUpperCase();
-        if (sku.includes('PACKAGE-S') || sku === 'S') return 'S';
-        if (sku.includes('PACKAGE-M') || sku === 'M') return 'M';
-        if (sku.includes('PACKAGE-L') || sku === 'L') return 'L';
-        return null;
-    }
-    function getAutoAssignConfig(product) {
-        if (!product.isPackage) return null;
-        const pkgType = detectPackageType(product);
-        if (!pkgType) return null;
-        const rule = PACKAGE_AUTO_RULES[pkgType];
-        if (!rule) return null;
-        const totalSlots = product.pose || 1;
-        const autoMap = new Array(totalSlots).fill(null);
-        rule.autoSlots.forEach(slot => { if (slot.index < totalSlots) autoMap[slot.index] = slot.label; });
-        return autoMap;
     }
 
     // ========== Supabase & Data ==========
@@ -582,10 +610,13 @@
         }
     }
     function getDemoProducts() {
+        // Include package examples so they are shown in demo mode
         return [
             { id: "demo1", sku: "A11", name_en: "Acrylic Photo A11", name_th: "ภาพอะคริลิค A11", size: "10x10", pose: 1, image_url: null, isPackage: false },
             { id: "demo2", sku: "B13", name_en: "Book B13", name_th: "หนังสือ B13", size: "A5", pose: 31, image_url: null, isPackage: false },
-            { id: "demo3", sku: "K11", name_en: "Calendar K11", name_th: "ปฏิทิน K11", size: "A4", pose: 20, image_url: null, isPackage: false }
+            { id: "demo3", sku: "Q1", name_en: "Package S (Q1)", name_th: "แพ็คเกจ S", size: "Mixed", pose: 6, image_url: null, isPackage: true },
+            { id: "demo4", sku: "Q2", name_en: "Package M (Q2)", name_th: "แพ็คเกจ M", size: "Mixed", pose: 11, image_url: null, isPackage: true },
+            { id: "demo5", sku: "Q3", name_en: "Package L (Q3)", name_th: "แพ็คเกจ L", size: "Mixed", pose: 14, image_url: null, isPackage: true }
         ];
     }
     async function preloadImages(products) {
@@ -636,38 +667,49 @@
         for (let prod of selected) {
             let key = `${prod.isPackage?'pkg':'prd'}_${prod.sku}_${Date.now()}_${Math.random()}`;
             let poseCount = prod.pose || 1;
-            let arch = getArchitectureForProduct(prod.sku);
             let slotLabels = [];
             let selectableMask = new Array(poseCount).fill(true);
-            if (arch && arch.slotLabels && arch.slotLabels.length === poseCount) {
-                slotLabels = arch.slotLabels;
-                if (arch.disabledIndices) arch.disabledIndices.forEach(i => { if (i < poseCount) selectableMask[i] = false; });
-            } else {
-                slotLabels = Array.from({length:poseCount}, (_,i) => `${t('pose')} ${i+1}`);
-            }
-            // override for packages with auto-assign
-            let autoLabels = new Array(poseCount).fill(null);
-            if (prod.isPackage) {
-                let autoConfig = getAutoAssignConfig(prod);
-                if (autoConfig) {
-                    for (let i=0; i<poseCount; i++) {
-                        if (autoConfig[i] !== null) {
-                            selectableMask[i] = false;
-                            autoLabels[i] = autoConfig[i];
-                            slotLabels[i] = autoConfig[i]; // show auto label
-                        }
-                    }
+            
+            // Apply architecture rules if regular product
+            if (!prod.isPackage) {
+                let arch = getArchitectureForProduct(prod.sku);
+                if (arch && arch.slotLabels && arch.slotLabels.length === poseCount) {
+                    slotLabels = arch.slotLabels;
+                    if (arch.disabledIndices) arch.disabledIndices.forEach(i => { if (i < poseCount) selectableMask[i] = false; });
+                } else {
+                    slotLabels = Array.from({length:poseCount}, (_,i) => `${t('pose')} ${i+1}`);
+                }
+            } 
+            // For packages, use the new package slot config
+            else {
+                let pkgConfig = getPackageSlotConfig(prod.sku, poseCount);
+                if (pkgConfig && pkgConfig.slotLabels.length === poseCount) {
+                    slotLabels = pkgConfig.slotLabels;
+                    if (pkgConfig.disabledIndices) pkgConfig.disabledIndices.forEach(i => { if (i < poseCount) selectableMask[i] = false; });
+                } else {
+                    // fallback generic labels
+                    slotLabels = Array.from({length:poseCount}, (_,i) => `Photo ${i+1}`);
                 }
             }
+            
             assignments[key] = {
                 key, id: prod.id, sku: prod.sku, nameEn: prod.name_en, nameTh: prod.name_th,
                 size: prod.size, pose: poseCount, image: prod.image_url, isPackage: prod.isPackage,
                 values: new Array(poseCount).fill(null),
-                selectableMask, slotLabels, autoLabels
+                selectableMask, slotLabels,
+                autoLabels: selectableMask.map((sel, idx) => sel ? null : (slotLabels[idx] || t('notSelectable'))) // store auto label for disabled slots
             };
         }
         render();
         toast(t('ok'));
+    }
+    function getArchitectureForProduct(sku) {
+        if (!sku) return null;
+        const upperSku = sku.toUpperCase();
+        for (let [key, rules] of Object.entries(architectureMap)) {
+            if (upperSku.includes(key)) return rules;
+        }
+        return null;
     }
     function handleOvalClick(prodKey, idx, currentVal) {
         let a = assignments[prodKey];
