@@ -633,7 +633,7 @@
                 }
             }
             
-            // Process packages from Supabase
+            // Process packages from Supabase with proper selectable flags
             if (packagesData && packagesData.length > 0) {
                 for (const pkg of packagesData) {
                     const packageSku = pkg.sku || pkg.slug;
@@ -662,8 +662,8 @@
                     });
                 }
             } else {
-                // Fallback packages with proper selectable flags
-                console.log('Using fallback package definitions');
+                // Fallback packages with proper selectable flags based on requirements
+                console.log('Using fallback package definitions with correct selectable flags');
                 packagesDB = getFallbackPackages();
             }
             
@@ -681,6 +681,9 @@
     }
 
     function getFallbackPackages() {
+        // Package definitions with selectable flags based on requirements
+        // Group photos (Class Serious + Logo, Class Sabai) are NOT selectable
+        // Individual photos ARE selectable
         return [
             {
                 id: "package_Q1",
@@ -734,7 +737,7 @@
     }
 
     function loadRandomOrder() {
-        console.log('🔄 Loading random order...');
+        console.log('🔄 Loading random order with packages...');
         
         // Load all packages
         const selected = [...packagesDB];
@@ -883,7 +886,6 @@
                 const val = asgn.values[i];
                 const isFilled = val !== null;
                 const slotName = currentLang === 'en' ? (slot?.name_en || t('photo')) : (slot?.name_th || t('photo'));
-                const slotSize = slot?.size || '';
                 
                 if (isSelectable) {
                     html += `<div class="slot-wrapper">
@@ -891,7 +893,7 @@
                              style="width:${ovalWidth}px; height:${ovalHeight}px;"
                              onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : ''}</div>
                         <span class="slot-number">${i+1}</span>
-                        <span class="slot-name" title="${slotName}">📸 ${slotName}</span>
+                        <span class="slot-name" title="${slotName}">✅ ${slotName}</span>
                     </div>`;
                 } else {
                     html += `<div class="slot-wrapper">
