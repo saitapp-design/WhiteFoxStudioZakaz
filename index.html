@@ -550,8 +550,7 @@
             isLoading = true;
             render();
             
-            // ===================== LOAD FROM product_cards TABLE =====================
-            // IMPORTANT: SKU values like A12, C13, D13, F12 come from the 'sku' column
+            // ===================== LOAD PRODUCTS FROM product_cards =====================
             console.log('📥 Fetching products from product_cards table...');
             const { data: productCardsData, error: productCardsError } = await supabaseClient
                 .from('product_cards')
@@ -564,12 +563,6 @@
             
             console.log(`✅ Fetched ${productCardsData?.length || 0} products from product_cards`);
             
-            // Log the SKUs we found
-            if (productCardsData && productCardsData.length > 0) {
-                const skus = productCardsData.map(card => card.sku).filter(sku => sku);
-                console.log('📋 SKUs found in database:', skus);
-            }
-            
             // ===================== LOAD PACKAGES =====================
             console.log('📦 Fetching packages from packages_with_price...');
             const { data: packagesData, error: packagesError } = await supabaseClient
@@ -578,135 +571,162 @@
             
             if (packagesError) {
                 console.warn('⚠️ Error fetching packages:', packagesError.message);
-            } else if (packagesData && packagesData.length > 0) {
-                console.log(`✅ Fetched ${packagesData.length} packages`);
-                console.log('📋 Package SKUs:', packagesData.map(p => p.sku));
+            } else {
+                console.log(`✅ Fetched ${packagesData?.length || 0} packages`);
             }
             
-            productsDB = [];
+            // ===================== PROCESS PRODUCTS =====================
+            let processedProducts = [];
             
-            // ===================== PROCESS PRODUCT CARDS =====================
-            // CRITICAL: SKU is taken directly from card.sku column (A12, C13, D13, F12, etc.)
             if (productCardsData && productCardsData.length > 0) {
-                for (const card of productCardsData) {
-                    let pose = 1;
-                    let selectable = true;
-                    let size = card.size || '';
-                    let imageUrl = card.cover_image || null;
+                productCardsData.forEach(card => {
+                    // Parse variants
+                    let variants = [];
+                    try {
+                        if (card.variants) {
+                            if (typeof card.variants === 'string') {
+                                variants = JSON.parse(card.variants);
+                            } else {
+                                variants = card.variants;
+                            }
+                        }
+                    } catch (e) {
+                        console.warn(`Error parsing variants for card:`, e);
+                    }
                     
-                    // ========== SKU IS TAKEN FROM card.sku ==========
-                    // This is where A12, C13, D13, F12 values come from
+                    // Find minimum price
+                    let minPrice = null;
+                    if (variants.length > 0) {
+                        const prices = variants.map(v => v.price || 0);
+                        minPrice = Math.min(...prices);
+                    }
+                    
+                    // Get SKU: first from card.sku, then from first variant, then generate
                     let cardSku = card.sku;
-                    
-                    if (!cardSku && card.article) {
-                        cardSku = card.article;
+                    if (!cardSku && variants.length > 0) {
+                        cardSku = variants[0].sku;
                     }
                     if (!cardSku) {
-                        cardSku = `UNKNOWN_${Date.now()}`;
+                        cardSku = card.card_id || `card_${Date.now()}`;
                     }
                     
-                    console.log(`📦 Processing product: SKU=${cardSku}, Name=${card.name_en || card.name_th}`);
-                    
-                    // Parse variants for pose and size
-                    if (card.variants) {
-                        try {
-                            const variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
-                            if (variants && variants.length > 0) {
-                                if (variants[0].pose) pose = Math.min(parseInt(variants[0].pose), 30);
-                                if (variants[0].size_label) size = variants[0].size_label;
-                                if (variants[0].image_url && !imageUrl) imageUrl = variants[0].image_url;
-                            }
-                        } catch(e) { console.warn('Parse variants error:', e); }
+                    // Get pose count
+                    let pose = 1;
+                    if (variants.length > 0 && variants[0].pose) {
+                        pose = Math.min(parseInt(variants[0].pose), 30);
                     }
-                    
                     if (card.pose) pose = Math.min(parseInt(card.pose), 30);
                     if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 30);
                     if (pose < 1) pose = 1;
                     
-                    const nameEn = card.name_en || `Product ${cardSku}`;
-                    const nameTh = card.name_th || `สินค้า ${cardSku}`;
-                    
-                    // Group photos and logo products are not selectable
+                    // Determine if selectable (group photos are not selectable)
+                    let selectable = true;
+                    const nameEn = card.name_en || '';
                     if (nameEn.toLowerCase().includes('group') || 
                         nameEn.toLowerCase().includes('logo') || 
                         (card.mess && card.mess.toLowerCase().includes('group'))) {
                         selectable = false;
                     }
                     
-                    productsDB.push({
+                    const size = card.size || '';
+                    const imageUrl = card.cover_image || null;
+                    
+                    console.log(`📦 Processing product: SKU=${cardSku}, Name=${card.name_en}, Pose=${pose}, Selectable=${selectable}`);
+                    
+                    processedProducts.push({
                         id: card.card_id || `card_${cardSku}`,
-                        type: 'product',
-                        sku: cardSku,  // ← SKU from database (A12, C13, D13, F12, etc.)
-                        name_en: nameEn,
-                        name_th: nameTh,
+                        sku: cardSku,
+                        name_en: card.name_en || `Product ${cardSku}`,
+                        name_th: card.name_th || `สินค้า ${cardSku}`,
+                        description_en: card.descriptions || card.description_en || '',
+                        description_th: card.descriptions_th || card.description_th || '',
                         size: size,
                         pose: pose,
                         selectable: selectable,
-                        image: imageUrl
+                        base_price: minPrice || card.price || 0,
+                        image_url: imageUrl,
+                        image: imageUrl,
+                        isPackage: false,
+                        variants: variants,
+                        sort_product: card.sort_product !== undefined ? card.sort_product : 999
                     });
-                    
-                    console.log(`   → Added product: ${cardSku} - ${nameEn}, Pose: ${pose}, Selectable: ${selectable}`);
-                }
+                });
             }
             
             // ===================== PROCESS PACKAGES =====================
             if (packagesData && packagesData.length > 0) {
-                for (const pkg of packagesData) {
-                    let pose = 0;
-                    let packageItems = [];
-                    let skuValue = pkg.sku || pkg.slug;
-                    let size = pkg.size || '';
-                    let imageUrl = pkg.image_url || null;
+                console.log(`Processing ${packagesData.length} packages`);
+                
+                packagesData.forEach(pkg => {
+                    if (pkg.visible === false) return;
                     
-                    if (!skuValue) {
-                        skuValue = `PKG_${Date.now()}`;
-                    }
+                    const packageSku = pkg.sku || pkg.slug || `package-${Date.now()}`;
+                    
+                    let packageItems = [];
+                    let totalPhotos = pkg.total_photos || 0;
                     
                     try {
                         if (pkg.contents) {
-                            packageItems = typeof pkg.contents === 'string' ? JSON.parse(pkg.contents) : pkg.contents;
-                            pose = packageItems.reduce((total, item) => total + (item.qty || 1), 0);
+                            if (typeof pkg.contents === 'string') {
+                                packageItems = JSON.parse(pkg.contents);
+                            } else {
+                                packageItems = pkg.contents;
+                            }
+                            totalPhotos = packageItems.reduce((sum, item) => sum + (item.qty || 1), 0);
                         }
-                    } catch(e) { console.warn('Parse package contents error:', e); }
+                    } catch (e) {
+                        console.warn(`Error parsing contents for package ${packageSku}:`, e);
+                    }
                     
-                    if (pkg.total_photos) pose = Math.min(parseInt(pkg.total_photos), 100);
-                    if (pose < 1) pose = 1;
+                    if (totalPhotos < 1) totalPhotos = 1;
                     
-                    const nameEn = pkg.name_en || `Package ${skuValue}`;
-                    const nameTh = pkg.name_th || `แพ็คเกจ ${skuValue}`;
+                    const placeholderImage = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='20'%3E${packageSku}%3C/text%3E%3C/svg%3E`;
                     
-                    productsDB.push({
-                        id: `package_${skuValue}`,
-                        type: 'package',
-                        sku: skuValue,
-                        name_en: nameEn,
-                        name_th: nameTh,
-                        size: size,
-                        pose: pose,
+                    const packageProduct = {
+                        id: `package_${packageSku}`,
+                        sku: packageSku,
+                        name_en: pkg.name_en || packageSku,
+                        name_th: pkg.name_th || pkg.name_en || packageSku,
+                        description_en: pkg.description_en || '',
+                        description_th: pkg.description_th || '',
+                        size: pkg.size || '',
+                        pose: totalPhotos,
                         selectable: true,
-                        image: imageUrl,
+                        price: pkg.price || 0,
+                        old_price: pkg.discount_percent ? Math.round(pkg.price / (1 - pkg.discount_percent/100)) : null,
+                        image_url: pkg.image_url || placeholderImage,
+                        image: pkg.image_url || placeholderImage,
+                        isPackage: true,
                         packageItems: packageItems,
-                        isPackage: true
-                    });
+                        totalPhotos: totalPhotos,
+                        bonus_type: pkg.bonus_type,
+                        bonus_value: pkg.bonus_value,
+                        discount_percent: pkg.discount_percent,
+                        visible: pkg.visible,
+                        sort_order: pkg.sort_order || 999,
+                        sort_product: pkg.sort_order || 999
+                    };
                     
-                    console.log(`   → Added package: ${skuValue} - ${nameEn}, Total photos: ${pose}`);
-                }
+                    console.log(`📦 Package added: ${packageSku} - ${packageProduct.name_en}, Photos: ${totalPhotos}`);
+                    processedProducts.push(packageProduct);
+                });
             }
             
-            // If no products loaded, show demo data
+            productsDB = processedProducts;
+            
             if (productsDB.length === 0) {
-                console.warn('⚠️ No products loaded from Supabase, using demo data');
+                console.warn('⚠️ No products loaded, using demo data');
                 productsDB = getDemoProducts();
             }
             
             console.log(`✅ Total products loaded: ${productsDB.length}`);
-            console.log('📊 Product SKUs loaded:', productsDB.map(p => ({ sku: p.sku, type: p.type, name: p.name_en, pose: p.pose })));
+            console.log('📊 Products list:', productsDB.map(p => ({ sku: p.sku, type: p.isPackage ? 'package' : 'product', name: p.name_en, pose: p.pose })));
             
             isLoading = false;
             toast(`✅ ${productsDB.length} products loaded`);
             
         } catch (error) {
-            console.error('❌ Supabase initialization error:', error);
+            console.error('❌ Supabase error:', error);
             productsDB = getDemoProducts();
             isLoading = false;
             toast(`⚠️ Using demo data (${productsDB.length} products)`);
@@ -716,12 +736,12 @@
     function getDemoProducts() {
         console.log('📦 Using demo product data with SKUs');
         return [
-            { id: "product_A12", type: "product", sku: "A12", name_en: "Acrylic Photo 12x12", name_th: "ภาพถ่ายอะคริลิค 12x12", size: "12x12 inch", pose: 1, selectable: true, image: null },
-            { id: "product_C13", type: "product", sku: "C13", name_en: "Canvas 20x30", name_th: "ผ้าใบ 20x30", size: "20x30 inch", pose: 1, selectable: true, image: null },
-            { id: "product_D13", type: "product", sku: "D13", name_en: "Water Bottle 600ml", name_th: "ขวดน้ำ 600ml", size: "600 ml", pose: 8, selectable: true, image: null },
-            { id: "product_F12", type: "product", sku: "F12", name_en: "Photo Collage", name_th: "ภาพตัดปะ", size: "8x12 inch", pose: 2, selectable: true, image: null },
-            { id: "product_Q3", type: "product", sku: "Q3", name_en: "Package L - Deluxe Set", name_th: "แพ็คเกจ L - ชุดดีลักซ์", size: "Mixed", pose: 5, selectable: true, image: null },
-            { id: "package_Q1", type: "package", sku: "Q1", name_en: "Package S - Starter", name_th: "แพ็คเกจ S - ชุดเริ่มต้น", size: "Mixed", pose: 6, selectable: true, image: null, isPackage: true }
+            { id: "product_A12", sku: "A12", name_en: "Acrylic Photo 12x12", name_th: "ภาพถ่ายอะคริลิค 12x12", size: "12x12 inch", pose: 1, selectable: true, image: null, isPackage: false },
+            { id: "product_C13", sku: "C13", name_en: "Canvas 20x30", name_th: "ผ้าใบ 20x30", size: "20x30 inch", pose: 1, selectable: true, image: null, isPackage: false },
+            { id: "product_D13", sku: "D13", name_en: "Water Bottle 600ml", name_th: "ขวดน้ำ 600ml", size: "600 ml", pose: 8, selectable: true, image: null, isPackage: false },
+            { id: "product_F12", sku: "F12", name_en: "Photo Collage", name_th: "ภาพตัดปะ", size: "8x12 inch", pose: 2, selectable: true, image: null, isPackage: false },
+            { id: "product_Q3", sku: "Q3", name_en: "Package L - Deluxe Set", name_th: "แพ็คเกจ L - ชุดดีลักซ์", size: "Mixed", pose: 5, selectable: true, image: null, isPackage: false },
+            { id: "package_Q1", sku: "Q1", name_en: "Package S - Starter", name_th: "แพ็คเกจ S - ชุดเริ่มต้น", size: "Mixed", pose: 6, selectable: true, image: null, isPackage: true }
         ];
     }
 
@@ -737,13 +757,13 @@
         }
         
         const selected = shuffled.slice(0, Math.min(10, shuffled.length));
-        console.log(`📋 Selected ${selected.length} products for order:`, selected.map(p => p.sku));
+        console.log(`📋 Selected ${selected.length} products:`, selected.map(p => p.sku));
         
         currentOrder = { number: "1111", products: selected };
         assignments = {};
         
         for (let prod of selected) {
-            const key = `${prod.type}_${prod.sku}_${Date.now()}_${Math.random()}`;
+            const key = `${prod.isPackage ? 'package' : 'product'}_${prod.sku}_${Date.now()}_${Math.random()}`;
             assignments[key] = {
                 key: key,
                 id: prod.id,
@@ -754,7 +774,6 @@
                 pose: prod.pose,
                 selectable: prod.selectable,
                 image: prod.image,
-                type: prod.type,
                 isPackage: prod.isPackage || false,
                 values: new Array(prod.pose).fill(null)
             };
@@ -844,7 +863,6 @@
             const ovalWidth = getOvalWidth(poseCount);
             const ovalHeight = 42;
             const imageUrl = getDirectImageUrl(asgn.image);
-            const isPackage = asgn.isPackage || asgn.type === 'package';
             
             html += `<div class="product-card">
                 <div class="product-content">
@@ -852,7 +870,7 @@
                         <div class="product-info">
                             <div>
                                 <span class="product-sku">${asgn.sku || 'N/A'}</span>
-                                ${isPackage ? `<span class="badge-package">📦 ${t('package')}</span>` : ''}
+                                ${asgn.isPackage ? `<span class="badge-package">📦 ${t('package')}</span>` : ''}
                             </div>
                             <div class="product-title">${name || asgn.sku}</div>
                             <div class="product-details">
