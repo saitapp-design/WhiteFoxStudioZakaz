@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>White Fox Studio · Photo Selection with Auto-Assign</title>
+    <title>White Fox Studio · Complete Photo Selection System</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/Rh1kRjsQ/LOGOTIP-WF-new.png">
     <style>
         * {
@@ -26,8 +26,9 @@
             --red: #dc2626;
             --red-light: #fee2e2;
             --slot-filled: #c8e6df;
-            --auto-bg: #f1f3f4;
-            --auto-border: #9ca3af;
+            --cover: #fef3c7;
+            --internal: #e0e7ff;
+            --design: #f3e8ff;
         }
 
         .header {
@@ -154,6 +155,33 @@
             width: 100%;
         }
 
+        .category-filter {
+            background: white;
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+
+        .category-btn {
+            background: #f0f0f0;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .category-btn.active {
+            background: var(--teal);
+            color: white;
+        }
+
         .order-header {
             background: white;
             border-radius: 1rem;
@@ -204,13 +232,24 @@
             flex: 1;
         }
 
-        .product-sku {
+        .product-category {
             background: var(--teal-light);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--teal);
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .product-sku {
+            background: #e9ecef;
             padding: 0.25rem 0.8rem;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 700;
-            color: var(--teal);
+            color: #495057;
             font-family: monospace;
             display: inline-block;
             margin-bottom: 0.5rem;
@@ -247,27 +286,6 @@
             font-weight: 600;
         }
 
-        .badge-auto {
-            background: var(--red-light);
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            color: var(--red);
-            font-weight: 500;
-            display: inline-block;
-        }
-
-        .badge-package {
-            background: #ffd966;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            color: #856404;
-            font-weight: 600;
-            display: inline-block;
-            margin-left: 0.5rem;
-        }
-
         .product-image {
             width: 70px;
             height: 70px;
@@ -284,10 +302,26 @@
             transform: scale(1.05);
         }
 
-        .slots-row {
+        .slots-container {
             margin-top: 1rem;
             padding-top: 0.8rem;
             border-top: 1px solid var(--border);
+        }
+
+        .slot-section {
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .slots-row {
             display: flex;
             flex-wrap: wrap;
             gap: 0.8rem;
@@ -330,13 +364,27 @@
             color: var(--teal-dark);
         }
 
-        /* Disabled auto-assigned slots: grey, not clickable */
         .oval.disabled {
             background: #e5e7eb;
             border-color: #9ca3af;
             cursor: not-allowed;
             color: #6b7280;
             opacity: 0.9;
+        }
+
+        .oval.cover {
+            background: var(--cover);
+            border-color: #f59e0b;
+        }
+
+        .oval.internal {
+            background: var(--internal);
+            border-color: #6366f1;
+        }
+
+        .oval.design {
+            background: var(--design);
+            border-color: #a855f7;
         }
 
         .oval-input {
@@ -359,19 +407,31 @@
             color: #8b9aab;
         }
 
-        .auto-note {
+        .slot-type {
+            font-size: 0.5rem;
+            font-weight: 500;
+            background: #f3f4f6;
+            padding: 0.1rem 0.3rem;
+            border-radius: 10px;
+            color: #6b7280;
+        }
+
+        .slot-note {
             font-size: 0.55rem;
             font-weight: 500;
-            color: #4b5563;
-            background: #e5e7eb;
+            color: #dc2626;
+            background: var(--red-light);
             padding: 0.15rem 0.4rem;
             border-radius: 20px;
+            max-width: 120px;
+            text-align: center;
         }
 
         .global-actions {
             margin-top: 1.5rem;
             display: flex;
             justify-content: flex-end;
+            gap: 1rem;
         }
 
         .toast {
@@ -415,16 +475,13 @@
             color: var(--teal);
             font-size: 1.1rem;
         }
-        
-        .preload-placeholder {
-            min-height: 200px;
-        }
 
         @media (max-width: 700px) {
             .slots-row { gap: 0.6rem; }
             .oval { height: 38px; font-size: 0.75rem; min-width: 60px; padding: 0 0.5rem; }
             .product-image { width: 55px; height: 55px; }
             .product-title { font-size: 0.9rem; }
+            .slot-note { font-size: 0.5rem; max-width: 100px; }
         }
     </style>
 </head>
@@ -462,93 +519,12 @@
     let productsDB = [];
     let currentLang = 'en';
     let currentOrder = null;
-    let assignments = {};  // structure: { productKey: { ..., values: [], selectableMask: bool[], autoAssignedLabels: [] } }
+    let assignments = {};
     let editingSlot = null;
     let isLoading = true;
+    let currentCategory = 'all';
 
-    // ========== PACKAGE AUTO-ASSIGNMENT RULES ==========
-    // Define rules based on package SKU or name patterns.
-    // Each rule defines which slot indices (0-based) are auto-assigned and their display label.
-    // Future packages can be added here.
-    const PACKAGE_AUTO_RULES = {
-        // Package S: "Class Serious + Logo" auto-assigned (slot 0)
-        "S": {
-            autoSlots: [
-                { index: 0, label: "Class Serious + Logo" }
-            ]
-        },
-        // Package M: "Class Serious + Logo" (slot 0) + "Class Sabai" (slot 1)
-        "M": {
-            autoSlots: [
-                { index: 0, label: "Class Serious + Logo" },
-                { index: 1, label: "Class Sabai" }
-            ]
-        },
-        // Package L: "Class Serious + Logo" (slot0), "Class Sabai" (slot1), plus third slot auto if exists
-        "L": {
-            autoSlots: [
-                { index: 0, label: "Class Serious + Logo" },
-                { index: 1, label: "Class Sabai" }
-                // third slot remains selectable unless future rules extend
-            ]
-        }
-    };
-    
-    // Helper: detect package size/type from SKU or name
-    function detectPackageType(product) {
-        const sku = (product.sku || '').toUpperCase();
-        const nameEn = (product.name_en || '').toUpperCase();
-        const nameTh = (product.name_th || '').toUpperCase();
-        
-        // Check SKU patterns first
-        if (sku.includes('PACKAGE-S') || sku === 'S' || nameEn.includes('PACKAGE S') || nameEn.includes('STARTER')) return 'S';
-        if (sku.includes('PACKAGE-M') || sku === 'M' || nameEn.includes('PACKAGE M') || nameEn.includes('MEDIUM')) return 'M';
-        if (sku.includes('PACKAGE-L') || sku === 'L' || nameEn.includes('PACKAGE L') || nameEn.includes('DELUXE') || nameEn.includes('LARGE')) return 'L';
-        
-        // fallback: check if it's a package and has specific keywords
-        if (product.isPackage) {
-            if (nameEn.includes('SERIOUS') && nameEn.includes('LOGO')) return 'S';
-        }
-        return null;
-    }
-    
-    // Generate auto-assign config for a package product
-    function getAutoAssignConfig(product) {
-        if (!product.isPackage) return null;
-        const pkgType = detectPackageType(product);
-        if (!pkgType) return null;
-        const rule = PACKAGE_AUTO_RULES[pkgType];
-        if (!rule) return null;
-        
-        // Build array of auto-assigned indices and their labels
-        const totalSlots = product.pose || 1;
-        const autoMap = new Array(totalSlots).fill(null);
-        rule.autoSlots.forEach(slot => {
-            if (slot.index < totalSlots) {
-                autoMap[slot.index] = slot.label;
-            }
-        });
-        return autoMap;
-    }
-    
-    // Preload images for all products to avoid layout shift
-    async function preloadProductImages(products) {
-        const imageUrls = products
-            .map(p => p.image_url || p.image)
-            .filter(url => url && url.startsWith('http') && !url.includes('data:image/svg'));
-        
-        const loadPromises = imageUrls.map(url => {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve(true);
-                img.onerror = () => resolve(false);
-                img.src = url;
-            });
-        });
-        await Promise.all(loadPromises);
-        console.log(`✅ Preloaded ${imageUrls.length} images`);
-    }
-
+    // Translations
     const trans = {
         en: { 
             enter: "Enter Order Number", btn: "Continue", invalid: "Use code 1111", 
@@ -556,14 +532,37 @@
             range: `Use ${MIN_PHOTO}–${MAX_PHOTO}`, 
             saved: "✓ Selection saved", back: "← Back", notSelectable: "Auto-assigned",
             loading: "Loading products...", error: "Error", viewPhoto: "View photo", 
-            size: "Size", pose: "Photos", noImage: "No image", package: "Package"
+            size: "Size", pose: "Total Photos", noImage: "No image",
+            categories: "Categories", all: "All",
+            cover: "Cover", backCover: "Back Cover", frontCover: "Front Cover",
+            internal: "Internal", design: "Design", portrait: "Portrait",
+            group: "Group", logo: "Logo", brand: "Brand",
+            selectPhoto: "Select photo number", note: "Note"
+        },
+        ru: { 
+            enter: "Введите номер заказа", btn: "Продолжить", invalid: "Используйте код 1111", 
+            ok: "✓ Заказ загружен", dup: "⚠️ Номер фото уже используется", 
+            range: `Используйте ${MIN_PHOTO}–${MAX_PHOTO}`, 
+            saved: "✓ Выбор сохранен", back: "← Назад", notSelectable: "Автоназначение",
+            loading: "Загрузка товаров...", error: "Ошибка", viewPhoto: "Просмотр фото",
+            size: "Размер", pose: "Всего фото", noImage: "Нет фото",
+            categories: "Категории", all: "Все",
+            cover: "Обложка", backCover: "Задняя обложка", frontCover: "Передняя обложка",
+            internal: "Внутренняя", design: "Дизайн", portrait: "Портрет",
+            group: "Групповое", logo: "Логотип", brand: "Бренд",
+            selectPhoto: "Выберите номер фото", note: "Примечание"
         },
         th: { 
             enter: "กรอกหมายเลขคำสั่งซื้อ", btn: "ดำเนินการ", invalid: "ใช้รหัส 1111", 
             ok: "✓ โหลดแล้ว", dup: "⚠️ หมายเลขรูปซ้ำ", range: `ใช้ ${MIN_PHOTO}–${MAX_PHOTO}`, 
             saved: "✓ บันทึกแล้ว", back: "← กลับ", notSelectable: "กำหนดอัตโนมัติ",
             loading: "กำลังโหลดสินค้า...", error: "เกิดข้อผิดพลาด", viewPhoto: "ดูรูป",
-            size: "ขนาด", pose: "จำนวนรูป", noImage: "ไม่มีรูป", package: "แพ็คเกจ"
+            size: "ขนาด", pose: "จำนวนรูปทั้งหมด", noImage: "ไม่มีรูป",
+            categories: "หมวดหมู่", all: "ทั้งหมด",
+            cover: "ปก", backCover: "ปกหลัง", frontCover: "ปกหน้า",
+            internal: "ภายใน", design: "ดีไซน์", portrait: "ภาพบุคคล",
+            group: "กลุ่ม", logo: "โลโก้", brand: "แบรนด์",
+            selectPhoto: "เลือกหมายเลขรูป", note: "หมายเหตุ"
         }
     };
 
@@ -587,12 +586,10 @@
         return false;
     }
 
-    // Set value with auto-assign protection
     function setValue(prodKey, idx, val) {
         const a = assignments[prodKey];
         if (!a) return false;
-        // Disable editing if slot is auto-assigned
-        if (a.selectableMask && a.selectableMask[idx] === false) {
+        if (a.disabledSlots && a.disabledSlots[idx]) {
             toast(t('notSelectable'));
             return false;
         }
@@ -637,6 +634,91 @@
         document.body.appendChild(modal);
     }
 
+    // Parse architecture sequence and create slot configurations
+    function parseArchitectureSequence(sequence, notes, totalPhotos) {
+        if (!sequence || sequence === 'Not specified') {
+            // Default: create generic slots
+            return Array(totalPhotos).fill(null).map((_, i) => ({
+                type: 'photo',
+                label: `Photo ${i + 1}`,
+                note: null,
+                disabled: false
+            }));
+        }
+
+        const slots = [];
+        const parts = sequence.split(',').map(p => p.trim());
+        
+        for (let i = 0; i < parts.length && i < totalPhotos; i++) {
+            let type = 'photo';
+            let label = '';
+            let note = null;
+            let disabled = false;
+            
+            const part = parts[i].toLowerCase();
+            
+            if (part.includes('cover') || part.includes('обложк')) {
+                if (part.includes('back') || part.includes('задн')) {
+                    type = 'backCover';
+                    label = t('backCover');
+                } else if (part.includes('front') || part.includes('передн')) {
+                    type = 'frontCover';
+                    label = t('frontCover');
+                } else {
+                    type = 'cover';
+                    label = t('cover');
+                }
+            } else if (part.includes('internal') || part.includes('внутр')) {
+                type = 'internal';
+                label = t('internal');
+            } else if (part.includes('design')) {
+                type = 'design';
+                label = t('design');
+            } else if (part.includes('portr') || part.includes('портрет')) {
+                type = 'portrait';
+                label = t('portrait');
+            } else if (part.includes('group')) {
+                type = 'group';
+                label = t('group');
+                // Check if group photo should NOT be selected
+                if (notes && (notes.toLowerCase().includes('group photo is not selected') || 
+                              notes.toLowerCase().includes('групповое фото не выбирается'))) {
+                    disabled = true;
+                    note = t('notSelectable');
+                }
+            } else if (part.includes('logo') || part.includes('бренд')) {
+                type = 'logo';
+                label = t('logo');
+            } else if (part.includes('brand')) {
+                type = 'brand';
+                label = t('brand');
+            } else {
+                type = 'photo';
+                label = `Photo ${i + 1}`;
+            }
+            
+            slots.push({
+                type: type,
+                label: label,
+                note: note,
+                disabled: disabled,
+                originalSequence: parts[i]
+            });
+        }
+        
+        // Fill remaining slots if totalPhotos > parts length
+        while (slots.length < totalPhotos) {
+            slots.push({
+                type: 'photo',
+                label: `Photo ${slots.length + 1}`,
+                note: null,
+                disabled: false
+            });
+        }
+        
+        return slots;
+    }
+
     async function loadProductsFromSupabase() {
         console.log('🚀 Initializing Supabase client...');
         
@@ -647,7 +729,7 @@
             isLoading = true;
             render();
             
-            // Fetch product_cards
+            // Fetch products from product_cards table
             console.log('📥 Fetching products from product_cards...');
             const { data: productCardsData, error: productCardsError } = await supabaseClient
                 .from('product_cards')
@@ -656,169 +738,158 @@
             if (productCardsError) throw productCardsError;
             console.log(`✅ Fetched ${productCardsData?.length || 0} products`);
             
-            // Fetch packages_with_price
-            console.log('📦 Fetching packages from packages_with_price...');
-            const { data: packagesData, error: packagesError } = await supabaseClient
-                .from('packages_with_price')
-                .select('*');
-            
-            if (packagesError) console.warn('⚠️ Packages error:', packagesError.message);
-            else console.log(`✅ Fetched ${packagesData?.length || 0} packages`);
-            
             let processedProducts = [];
             
-            // Process regular products
             if (productCardsData) {
                 productCardsData.forEach(card => {
+                    // Parse variants to get pose count
+                    let pose = 1;
                     let variants = [];
                     try {
                         if (card.variants) {
                             variants = typeof card.variants === 'string' ? JSON.parse(card.variants) : card.variants;
+                            if (variants.length > 0 && variants[0].pose) {
+                                pose = Math.min(parseInt(variants[0].pose), 50);
+                            }
                         }
                     } catch(e) { console.warn(e); }
                     
-                    let pose = 1;
-                    if (variants.length > 0 && variants[0].pose) pose = Math.min(parseInt(variants[0].pose), 30);
-                    if (card.pose) pose = Math.min(parseInt(card.pose), 30);
-                    if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 30);
+                    if (card.total_photos) pose = Math.min(parseInt(card.total_photos), 50);
+                    if (card.pose) pose = Math.min(parseInt(card.pose), 50);
                     
-                    let selectable = true;
-                    const nameEn = card.name_en || '';
-                    if (nameEn.toLowerCase().includes('group') || nameEn.toLowerCase().includes('logo')) selectable = false;
+                    // Determine category from SKU prefix
+                    let category = 'other';
+                    const sku = (card.sku || '').toUpperCase();
+                    if (sku.startsWith('A')) category = 'acrylic';
+                    else if (sku.startsWith('W')) category = 'frame';
+                    else if (sku.startsWith('C')) category = 'canvas';
+                    else if (sku.startsWith('F')) category = 'photoBox';
+                    else if (sku.startsWith('B')) category = 'book';
+                    else if (sku.startsWith('K')) category = 'calendar';
+                    else if (sku.startsWith('D')) category = 'mug';
+                    else if (sku.startsWith('S')) category = 'standalone';
+                    else if (sku.startsWith('E')) category = 'accessory';
+                    else if (sku.startsWith('X')) category = 'poster';
+                    else if (sku.startsWith('P')) category = 'print';
+                    else if (sku.startsWith('J')) category = 'digital';
+                    else if (sku.startsWith('ID')) category = 'id';
+                    
+                    // Parse architecture sequence
+                    let architectureSequence = card.architecture_sequence || card.sequence || '';
+                    let selectionNotes = card.selection_notes || card.mess || card.notes || '';
+                    
+                    const slotConfig = parseArchitectureSequence(architectureSequence, selectionNotes, pose);
                     
                     processedProducts.push({
-                        id: card.card_id || `card_${Date.now()}`,
-                        sku: card.sku || `SKU_${card.card_id}`,
-                        name_en: card.name_en || 'Product',
-                        name_th: card.name_th || 'สินค้า',
+                        id: card.card_id || `card_${card.sku}`,
+                        sku: card.sku,
+                        name_en: card.name_en || `Product ${card.sku}`,
+                        name_th: card.name_th || `สินค้า ${card.sku}`,
+                        name_ru: card.name_ru || card.name_en || `Товар ${card.sku}`,
+                        category: category,
+                        categoryName: getCategoryName(category),
                         size: card.size || '',
                         pose: pose,
-                        selectable: selectable,
-                        image_url: card.cover_image || null,
-                        image: card.cover_image || null,
-                        isPackage: false,
-                        sort_product: card.sort_product || 999
+                        image_url: card.cover_image || card.image || null,
+                        architectureSequence: architectureSequence,
+                        selectionNotes: selectionNotes,
+                        slotConfig: slotConfig,
+                        sort_order: card.sort_product || card.sort_order || 999
                     });
                 });
             }
             
-            // Process packages with auto-assignment rules
-            if (packagesData && packagesData.length) {
-                packagesData.forEach(pkg => {
-                    if (pkg.visible === false) return;
-                    
-                    let packageItems = [];
-                    let totalPhotos = pkg.total_photos || 0;
-                    try {
-                        if (pkg.contents) {
-                            packageItems = typeof pkg.contents === 'string' ? JSON.parse(pkg.contents) : pkg.contents;
-                            totalPhotos = packageItems.reduce((sum, item) => sum + (item.qty || 1), 0);
-                        }
-                    } catch(e) { console.warn(e); }
-                    if (totalPhotos < 1) totalPhotos = 1;
-                    
-                    const packageSku = pkg.sku || pkg.slug || `PACKAGE-${Date.now()}`;
-                    const placeholderImage = pkg.image_url || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='20'%3E${packageSku}%3C/text%3E%3C/svg%3E`;
-                    
-                    processedProducts.push({
-                        id: `package_${packageSku}`,
-                        sku: packageSku,
-                        name_en: pkg.name_en || packageSku,
-                        name_th: pkg.name_th || pkg.name_en || packageSku,
-                        size: pkg.size || '',
-                        pose: totalPhotos,
-                        selectable: true,
-                        image_url: pkg.image_url || placeholderImage,
-                        image: pkg.image_url || placeholderImage,
-                        isPackage: true,
-                        packageItems: packageItems,
-                        totalPhotos: totalPhotos,
-                        sort_product: pkg.sort_order || 999
-                    });
-                });
-            }
-            
-            productsDB = processedProducts.sort((a,b) => (a.sort_product||999) - (b.sort_product||999));
+            productsDB = processedProducts.sort((a,b) => a.sort_order - b.sort_order);
             
             if (productsDB.length === 0) {
-                productsDB = getDemoProducts();
+                productsDB = getDemoProductsWithArchitecture();
             }
-            
-            // Preload images to avoid layout shifts
-            await preloadProductImages(productsDB);
             
             isLoading = false;
             toast(`✅ ${productsDB.length} products loaded`);
             
         } catch (error) {
             console.error('❌ Supabase error:', error);
-            productsDB = getDemoProducts();
-            await preloadProductImages(productsDB);
+            productsDB = getDemoProductsWithArchitecture();
             isLoading = false;
             toast(`⚠️ Using demo data (${productsDB.length} products)`);
         }
     }
 
-    function getDemoProducts() {
+    function getCategoryName(category) {
+        const names = {
+            acrylic: 'Acrylic Photo',
+            frame: 'Float Frame',
+            canvas: 'Canvas',
+            photoBox: 'Photo Box & Frames',
+            book: 'Books',
+            calendar: 'Calendars',
+            mug: 'Mugs & Bottles',
+            standalone: 'Standalone & Stickers',
+            accessory: 'Accessories',
+            poster: 'Posters & Bags',
+            print: 'Photo Prints',
+            digital: 'Digital Photos',
+            id: 'ID Photos',
+            other: 'Other Products'
+        };
+        return names[category] || category;
+    }
+
+    function getDemoProductsWithArchitecture() {
         return [
-            { id: "prod_A12", sku: "A12", name_en: "Acrylic Photo 12x12", name_th: "ภาพอะคริลิค", size: "12x12 inch", pose: 1, selectable: true, image: null, isPackage: false },
-            { id: "prod_C13", sku: "C13", name_en: "Canvas 20x30", name_th: "ผ้าใบ", size: "20x30 inch", pose: 1, selectable: true, image: null, isPackage: false },
-            { id: "package_S1", sku: "PACKAGE-S", name_en: "Package S - Starter", name_th: "แพ็คเกจ S", size: "Mixed", pose: 3, selectable: true, image: null, isPackage: true },
-            { id: "package_M1", sku: "PACKAGE-M", name_en: "Package M - Medium", name_th: "แพ็คเกจ M", size: "Mixed", pose: 4, selectable: true, image: null, isPackage: true },
-            { id: "package_L1", sku: "PACKAGE-L", name_en: "Package L - Deluxe", name_th: "แพ็คเกจ L", size: "Mixed", pose: 5, selectable: true, image: null, isPackage: true }
+            { sku: "A11", name_en: "Acrylic Photo 11x11", name_th: "ภาพอะคริลิค 11x11", name_ru: "Акриловое фото 11x11", category: "acrylic", categoryName: "Acrylic Photo", size: "11x11 inch", pose: 1, architectureSequence: "1. group", selectionNotes: "Group photo is selected.", slotConfig: [{type:"group", label:"Group", note:null, disabled:false}] },
+            { sku: "A12", name_en: "Acrylic Photo 12x12", name_th: "ภาพอะคริลิค 12x12", name_ru: "Акриловое фото 12x12", category: "acrylic", size: "12x12 inch", pose: 1, architectureSequence: "1. portr", selectionNotes: "", slotConfig: [{type:"portrait", label:"Portrait", note:null, disabled:false}] },
+            { sku: "A14", name_en: "Acrylic Photo 14x14", name_th: "ภาพอะคริลิค 14x14", name_ru: "Акриловое фото 14x14", category: "acrylic", size: "14x14 inch", pose: 2, architectureSequence: "1. group+portr, 2. brand", selectionNotes: "Group photo is not selected. One image contains group and portrait with logo.", slotConfig: [{type:"group", label:"Group+Portrait", note:"Contains group+portrait+logo", disabled:false}, {type:"brand", label:"Brand", note:null, disabled:false}] },
+            { sku: "B11", name_en: "Photo Book 16 Pages", name_th: "อัลบั้มรูป 16 หน้า", name_ru: "Фотоальбом 16 страниц", category: "book", size: "8x8 inch", pose: 16, architectureSequence: "Back Cover, Front Cover", selectionNotes: "Two main photos for front/back cover of 16-page book", slotConfig: [{type:"backCover", label:"Back Cover", note:null, disabled:false}, {type:"frontCover", label:"Front Cover", note:null, disabled:false}, ...Array(14).fill({type:"internal", label:"Internal", note:null, disabled:false})] },
+            { sku: "B12", name_en: "Photo Book 14 Pages", name_th: "อัลบั้มรูป 14 หน้า", name_ru: "Фотоальбом 14 страниц", category: "book", size: "8x8 inch", pose: 14, architectureSequence: "Back Cover, Front Cover, 12 internal photos", selectionNotes: "Two cover photos + 12 internal pages", slotConfig: [{type:"backCover", label:"Back Cover", note:null, disabled:false}, {type:"frontCover", label:"Front Cover", note:null, disabled:false}, ...Array(12).fill({type:"internal", label:"Internal", note:null, disabled:false})] },
+            { sku: "K15", name_en: "Calendar with Group Photo", name_th: "ปฏิทินพร้อมรูปกลุ่ม", name_ru: "Календарь с групповым фото", category: "calendar", size: "A4", pose: 12, architectureSequence: "Group photo selection required", selectionNotes: "Choose a group photo", slotConfig: Array(12).fill(null).map((_,i) => ({type: i===0 ? "group" : "photo", label: i===0 ? "Group Photo" : `Photo ${i+1}`, note: i===0 ? "Group photo required" : null, disabled: false})) }
         ];
     }
 
     function loadRandomOrder() {
         if (productsDB.length === 0) return;
         
-        const shuffled = [...productsDB];
+        let filtered = currentCategory === 'all' ? productsDB : productsDB.filter(p => p.category === currentCategory);
+        if (filtered.length === 0) filtered = productsDB;
+        
+        const shuffled = [...filtered];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
         
-        const selected = shuffled.slice(0, Math.min(8, shuffled.length));
-        console.log(`📋 Order products:`, selected.map(p => p.sku));
+        const selected = shuffled.slice(0, Math.min(10, shuffled.length));
         
         currentOrder = { number: "1111", products: selected };
         assignments = {};
         
         for (let prod of selected) {
-            const key = `${prod.isPackage ? 'pkg' : 'prd'}_${prod.sku}_${Date.now()}_${Math.random()}`;
-            const poseCount = prod.pose || 1;
+            const key = `${prod.sku}_${Date.now()}_${Math.random()}`;
+            const poseCount = prod.pose;
+            const slotConfig = prod.slotConfig || Array(poseCount).fill(null).map((_,i) => ({type:'photo', label:`Photo ${i+1}`, note:null, disabled:false}));
             
-            // Determine auto-assign configuration for packages
-            let autoConfig = null;
-            let selectableMask = new Array(poseCount).fill(true);
-            let autoLabels = new Array(poseCount).fill(null);
-            
-            if (prod.isPackage) {
-                autoConfig = getAutoAssignConfig(prod);
-                if (autoConfig) {
-                    for (let i = 0; i < poseCount; i++) {
-                        if (autoConfig[i] !== null) {
-                            selectableMask[i] = false;   // disabled, not clickable
-                            autoLabels[i] = autoConfig[i];
-                        }
-                    }
-                }
-            }
+            const disabledSlots = slotConfig.map(slot => slot.disabled === true);
+            const slotNotes = slotConfig.map(slot => slot.note);
+            const slotTypes = slotConfig.map(slot => slot.type);
+            const slotLabels = slotConfig.map(slot => slot.label);
             
             assignments[key] = {
                 key: key,
-                id: prod.id,
                 sku: prod.sku,
                 nameEn: prod.name_en,
                 nameTh: prod.name_th,
+                nameRu: prod.name_ru,
+                category: prod.category,
+                categoryName: prod.categoryName,
                 size: prod.size,
                 pose: poseCount,
-                selectable: prod.selectable && !prod.isPackage ? true : true, // packages are selectable except auto slots
-                image: prod.image_url || prod.image,
-                isPackage: prod.isPackage || false,
+                image: prod.image_url,
                 values: new Array(poseCount).fill(null),
-                selectableMask: selectableMask,
-                autoLabels: autoLabels
+                disabledSlots: disabledSlots,
+                slotNotes: slotNotes,
+                slotTypes: slotTypes,
+                slotLabels: slotLabels
             };
         }
         render();
@@ -828,8 +899,7 @@
     function handleOvalClick(prodKey, idx, currentVal) {
         const a = assignments[prodKey];
         if (!a) return;
-        // Check if this slot is auto-assigned (disabled)
-        if (a.selectableMask && a.selectableMask[idx] === false) {
+        if (a.disabledSlots && a.disabledSlots[idx]) {
             toast(t('notSelectable'));
             return;
         }
@@ -848,6 +918,7 @@
         input.max = MAX_PHOTO;
         input.style.width = `${width}px`;
         input.style.height = `${height}px`;
+        input.placeholder = t('selectPhoto');
         
         ovalDiv.replaceWith(input);
         input.focus();
@@ -871,6 +942,16 @@
         editingSlot = `${prodKey}_${idx}`;
     }
 
+    function getOvalClass(type, isFilled, isDisabled) {
+        if (isDisabled) return 'oval disabled';
+        let baseClass = 'oval';
+        if (isFilled) baseClass += ' filled';
+        if (type === 'cover' || type === 'frontCover' || type === 'backCover') baseClass += ' cover';
+        if (type === 'internal') baseClass += ' internal';
+        if (type === 'design') baseClass += ' design';
+        return baseClass;
+    }
+
     function render() {
         const container = document.getElementById('app');
         
@@ -880,11 +961,30 @@
         }
         
         if (!currentOrder) {
-            container.innerHTML = `<div class="login-card">
+            // Render category filter on login screen too
+            const categories = ['all', 'acrylic', 'frame', 'canvas', 'photoBox', 'book', 'calendar', 'mug', 'standalone', 'accessory', 'poster', 'print'];
+            
+            let catsHtml = `<div class="category-filter">
+                <span style="font-weight:600; margin-right:0.5rem;">${t('categories')}:</span>`;
+            categories.forEach(cat => {
+                const displayName = cat === 'all' ? t('all') : getCategoryName(cat);
+                catsHtml += `<button class="category-btn ${currentCategory === cat ? 'active' : ''}" data-cat="${cat}">${displayName}</button>`;
+            });
+            catsHtml += `</div>`;
+            
+            container.innerHTML = catsHtml + `<div class="login-card">
                 <h3>${t('enter')}</h3>
                 <input type="text" id="loginCode" class="order-input" placeholder="1111" value="1111">
                 <button class="btn-primary" id="loginExec">${t('btn')}</button>
             </div>`;
+            
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentCategory = btn.dataset.cat;
+                    render();
+                });
+            });
+            
             document.getElementById('loginExec')?.addEventListener('click', () => {
                 const code = document.getElementById('loginCode').value.trim();
                 if (code === '1111') loadRandomOrder();
@@ -906,10 +1006,9 @@
         </div>`;
         
         for (let [key, asgn] of Object.entries(assignments)) {
-            const name = currentLang === 'en' ? asgn.nameEn : asgn.nameTh;
+            const name = currentLang === 'en' ? asgn.nameEn : (currentLang === 'ru' ? asgn.nameRu : asgn.nameTh);
             const poseCount = asgn.pose;
             const ovalWidth = getOvalWidth(poseCount);
-            const ovalHeight = 42;
             const imageUrl = getDirectImageUrl(asgn.image);
             
             html += `<div class="product-card">
@@ -917,10 +1016,10 @@
                     <div class="product-header">
                         <div class="product-info">
                             <div>
-                                <span class="product-sku">${asgn.sku || 'N/A'}</span>
-                                ${asgn.isPackage ? `<span class="badge-package">📦 ${t('package')}</span>` : ''}
+                                <span class="product-category">${asgn.categoryName}</span>
+                                <span class="product-sku">${asgn.sku}</span>
                             </div>
-                            <div class="product-title">${name || asgn.sku}</div>
+                            <div class="product-title">${name}</div>
                             <div class="product-details">
                                 ${asgn.size ? `<span class="product-size">📏 ${t('size')}: ${asgn.size}</span>` : ''}
                                 <span class="product-pose">📷 ${t('pose')}: ${poseCount}</span>
@@ -928,32 +1027,28 @@
                         </div>
                         ${imageUrl ? `<img class="product-image" src="${imageUrl}" alt="${name}" onerror="this.src='https://placehold.co/70x70?text=No+Image'" onclick="showImageModal('${imageUrl}', '${name.replace(/'/g, "\\'")}')" title="${t('viewPhoto')}">` : '<div style="width:70px; height:70px; background:#f0f0f0; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#999;">No img</div>'}
                     </div>
-                    <div class="slots-row">`;
+                    <div class="slots-container">`;
             
+            // Group slots by sections if needed (covers first, then internal)
+            html += `<div class="slots-row">`;
             for (let i = 0; i < poseCount; i++) {
                 const val = asgn.values[i];
                 const isFilled = val !== null;
-                const isAutoSlot = asgn.selectableMask && asgn.selectableMask[i] === false;
-                const autoLabel = (asgn.autoLabels && asgn.autoLabels[i]) ? asgn.autoLabels[i] : t('notSelectable');
+                const isDisabled = asgn.disabledSlots && asgn.disabledSlots[i];
+                const slotType = asgn.slotTypes ? asgn.slotTypes[i] : 'photo';
+                const slotLabel = asgn.slotLabels ? asgn.slotLabels[i] : `Slot ${i+1}`;
+                const slotNote = asgn.slotNotes ? asgn.slotNotes[i] : null;
+                const ovalClass = getOvalClass(slotType, isFilled, isDisabled);
                 
-                if (!isAutoSlot && asgn.selectable) {
-                    // Selectable slot (normal)
-                    html += `<div class="slot-wrapper">
-                        <div id="oval_${key}_${i}" class="oval ${isFilled ? 'filled' : ''}" 
-                             style="width:${ovalWidth}px; height:${ovalHeight}px;"
-                             onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : ''}</div>
-                        <span class="slot-number">${i+1}</span>
-                    </div>`;
-                } else {
-                    // Auto-assigned disabled slot: grey, not clickable, show label "Auto-assigned"
-                    html += `<div class="slot-wrapper">
-                        <div class="oval disabled" style="width:${ovalWidth}px; height:${ovalHeight}px;"></div>
-                        <span class="slot-number">${i+1}</span>
-                        <span class="auto-note">${autoLabel}</span>
-                    </div>`;
-                }
+                html += `<div class="slot-wrapper">
+                    <div id="oval_${key}_${i}" class="${ovalClass}" 
+                         style="width:${ovalWidth}px; height:42px;"
+                         onclick="handleOvalClick('${key}', ${i}, ${val !== null ? val : 'null'})">${isFilled ? val : ''}</div>
+                    <span class="slot-number">${slotLabel}</span>
+                    ${slotNote ? `<span class="slot-note">📌 ${slotNote}</span>` : ''}
+                </div>`;
             }
-            html += `</div></div></div>`;
+            html += `</div></div></div></div>`;
         }
         
         html += `<div class="global-actions"><button class="btn-primary" id="confirmBtn" style="width:auto; padding:0.5rem 1.5rem;">✓ ${t('saved')}</button></div>`;
@@ -963,12 +1058,13 @@
         document.getElementById('confirmBtn')?.addEventListener('click', () => {
             let summary = "═══════════════════════════\n   WHITE FOX STUDIO\n   PHOTO SELECTION\n═══════════════════════════\n";
             for (let [key, a] of Object.entries(assignments)) {
-                const name = currentLang === 'en' ? a.nameEn : a.nameTh;
+                const name = currentLang === 'en' ? a.nameEn : (currentLang === 'ru' ? a.nameRu : a.nameTh);
                 summary += `\n📦 ${a.sku} — ${name}\n📏 ${t('size')}: ${a.size || '—'}  |  📷 ${t('pose')}: ${a.pose}\n`;
                 for (let i = 0; i < a.values.length; i++) {
-                    const isAuto = a.selectableMask && a.selectableMask[i] === false;
-                    const autoTag = isAuto ? ` [${a.autoLabels[i] || 'Auto'}]` : '';
-                    summary += `   ${String(i+1).padStart(2)}: ${a.values[i] || '❌'}${autoTag}\n`;
+                    const slotLabel = a.slotLabels ? a.slotLabels[i] : `Slot ${i+1}`;
+                    const isDisabled = a.disabledSlots && a.disabledSlots[i];
+                    const disabledTag = isDisabled ? ` [${t('notSelectable')}]` : '';
+                    summary += `   ${slotLabel.padEnd(15)}: ${a.values[i] || '❌'}${disabledTag}\n`;
                 }
             }
             alert(summary);
@@ -982,14 +1078,24 @@
     function updateLang() {
         const iconSpan = document.getElementById('langIcon');
         const textSpan = document.getElementById('langText');
-        if (iconSpan) iconSpan.innerText = currentLang === 'en' ? '🇬🇧' : '🇹🇭';
-        if (textSpan) textSpan.innerText = currentLang === 'en' ? 'EN' : 'TH';
+        if (iconSpan) {
+            if (currentLang === 'en') iconSpan.innerText = '🇬🇧';
+            else if (currentLang === 'ru') iconSpan.innerText = '🇷🇺';
+            else iconSpan.innerText = '🇹🇭';
+        }
+        if (textSpan) {
+            if (currentLang === 'en') textSpan.innerText = 'EN';
+            else if (currentLang === 'ru') textSpan.innerText = 'RU';
+            else textSpan.innerText = 'TH';
+        }
         if (currentOrder) render();
         else render();
     }
 
     document.getElementById('langBtn')?.addEventListener('click', () => {
-        currentLang = currentLang === 'en' ? 'th' : 'en';
+        const langs = ['en', 'ru', 'th'];
+        const currentIndex = langs.indexOf(currentLang);
+        currentLang = langs[(currentIndex + 1) % langs.length];
         updateLang();
     });
     document.getElementById('checkBtn')?.addEventListener('click', () => {
